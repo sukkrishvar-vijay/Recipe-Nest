@@ -9,6 +9,10 @@ android {
     namespace = "com.group2.recipenest"
     compileSdk = 34
 
+    buildFeatures{
+        viewBinding = true
+    }
+
     defaultConfig {
         applicationId = "com.group2.recipenest"
         minSdk = 30
