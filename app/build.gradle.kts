@@ -1,4 +1,6 @@
+
 plugins {
+    id("com.google.gms.google-services")
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
 }
@@ -6,6 +8,10 @@ plugins {
 android {
     namespace = "com.group2.recipenest"
     compileSdk = 34
+
+    buildFeatures{
+        viewBinding = true
+    }
 
     defaultConfig {
         applicationId = "com.group2.recipenest"
@@ -37,6 +43,9 @@ android {
 
 dependencies {
 
+//    implementation (platform("com.google.android.material:material:1.9.0"))
+    implementation(platform("com.google.firebase:firebase-bom:33.3.0"))
+    implementation("com.google.firebase:firebase-firestore-ktx")
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
