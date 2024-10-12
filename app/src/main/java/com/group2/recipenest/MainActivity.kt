@@ -2,10 +2,8 @@ package com.group2.recipenest
 
 import android.os.Bundle
 import androidx.appcompat.widget.Toolbar
-import com.group2.recipenest.R
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
-import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.group2.recipenest.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
@@ -21,9 +19,13 @@ class MainActivity : AppCompatActivity() {
         // Find the Toolbar and set it as the ActionBar
         val toolbar: Toolbar = findViewById(R.id.toolbar)
         setSupportActionBar(toolbar)
+        supportActionBar?.title = ""
 
         // Load the default fragment
         loadFragment(FavoritesFragment())
+
+        // Set the BottomNavigationView to show Recipes as selected by default
+        binding.bottomNavigation.selectedItemId = R.id.nav_favorites
 
         // Set up bottom navigation
         binding.bottomNavigation.setOnItemSelectedListener { item ->
