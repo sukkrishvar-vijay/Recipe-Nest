@@ -21,11 +21,14 @@ class RecipeCardsFragment : Fragment() {
     ): View? {
         val view = inflater.inflate(R.layout.recipes_collections, container, false)
 
+        // Get the tile title passed from FavoritesFragment
+        val tileTitle = arguments?.getString("tileTitle") ?: "Recipes"
+
         // Find the toolbar in the activity
         val toolbar: Toolbar = requireActivity().findViewById(R.id.toolbar)
 
-        // Set the toolbar title directly
-        toolbar.title = "Breakfast"
+        // Set the toolbar title to the tile title passed from FavoritesFragment
+        toolbar.title = tileTitle
         toolbar.setTitleTextColor(resources.getColor(android.R.color.black, null))
 
         // Set up the back button (up button)
@@ -34,19 +37,9 @@ class RecipeCardsFragment : Fragment() {
             requireActivity().onBackPressedDispatcher.onBackPressed()  // Navigate back when back button is clicked
         }
 
-        // Sample data
+        // Sample data (this can be dynamic based on the collection)
         val recipeList = listOf(
             RecipeCardModel("Recipe 1", "Easy • 30mins • Thai, Vegetarian", R.drawable.placeholder_recipe_image),
-            RecipeCardModel("Recipe 2", "Medium • 45mins • Italian, Vegetarian", R.drawable.placeholder_recipe_image),
-            RecipeCardModel("Recipe 3", "Hard • 60mins • Mexican", R.drawable.placeholder_recipe_image),RecipeCardModel("Recipe 1", "Easy • 30mins • Thai, Vegetarian", R.drawable.placeholder_recipe_image),
-            RecipeCardModel("Recipe 2", "Medium • 45mins • Italian, Vegetarian", R.drawable.placeholder_recipe_image),
-            RecipeCardModel("Recipe 3", "Hard • 60mins • Mexican", R.drawable.placeholder_recipe_image),RecipeCardModel("Recipe 1", "Easy • 30mins • Thai, Vegetarian", R.drawable.placeholder_recipe_image),
-            RecipeCardModel("Recipe 2", "Medium • 45mins • Italian, Vegetarian", R.drawable.placeholder_recipe_image),
-            RecipeCardModel("Recipe 3", "Hard • 60mins • Mexican", R.drawable.placeholder_recipe_image),RecipeCardModel("Recipe 1", "Easy • 30mins • Thai, Vegetarian", R.drawable.placeholder_recipe_image),
-            RecipeCardModel("Recipe 2", "Medium • 45mins • Italian, Vegetarian", R.drawable.placeholder_recipe_image),
-            RecipeCardModel("Recipe 3", "Hard • 60mins • Mexican", R.drawable.placeholder_recipe_image),RecipeCardModel("Recipe 1", "Easy • 30mins • Thai, Vegetarian", R.drawable.placeholder_recipe_image),
-            RecipeCardModel("Recipe 2", "Medium • 45mins • Italian, Vegetarian", R.drawable.placeholder_recipe_image),
-            RecipeCardModel("Recipe 3", "Hard • 60mins • Mexican", R.drawable.placeholder_recipe_image),RecipeCardModel("Recipe 1", "Easy • 30mins • Thai, Vegetarian", R.drawable.placeholder_recipe_image),
             RecipeCardModel("Recipe 2", "Medium • 45mins • Italian, Vegetarian", R.drawable.placeholder_recipe_image),
             RecipeCardModel("Recipe 3", "Hard • 60mins • Mexican", R.drawable.placeholder_recipe_image)
         )
@@ -58,5 +51,16 @@ class RecipeCardsFragment : Fragment() {
         recipeRecyclerView.adapter = recipeAdapter
 
         return view
+    }
+
+    companion object {
+        // Method to create a new instance of RecipeCardsFragment and pass the tile title
+        fun newInstance(tileTitle: String): RecipeCardsFragment {
+            val fragment = RecipeCardsFragment()
+            val args = Bundle()
+            args.putString("tileTitle", tileTitle)
+            fragment.arguments = args
+            return fragment
+        }
     }
 }

@@ -1,5 +1,6 @@
 package com.group2.recipenest
 
+import FavoriteCollectionsTileModel
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -8,7 +9,7 @@ import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
 
-class FavoritesTileAdapter(private val tileList: List<Tile>, private val onClick: (Tile) -> Unit) :
+class FavoritesTileAdapter(private val tileList: List<FavoriteCollectionsTileModel>, private val onClick: (FavoriteCollectionsTileModel) -> Unit) :
     RecyclerView.Adapter<FavoritesTileAdapter.TileViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TileViewHolder {
@@ -29,7 +30,7 @@ class FavoritesTileAdapter(private val tileList: List<Tile>, private val onClick
         private val trailingIcon: ImageView = itemView.findViewById(R.id.list_item_trailing_icon)
         private val tileLayout: ConstraintLayout = itemView.findViewById(R.id.tile_layout)
 
-        fun bind(tile: Tile, onClick: (Tile) -> Unit) {
+        fun bind(tile: FavoriteCollectionsTileModel, onClick: (FavoriteCollectionsTileModel) -> Unit) {
             tileTitle.text = "${tile.title} (${tile.count})"
             trailingIcon.setImageResource(R.drawable.ic_right)
             tileLayout.setOnClickListener { onClick(tile) }
@@ -37,4 +38,3 @@ class FavoritesTileAdapter(private val tileList: List<Tile>, private val onClick
     }
 }
 
-data class Tile(val title: String, val count: Int)
