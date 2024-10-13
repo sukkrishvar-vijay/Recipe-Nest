@@ -2,7 +2,6 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:gravity="center_horizontal">
 
@@ -63,7 +62,7 @@
                 android:id="@+id/circle2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/circle_unselected"
+                android:src="@drawable/circle_selected"
                 android:scaleType="centerCrop" />
 
             <TextView
@@ -114,60 +113,16 @@
 
     </LinearLayout>
 
-    <LinearLayout
-        android:id="@+id/userNameFields"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="30sp"
-        android:layout_marginRight="30sp"
-        android:orientation="horizontal"
-        android:gravity="center"
-        android:layout_marginTop="60sp">
-
-        <com.google.android.material.textfield.TextInputLayout
-            style="?attr/textInputFilledStyle"
-            android:id="@+id/firstNametextField"
-            android:backgroundTint="@color/theme"
-            android:layout_height="wrap_content"
-            android:layout_width="0dp"
-            android:layout_marginRight="5sp"
-            android:layout_weight="1"
-            android:hint="First Name">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                />
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <com.google.android.material.textfield.TextInputLayout
-            style="?attr/textInputFilledStyle"
-            android:id="@+id/lastNametextField"
-            android:backgroundTint="@color/theme"
-            android:layout_height="wrap_content"
-            android:layout_width="0dp"
-            android:layout_marginLeft="5sp"
-            android:layout_weight="1"
-            android:hint="Last Name">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                />
-        </com.google.android.material.textfield.TextInputLayout>
-
-    </LinearLayout>
-
     <com.google.android.material.textfield.TextInputLayout
         style="?attr/textInputFilledStyle"
-        android:id="@+id/emailtextField"
+        android:id="@+id/usernametextField"
         android:backgroundTint="@color/theme"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="5sp"
         android:layout_marginLeft="30sp"
         android:layout_marginRight="30sp"
-        android:hint="Email">
+        android:layout_marginTop="60sp"
+        android:hint="Username">
 
         <com.google.android.material.textfield.TextInputEditText
             android:layout_width="match_parent"
@@ -177,39 +132,21 @@
 
     <com.google.android.material.textfield.TextInputLayout
         style="?attr/textInputFilledStyle"
-        android:id="@+id/enterPasswordtextField"
+        android:id="@+id/userDescriptiontextField"
         android:backgroundTint="@color/theme"
-        app:endIconMode="password_toggle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="5sp"
         android:layout_marginLeft="30sp"
         android:layout_marginRight="30sp"
-        android:hint="Password">
+        android:layout_marginTop="15sp"
+        android:hint="Tell about yourself (optional)">
 
         <com.google.android.material.textfield.TextInputEditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="textPassword"
-            />
-    </com.google.android.material.textfield.TextInputLayout>
-
-    <com.google.android.material.textfield.TextInputLayout
-        style="?attr/textInputFilledStyle"
-        android:id="@+id/confirmPasswordtextField"
-        android:backgroundTint="@color/theme"
-        app:endIconMode="password_toggle"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="5sp"
-        android:layout_marginLeft="30sp"
-        android:layout_marginRight="30sp"
-        android:hint="Confirm Password">
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:inputType="textPassword"
+            android:inputType="textMultiLine"
+            android:minLines="8"
+            android:gravity="top"
             />
     </com.google.android.material.textfield.TextInputLayout>
 
