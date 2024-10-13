@@ -94,7 +94,7 @@
                 android:id="@+id/circle3"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/circle_unselected"
+                android:src="@drawable/circle_selected"
                 android:scaleType="centerCrop" />
 
             <TextView
@@ -113,80 +113,49 @@
 
     </LinearLayout>
 
-    <com.google.android.material.textfield.TextInputLayout
-        style="?attr/textInputFilledStyle"
-        android:id="@+id/usernametextField"
+    <ImageView
+        android:id="@+id/landingpage_img2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/generic_avatar"
+        android:layout_marginTop="60sp"/>
+
+    <Button
+        android:id="@+id/uploadImageButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:backgroundTint="@color/white"
+        android:textColor="@color/text_blue"
+        android:layout_marginTop="5sp"
+        android:paddingStart="10sp"
+        android:paddingEnd="10sp"
+        android:text="Upload Image"
+        />
+
+    <Button
+        android:id="@+id/previousButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:backgroundTint="@color/white"
+        android:layout_gravity="start"
+        android:textColor="@color/text_blue"
+        android:layout_marginTop="40sp"
+        android:layout_marginLeft="30sp"
+        android:paddingStart="1sp"
+        android:paddingEnd="1sp"
+        android:text="Previous"
+        />
+
+    <Button
+        android:id="@+id/submitButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:backgroundTint="@color/theme"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="30sp"
-        android:layout_marginRight="30sp"
-        android:layout_marginTop="60sp"
-        android:hint="Username">
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            />
-    </com.google.android.material.textfield.TextInputLayout>
-
-    <com.google.android.material.textfield.TextInputLayout
-        style="?attr/textInputFilledStyle"
-        android:id="@+id/userDescriptiontextField"
-        android:backgroundTint="@color/theme"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="30sp"
-        android:layout_marginRight="30sp"
-        android:layout_marginTop="10sp"
-        android:hint="Tell about yourself (optional)">
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:inputType="textMultiLine"
-            android:minLines="8"
-            android:gravity="top"
-            />
-    </com.google.android.material.textfield.TextInputLayout>
-
-    <LinearLayout
-        android:id="@+id/navOptions"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="30sp"
-        android:layout_marginTop="60dp"
-        android:layout_marginRight="30sp"
-        android:orientation="horizontal">
-
-        <Button
-            android:id="@+id/previousPageButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="start"
-            android:backgroundTint="@color/white"
-            android:paddingStart="1sp"
-            android:paddingEnd="1sp"
-            android:text="Previous"
-            android:textColor="@color/text_blue" />
-
-        <View
-            android:layout_width="0dp"
-            android:layout_height="10dp"
-            android:layout_gravity="center"
-            android:layout_weight="1" />
-
-        <Button
-            android:id="@+id/nextPageButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="end"
-            android:backgroundTint="@color/white"
-            android:paddingStart="1sp"
-            android:paddingEnd="1sp"
-            android:text="Next"
-            android:textColor="@color/text_blue" />
-
-    </LinearLayout>
+        android:layout_marginTop="30sp"
+        android:textColor="@color/black"
+        android:text="Submit"
+        android:paddingStart="80sp"
+        android:paddingEnd="80sp"
+        />
 
 </LinearLayout>
