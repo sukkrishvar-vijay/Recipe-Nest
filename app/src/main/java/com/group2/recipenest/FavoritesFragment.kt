@@ -6,7 +6,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.appcompat.widget.Toolbar
-import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 
 class FavoritesFragment : Fragment() {
 
@@ -16,20 +17,33 @@ class FavoritesFragment : Fragment() {
     ): View? {
         val rootView = inflater.inflate(R.layout.fragment_favorites, container, false)
 
+        // Set up RecyclerView
+        val recyclerView = rootView.findViewById<RecyclerView>(R.id.favoritesRecyclerView)
+        recyclerView.layoutManager = LinearLayoutManager(requireContext())
+
+        // List of tiles with dynamic data
+        val tileList = listOf(
+            Tile("Breakfast", 0),
+            Tile("Lunch", 0),
+            Tile("Snack", 0),
+            Tile("Dinner", 0)
+        )
+
+        // Set adapter with tile list
+        val adapter = FavoritesTileAdapter(tileList) { tile ->
+            // Handle tile click, navigate to RecipeCardsFragment
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.fragment_container, RecipeCardsFragment())
+                .addToBackStack(null)
+                .commit()
+        }
+        recyclerView.adapter = adapter
+
         // Set the toolbar title
         val toolbar: Toolbar = requireActivity().findViewById(R.id.toolbar)
         toolbar.title = "Favorites"
         toolbar.setTitleTextColor(resources.getColor(android.R.color.black, null))
 
-        // Find the tile and set an OnClickListener
-        val openRecipeCardsTile = rootView.findViewById<ConstraintLayout>(R.id.favorite_collection_tile)
-        openRecipeCardsTile.setOnClickListener {
-            // Navigate to RecipeCardsFragment using FragmentTransaction
-            parentFragmentManager.beginTransaction()
-                .replace(R.id.fragment_container, RecipeCardsFragment())  // Replace with your fragment container ID
-                .addToBackStack(null)  // Add this transaction to the back stack
-                .commit()
-        }
         return rootView
     }
 
