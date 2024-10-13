@@ -15,18 +15,16 @@
         android:src="@drawable/logo" />
 
     <ImageView
-        android:id="@+id/landingpage_img1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="30dp"
-        android:layout_marginRight="30dp"
-        android:src="@drawable/landing_page_1" />
+        android:id="@+id/landingpage_img2"
+        android:layout_width="399dp"
+        android:layout_height="306dp"
+        android:src="@drawable/landing_page_2" />
 
     <TextView
         android:id="@+id/discoverTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Discover New Flavors"
+        android:text="Simplify Meal Planning"
         android:textSize="20sp"
         android:textColor="@android:color/black"
         android:layout_marginTop="18dp"/>
@@ -35,7 +33,7 @@
         android:id="@+id/flavorDescriptionTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Discover thousands of mouthwatering recipes and find your next favorite dish."
+        android:text="Plan your meals, save your favorite recipes, and simplify your cooking routine."
         android:textSize="14sp"
         android:textColor="@android:color/darker_gray"
         android:layout_marginLeft="10dp"
@@ -53,6 +51,12 @@
         <View
             android:layout_width="8dp"
             android:layout_height="8dp"
+            android:background="@drawable/dot_unselected"
+            android:layout_margin="4dp" />
+
+        <View
+            android:layout_width="8dp"
+            android:layout_height="8dp"
             android:background="@drawable/dot_selected"
             android:layout_margin="4dp" />
 
@@ -61,13 +65,7 @@
             android:layout_height="8dp"
             android:background="@drawable/dot_unselected"
             android:layout_margin="4dp" />
-
-        <View
-            android:layout_width="8dp"
-            android:layout_height="8dp"
-            android:background="@drawable/dot_unselected"
-            android:layout_margin="4dp" />
     </LinearLayout>
 
 
-    </LinearLayout>
+</LinearLayout>
