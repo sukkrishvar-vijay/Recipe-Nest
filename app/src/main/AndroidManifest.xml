@@ -12,16 +12,21 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.RecipeNest"
         tools:targetApi="31">
+
+        <!-- Main activity (the launcher activity) -->
         <activity
             android:name=".MainActivity"
             android:exported="true"
             android:label="">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <!-- Add your RecipeCardsListActivity here -->
+        <activity android:name=".RecipeCardsListActivity" />
+
     </application>
 
 </manifest>

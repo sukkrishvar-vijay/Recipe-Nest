@@ -18,7 +18,7 @@ class ProfileFragment : Fragment() {
         // Find the toolbar in the activity
         val toolbar: Toolbar = requireActivity().findViewById(R.id.toolbar)
 
-        // Set the toolbar title directly, avoid creating a new TextView each time
+        // Set the toolbar title directly
         toolbar.title = "Account"
         toolbar.setTitleTextColor(resources.getColor(android.R.color.black, null))
 

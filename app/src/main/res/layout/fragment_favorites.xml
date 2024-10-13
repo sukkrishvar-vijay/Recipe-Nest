@@ -21,7 +21,8 @@
         android:layout_height="wrap_content"
         android:padding="16dp"
         android:background="#F7F4D1"
-        android:layout_marginTop="5dp">
+        android:layout_marginTop="5dp"
+        android:id="@+id/favorite_collection_tile">
 
         <TextView
             android:id="@+id/list_item_title1"
