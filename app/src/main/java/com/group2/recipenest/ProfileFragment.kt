@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 
@@ -21,6 +22,16 @@ class ProfileFragment : Fragment() {
         // Set the toolbar title directly
         toolbar.title = "Account"
         toolbar.setTitleTextColor(resources.getColor(android.R.color.black, null))
+
+        // Set click listener on "My Recipes" tile (list_item_title1)
+        val myRecipesTile = rootView.findViewById<TextView>(R.id.list_item_title1)
+        myRecipesTile.setOnClickListener {
+            // Navigate to MyRecipesFragment
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.fragment_container, MyRecipesFragment())
+                .addToBackStack(null)
+                .commit()
+        }
 
         return rootView
     }
