@@ -67,7 +67,7 @@
         />
 
     <LinearLayout
-        android:id="@+id/viewPagerDots"
+        android:id="@+id/signInOptions"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
