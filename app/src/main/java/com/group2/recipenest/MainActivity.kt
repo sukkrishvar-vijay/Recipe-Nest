@@ -21,6 +21,10 @@ class MainActivity : AppCompatActivity() {
         setSupportActionBar(toolbar)
         supportActionBar?.title = ""
 
+        // Enable the back button in the toolbar
+        supportActionBar?.setDisplayHomeAsUpEnabled(false)
+        supportActionBar?.setDisplayShowHomeEnabled(false)
+
         // Load the default fragment
         loadFragment(FavoritesFragment())
 
