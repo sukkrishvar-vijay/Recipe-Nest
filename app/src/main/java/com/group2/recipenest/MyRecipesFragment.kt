@@ -38,6 +38,12 @@ class MyRecipesFragment : Fragment() {
         val recipeList = listOf(
             RecipeCardModel("Recipe 1", "Easy • 30mins • Thai, Vegetarian", R.drawable.placeholder_recipe_image),
             RecipeCardModel("Recipe 2", "Medium • 45mins • Italian, Vegetarian", R.drawable.placeholder_recipe_image),
+            RecipeCardModel("Recipe 3", "Hard • 60mins • Mexican", R.drawable.placeholder_recipe_image), RecipeCardModel("Recipe 1", "Easy • 30mins • Thai, Vegetarian", R.drawable.placeholder_recipe_image),
+            RecipeCardModel("Recipe 2", "Medium • 45mins • Italian, Vegetarian", R.drawable.placeholder_recipe_image),
+            RecipeCardModel("Recipe 3", "Hard • 60mins • Mexican", R.drawable.placeholder_recipe_image), RecipeCardModel("Recipe 1", "Easy • 30mins • Thai, Vegetarian", R.drawable.placeholder_recipe_image),
+            RecipeCardModel("Recipe 2", "Medium • 45mins • Italian, Vegetarian", R.drawable.placeholder_recipe_image),
+            RecipeCardModel("Recipe 3", "Hard • 60mins • Mexican", R.drawable.placeholder_recipe_image), RecipeCardModel("Recipe 1", "Easy • 30mins • Thai, Vegetarian", R.drawable.placeholder_recipe_image),
+            RecipeCardModel("Recipe 2", "Medium • 45mins • Italian, Vegetarian", R.drawable.placeholder_recipe_image),
             RecipeCardModel("Recipe 3", "Hard • 60mins • Mexican", R.drawable.placeholder_recipe_image)
         )
 

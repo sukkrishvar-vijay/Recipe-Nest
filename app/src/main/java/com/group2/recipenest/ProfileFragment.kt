@@ -35,4 +35,16 @@ class ProfileFragment : Fragment() {
 
         return rootView
     }
+
+    override fun onResume() {
+        super.onResume()
+
+        // Reset the toolbar when FavoritesFragment is resumed
+        val toolbar: Toolbar = requireActivity().findViewById(R.id.toolbar)
+        toolbar.title = "Account"
+        toolbar.setTitleTextColor(resources.getColor(android.R.color.black, null))
+
+        // Remove the navigation icon (back button)
+        toolbar.navigationIcon = null  // This removes the back button from the toolbar
+    }
 }

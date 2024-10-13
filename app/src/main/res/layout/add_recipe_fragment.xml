@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <!-- ImageView with Button in the middle -->
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:layout_marginBottom="16dp"
+            android:background="@drawable/add_recipe_placeholder_image">
+
+            <ImageView
+                android:id="@+id/uploaded_image"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                android:background="#D3D3D3" />
+
+            <Button
+                android:id="@+id/upload_image_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="Upload food image"
+                android:textColor="@android:color/holo_blue_dark"
+                android:background="@android:color/transparent" />
+        </FrameLayout>
+
+        <!-- Title EditText -->
+        <EditText
+            android:id="@+id/recipe_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Title"
+            android:backgroundTint="@color/light_yellow"
+            android:padding="12dp"
+            android:layout_marginBottom="16dp" />
+
+        <!-- Description Text Area -->
+        <EditText
+            android:id="@+id/recipe_description"
+            android:layout_width="match_parent"
+            android:layout_height="120dp"
+            android:hint="Add description for your recipe"
+            android:backgroundTint="@color/light_yellow"
+            android:gravity="top|start"
+            android:inputType="textMultiLine"
+            android:padding="12dp"
+            android:layout_marginBottom="16dp" />
+
+        <!-- Divider -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@android:color/darker_gray"
+            android:layout_marginBottom="16dp" />
+
+        <!-- Cuisine Types Checkboxes -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Cuisine Type(s)"
+            android:textSize="16sp"
+            android:layout_marginBottom="8dp" />
+
+        <CheckBox
+            android:id="@+id/cuisine_chinese"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Chinese" />
+
+        <CheckBox
+            android:id="@+id/cuisine_thai"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Thai" />
+
+        <CheckBox
+            android:id="@+id/cuisine_american"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="American" />
+
+        <CheckBox
+            android:id="@+id/cuisine_indian"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Indian"
+            android:layout_marginBottom="16dp" />
+
+        <!-- Divider -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@android:color/darker_gray"
+            android:layout_marginBottom="16dp" />
+
+        <!-- Cooking Time Radio Buttons -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Cooking Time"
+            android:textSize="16sp"
+            android:layout_marginBottom="8dp" />
+
+        <RadioGroup
+            android:id="@+id/cooking_time_group"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <RadioButton
+                android:id="@+id/time_15"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="15mins" />
+
+            <RadioButton
+                android:id="@+id/time_30"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="30mins" />
+
+            <RadioButton
+                android:id="@+id/time_45"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="45mins" />
+
+            <RadioButton
+                android:id="@+id/time_60"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="60mins" />
+        </RadioGroup>
+
+        <!-- Divider -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@android:color/darker_gray"
+            android:layout_marginBottom="16dp" />
+
+        <!-- Difficulty Level (Three Horizontal Buttons) -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Difficulty Level"
+            android:textSize="16sp"
+            android:layout_marginBottom="8dp" />
+
+        <RadioGroup
+            android:id="@+id/difficulty_group"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <RadioButton
+                android:id="@+id/easy_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Easy"
+                android:layout_weight="1" />
+
+            <RadioButton
+                android:id="@+id/medium_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:buttonTint="@android:color/darker_gray"
+                android:text="Medium"
+                android:layout_weight="1" />
+
+            <RadioButton
+                android:id="@+id/hard_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:buttonTint="@android:color/darker_gray"
+                android:text="Hard"
+                android:layout_weight="1" />
+        </RadioGroup>
+
+        <!-- Submit Button -->
+        <Button
+            android:id="@+id/submit_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Submit"
+            android:textColor="@android:color/white"
+            android:layout_marginTop="16dp" />
+    </LinearLayout>
+</ScrollView>
