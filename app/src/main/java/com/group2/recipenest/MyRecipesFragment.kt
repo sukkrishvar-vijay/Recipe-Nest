@@ -1,5 +1,6 @@
 package com.group2.recipenest
 
+import AddRecipeFragment
 import RecipeCardModel
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -9,6 +10,7 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.appcompat.widget.Toolbar
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 class MyRecipesFragment : Fragment() {
 
@@ -32,6 +34,18 @@ class MyRecipesFragment : Fragment() {
         toolbar.setNavigationIcon(R.drawable.ic_back_arrow)  // Replace with your back icon
         toolbar.setNavigationOnClickListener {
             requireActivity().onBackPressedDispatcher.onBackPressed()  // Navigate back when back button is clicked
+        }
+
+        // Handle FAB click to navigate to AddRecipeFragment
+        val fab: FloatingActionButton = view.findViewById(R.id.fab_add_new_recipe)
+        fab.setOnClickListener {
+            val addRecipeFragment = AddRecipeFragment()
+
+            // Navigate to AddRecipeFragment
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.fragment_container, addRecipeFragment)
+                .addToBackStack(null)
+                .commit()
         }
 
         // Sample data (this can be dynamic based on the collection)

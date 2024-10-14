@@ -4,4 +4,6 @@
     <color name="white">#FFFFFFFF</color>
     <color name="light_yellow">#FFF9E4</color>
     <color name="d1c300">#D1C300</color>
+    <color name="uncheckedColor">#F7F4E9</color>  <!-- This is your custom unchecked color -->
+    <color name="checkedColor">#D1C300</color>
 </resources>

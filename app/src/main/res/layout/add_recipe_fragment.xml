@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="utf-8"?>
 <ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -41,7 +40,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Title"
-            android:backgroundTint="@color/light_yellow"
+            android:background="#F7F4E9"
             android:padding="12dp"
             android:layout_marginBottom="16dp" />
 
@@ -49,9 +48,9 @@
         <EditText
             android:id="@+id/recipe_description"
             android:layout_width="match_parent"
-            android:layout_height="120dp"
+            android:layout_height="250dp"
             android:hint="Add description for your recipe"
-            android:backgroundTint="@color/light_yellow"
+            android:background="#F7F4E9"
             android:gravity="top|start"
             android:inputType="textMultiLine"
             android:padding="12dp"
@@ -61,7 +60,7 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:background="@android:color/darker_gray"
+            android:background="#D1C300"
             android:layout_marginBottom="16dp" />
 
         <!-- Cuisine Types Checkboxes -->
@@ -69,39 +68,48 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Cuisine Type(s)"
-            android:textSize="16sp"
+            android:textStyle="bold"
+            android:textSize="18sp"
             android:layout_marginBottom="8dp" />
 
         <CheckBox
             android:id="@+id/cuisine_chinese"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Chinese" />
+            android:text="Chinese"
+            android:buttonTint="@color/checkbox_tint"
+            android:layout_marginLeft="10dp" />
 
         <CheckBox
             android:id="@+id/cuisine_thai"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Thai" />
+            android:text="Thai"
+            android:buttonTint="@color/checkbox_tint"
+            android:layout_marginLeft="10dp" />
 
         <CheckBox
             android:id="@+id/cuisine_american"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="American" />
+            android:text="American"
+            android:buttonTint="@color/checkbox_tint"
+            android:layout_marginLeft="10dp" />
 
         <CheckBox
             android:id="@+id/cuisine_indian"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Indian"
-            android:layout_marginBottom="16dp" />
+            android:layout_marginBottom="16dp"
+            android:buttonTint="@color/checkbox_tint"
+            android:layout_marginLeft="10dp" />
 
         <!-- Divider -->
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:background="@android:color/darker_gray"
+            android:background="#D1C300"
             android:layout_marginBottom="16dp" />
 
         <!-- Cooking Time Radio Buttons -->
@@ -109,7 +117,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Cooking Time"
-            android:textSize="16sp"
+            android:textStyle="bold"
+            android:textSize="18sp"
             android:layout_marginBottom="8dp" />
 
         <RadioGroup
@@ -122,71 +131,85 @@
                 android:id="@+id/time_15"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="15mins" />
+                android:text="15mins"
+                android:buttonTint="@color/radiobutton_tint"
+                android:layout_marginLeft="10dp" />
 
             <RadioButton
                 android:id="@+id/time_30"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="30mins" />
+                android:text="30mins"
+                android:buttonTint="@color/radiobutton_tint"
+                android:layout_marginLeft="10dp" />
 
             <RadioButton
                 android:id="@+id/time_45"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="45mins" />
+                android:text="45mins"
+                android:buttonTint="@color/radiobutton_tint"
+                android:layout_marginLeft="10dp" />
 
             <RadioButton
                 android:id="@+id/time_60"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="60mins" />
+                android:text="60mins"
+                android:buttonTint="@color/radiobutton_tint"
+                android:layout_marginLeft="10dp" />
         </RadioGroup>
 
         <!-- Divider -->
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:background="@android:color/darker_gray"
+            android:background="#D1C300"
             android:layout_marginBottom="16dp" />
 
-        <!-- Difficulty Level (Three Horizontal Buttons) -->
+        <!-- Difficulty Level Segmented Buttons -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Difficulty Level"
-            android:textSize="16sp"
+            android:textSize="18sp"
+            android:textStyle="bold"
             android:layout_marginBottom="8dp" />
 
-        <RadioGroup
-            android:id="@+id/difficulty_group"
+        <com.google.android.material.button.MaterialButtonToggleGroup
+            android:id="@+id/difficulty_toggle_group"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:layout_marginHorizontal="20dp"
+            app:singleSelection="true">
 
-            <RadioButton
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/easy_button"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_weight="1"
                 android:text="Easy"
-                android:layout_weight="1" />
+                android:backgroundTint="#FFFCD7"
+                android:textColor="@color/black"/>
 
-            <RadioButton
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/medium_button"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:buttonTint="@android:color/darker_gray"
+                android:layout_weight="1"
                 android:text="Medium"
-                android:layout_weight="1" />
+                android:backgroundTint="#FFFCD7"
+                android:textColor="@color/black"/>
 
-            <RadioButton
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/hard_button"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:buttonTint="@android:color/darker_gray"
+                android:layout_weight="1"
                 android:text="Hard"
-                android:layout_weight="1" />
-        </RadioGroup>
+                android:backgroundTint="#FFFCD7"
+                android:textColor="@color/black"/>
+        </com.google.android.material.button.MaterialButtonToggleGroup>
 
         <!-- Submit Button -->
         <Button
@@ -194,7 +217,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Submit"
-            android:textColor="@android:color/white"
-            android:layout_marginTop="16dp" />
+            android:textColor="@android:color/black"
+            android:backgroundTint="#D1C300"
+            android:layout_marginTop="25dp" />
     </LinearLayout>
 </ScrollView>

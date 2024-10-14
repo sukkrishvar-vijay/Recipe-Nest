@@ -1,5 +1,4 @@
-package com.group2.recipenest
-
+import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -7,10 +6,12 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.CheckBox
 import android.widget.EditText
-import android.widget.RadioButton
-import android.widget.RadioGroup
 import android.widget.Toast
+import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
+import com.google.android.material.button.MaterialButton
+import com.google.android.material.button.MaterialButtonToggleGroup
+import com.group2.recipenest.R
 
 class AddRecipeFragment : Fragment() {
 
@@ -21,45 +22,56 @@ class AddRecipeFragment : Fragment() {
         // Inflate the layout for this fragment
         val rootView = inflater.inflate(R.layout.add_recipe_fragment, container, false)
 
+        // Set the toolbar title
+        val toolbar: Toolbar = requireActivity().findViewById(R.id.toolbar)
+        toolbar.title = "Add New Recipe"
+        toolbar.setTitleTextColor(Color.BLACK)
+
         // Initialize UI elements
         val uploadImageButton: Button = rootView.findViewById(R.id.upload_image_button)
         val titleEditText: EditText = rootView.findViewById(R.id.recipe_title)
         val descriptionEditText: EditText = rootView.findViewById(R.id.recipe_description)
         val cuisineChinese: CheckBox = rootView.findViewById(R.id.cuisine_chinese)
-        val cuisineThai: CheckBox = rootView.findViewById(R.id.cuisine_thai)
-        val cuisineAmerican: CheckBox = rootView.findViewById(R.id.cuisine_american)
-        val cuisineIndian: CheckBox = rootView.findViewById(R.id.cuisine_indian)
-        val cookingTimeGroup: RadioGroup = rootView.findViewById(R.id.cooking_time_group)
-        val difficultyGroup: RadioGroup = rootView.findViewById(R.id.difficulty_group)
-        val submitButton: Button = rootView.findViewById(R.id.submit_button)
+        val difficultyToggleGroup: MaterialButtonToggleGroup = rootView.findViewById(R.id.difficulty_toggle_group)
+        val easy_button: MaterialButton = rootView.findViewById(R.id.easy_button)
+        val medium_button: MaterialButton = rootView.findViewById(R.id.medium_button)
+        val hard_button: MaterialButton = rootView.findViewById(R.id.hard_button)
 
-        // Handling image upload (currently just a placeholder)
+        // Handle image upload click (currently placeholder functionality)
         uploadImageButton.setOnClickListener {
             Toast.makeText(activity, "Upload image clicked", Toast.LENGTH_SHORT).show()
         }
 
-        // Handling submit button click
-        submitButton.setOnClickListener {
-            val title = titleEditText.text.toString()
-            val description = descriptionEditText.text.toString()
-
-            val selectedCuisine = mutableListOf<String>()
-            if (cuisineChinese.isChecked) selectedCuisine.add("Chinese")
-            if (cuisineThai.isChecked) selectedCuisine.add("Thai")
-            if (cuisineAmerican.isChecked) selectedCuisine.add("American")
-            if (cuisineIndian.isChecked) selectedCuisine.add("Indian")
-
-            val selectedTimeId = cookingTimeGroup.checkedRadioButtonId
-            val selectedTime: String = rootView.findViewById<RadioButton>(selectedTimeId).text.toString()
-
-            val selectedDifficultyId = difficultyGroup.checkedRadioButtonId
-            val selectedDifficulty: String = rootView.findViewById<RadioButton>(selectedDifficultyId).text.toString()
-
-            // Display selected values (for demonstration)
-            val message = "Title: $title\nDescription: $description\nCuisine: $selectedCuisine\nTime: $selectedTime\nDifficulty: $selectedDifficulty"
-            Toast.makeText(activity, message, Toast.LENGTH_LONG).show()
+        // Handle difficulty level toggle selection
+        difficultyToggleGroup.addOnButtonCheckedListener { group, checkedId, isChecked ->
+            if (isChecked) {
+                val selectedButton: MaterialButton = rootView.findViewById(checkedId)
+                setSelectedButtonState(selectedButton)
+                if(selectedButton == easy_button){
+                    resetButtonState(medium_button)
+                    resetButtonState(hard_button)
+                }else if (selectedButton == medium_button){
+                    resetButtonState(easy_button)
+                    resetButtonState(hard_button)
+                }else{
+                    resetButtonState(easy_button)
+                    resetButtonState(medium_button)
+                }
+            }
         }
 
         return rootView
+    }
+
+    // Helper to set the selected button state
+    private fun setSelectedButtonState(button: MaterialButton) {
+        button.setBackgroundColor(Color.parseColor("#D1C300")) // Set selected background color
+        button.setTextColor(Color.BLACK) // Change text color to white when selected
+    }
+
+    // Helper to reset button state to unselected
+    private fun resetButtonState(button: MaterialButton) {
+        button.setBackgroundColor(Color.parseColor("#FFFCD7")) // Set default unselected background color
+        button.setTextColor(Color.BLACK)  // Set text color to black
     }
 }
