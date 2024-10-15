@@ -116,7 +116,6 @@
     <com.google.android.material.textfield.TextInputLayout
         style="?attr/textInputFilledStyle"
         android:id="@+id/usernametextField"
-        android:backgroundTint="@color/theme"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="30sp"
@@ -127,13 +126,13 @@
         <com.google.android.material.textfield.TextInputEditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:backgroundTint="#2ED1C300"
             />
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
         style="?attr/textInputFilledStyle"
         android:id="@+id/userDescriptiontextField"
-        android:backgroundTint="@color/theme"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="30sp"
@@ -144,6 +143,7 @@
         <com.google.android.material.textfield.TextInputEditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:backgroundTint="#2ED1C300"
             android:inputType="textMultiLine"
             android:minLines="8"
             android:gravity="top"
