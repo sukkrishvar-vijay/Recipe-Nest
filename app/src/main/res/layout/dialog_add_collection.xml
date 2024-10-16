@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="24dp"
+    android:elevation="10dp"
+    android:gravity="center_horizontal"
+    android:layout_gravity="center"
+    android:backgroundTint="@color/light_yellow"
+    android:layout_margin="20dp"
+    android:background="@drawable/rounded_corners_bg">
+
+    <!-- Title -->
+    <TextView
+        android:id="@+id/dialog_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:text="Add Personalized Collection"
+        android:layout_gravity="start"
+        android:textAlignment="viewStart"
+        android:textColor="@android:color/black"
+        android:textSize="20sp" />
+
+    <!-- Text Input for Collection Name -->
+    <EditText
+        android:id="@+id/input_collection_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text=""
+        android:background="#F7F4E9"
+        android:padding="10dp"
+        android:textSize="16sp"
+        android:layout_marginBottom="24dp"
+        android:inputType="text" />
+
+    <!-- Buttons: Cancel and Add -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="end">
+
+        <Button
+            android:id="@+id/cancel_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Cancel"
+            android:background="?attr/selectableItemBackground"
+            android:textColor="@android:color/black" />
+
+        <Button
+            android:id="@+id/add_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Add"
+            android:background="?attr/selectableItemBackground"
+            android:textColor="@android:color/black"
+            android:layout_marginStart="16dp" />
+    </LinearLayout>
+</LinearLayout>

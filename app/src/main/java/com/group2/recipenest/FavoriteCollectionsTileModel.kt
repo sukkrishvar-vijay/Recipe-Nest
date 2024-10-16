@@ -1,0 +1,1 @@
+data class FavoriteCollectionsTileModel(val title: String, val count: Int)

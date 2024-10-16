@@ -1,0 +1,1 @@
+data class RecipesCarouselModel(val title: String, val imageResId: Int)

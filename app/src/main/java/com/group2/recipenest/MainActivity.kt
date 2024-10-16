@@ -1,9 +1,9 @@
 package com.group2.recipenest
 //vijay develops
 import android.os.Bundle
+import androidx.appcompat.widget.Toolbar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
-import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.group2.recipenest.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
@@ -16,8 +16,21 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+
+        // Find the Toolbar and set it as the ActionBar
+        val toolbar: Toolbar = findViewById(R.id.toolbar)
+        setSupportActionBar(toolbar)
+        supportActionBar?.title = ""
+
+        // Disable the back button in the toolbar (enable where required)
+        supportActionBar?.setDisplayHomeAsUpEnabled(false)
+        supportActionBar?.setDisplayShowHomeEnabled(false)
+
         // Load the default fragment
         loadFragment(RecipesFragment())
+
+        // Set the BottomNavigationView to show Recipes as selected by default
+        binding.bottomNavigation.selectedItemId = R.id.nav_recipes
 
         // Set up bottom navigation
         binding.bottomNavigation.setOnItemSelectedListener { item ->

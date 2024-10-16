@@ -1,8 +1,19 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true">
+
+    <!-- Toolbar at the top -->
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="#D1C300"
+        android:title=""
+        android:elevation="5dp" />
 
     <!-- Fragment container -->
     <FrameLayout
@@ -20,8 +31,6 @@
         app:menu="@menu/bottom_nav_menu"
         app:itemIconTint="@color/nav_item_icon_color"
         app:itemTextColor="@color/nav_item_label_color"
-        app:labelVisibilityMode="labeled"
-    />
-
+        app:labelVisibilityMode="labeled" />
 
 </LinearLayout>
