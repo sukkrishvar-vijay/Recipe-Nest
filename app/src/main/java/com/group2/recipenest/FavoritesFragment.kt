@@ -13,8 +13,17 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 
 class FavoritesFragment : Fragment() {
+
+    // Firestore instance
+    private lateinit var firestore: FirebaseFirestore
+
+    // User ID
+    private val userId = "ceZ4r5FauC7TuTyckeRp"
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -22,29 +31,26 @@ class FavoritesFragment : Fragment() {
     ): View? {
         val rootView = inflater.inflate(R.layout.fragment_favorites, container, false)
 
+        // Initialize Firestore
+        firestore = Firebase.firestore
+
         // Set up RecyclerView
         val recyclerView = rootView.findViewById<RecyclerView>(R.id.favoritesRecyclerView)
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
 
-        // List of tiles with dynamic data
-        val tileList = listOf(
-            FavoriteCollectionsTileModel("Breakfast", 0),
-            FavoriteCollectionsTileModel("Lunch", 0),
-            FavoriteCollectionsTileModel("Snack", 0),
-            FavoriteCollectionsTileModel("Dinner", 0)
-        )
-
-        // Set adapter with tile list
-        val adapter = FavoritesTileAdapter(tileList) { tile ->
-            // Pass the tile title (e.g., "Breakfast") to RecipeCardsFragment
+        // Set up the adapter with an empty list initially
+        val adapter = FavoritesTileAdapter(emptyList()) { tile ->
+            // Pass the tile title to RecipeCardsFragment
             val recipeCardsFragment = RecipeCardsFragment.newInstance(tile.title)
-            // Handle tile click, navigate to RecipeCardsFragment
             parentFragmentManager.beginTransaction()
                 .replace(R.id.fragment_container, recipeCardsFragment)
                 .addToBackStack(null)
                 .commit()
         }
         recyclerView.adapter = adapter
+
+        // Fetch the favorite collections when the page loads
+        fetchFavoriteCollections(adapter)
 
         // Set the toolbar title
         val toolbar: Toolbar = requireActivity().findViewById(R.id.toolbar)
@@ -69,7 +75,38 @@ class FavoritesFragment : Fragment() {
         toolbar.setTitleTextColor(resources.getColor(android.R.color.black, null))
 
         // Remove the navigation icon (back button)
-        toolbar.navigationIcon = null  // This removes the back button from the toolbar
+        toolbar.navigationIcon = null
+    }
+
+    // Function to fetch favorite collections and update the counts
+    private fun fetchFavoriteCollections(adapter: FavoritesTileAdapter) {
+        // Fetch the User document from Firestore
+        val userRef = firestore.collection("User").document(userId)
+
+        userRef.get().addOnSuccessListener { document ->
+            if (document != null && document.exists()) {
+                // Get the favoriteCollection field
+                val favoriteCollection = document.get("favoriteCollection") as? List<Map<String, List<String>>>
+
+                // Create a mutable list to hold updated tiles based on dynamic data
+                val updatedTileList = mutableListOf<FavoriteCollectionsTileModel>()
+
+                // Iterate over each map in the favoriteCollection
+                favoriteCollection?.forEach { collection ->
+                    // Each map contains one key-value pair
+                    collection.forEach { (category, recipeIds) ->
+                        // Add a new tile with the key as the title and the count as the array size
+                        updatedTileList.add(FavoriteCollectionsTileModel(category, recipeIds.size))
+                    }
+                }
+
+                // Update the adapter with the new tile list
+                adapter.updateTiles(updatedTileList)
+            }
+        }.addOnFailureListener { exception ->
+            // Handle failure case here
+            exception.printStackTrace()
+        }
     }
 
     // Function to show the Add Collection dialog

@@ -7,12 +7,11 @@
     android:layout_margin="8dp"
     app:cardCornerRadius="12dp"
     app:cardElevation="4dp"
-    android:padding="8dp">
+    android:padding="20dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingStart="5dp">
+        android:layout_height="wrap_content">
 
         <!-- Circular Rating Badge -->
         <LinearLayout
@@ -25,13 +24,12 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
-            android:layout_marginEnd="8dp">
+            android:layout_marginHorizontal="5dp">
 
             <TextView
                 android:id="@+id/recipe_rating"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="4.5★"
                 android:textColor="@android:color/black"
                 android:textSize="14sp"
                 android:textStyle="bold"/>
@@ -42,7 +40,6 @@
             android:id="@+id/recipe_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Recipe"
             android:textSize="18sp"
             android:textStyle="bold"
             android:textColor="@android:color/black"
@@ -50,15 +47,13 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/image_container"
             app:layout_constraintHorizontal_bias="0"
-            android:layout_marginLeft="5dp"
-            android:layout_marginTop="5dp"/>
+            android:layout_marginLeft="5dp"/>
 
         <!-- Recipe Description -->
         <TextView
             android:id="@+id/recipe_description"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Easy • 30mins • Thai, Vegetarian"
             android:textSize="14sp"
             android:textColor="@android:color/darker_gray"
             app:layout_constraintStart_toEndOf="@id/rating_badge"
@@ -66,7 +61,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/image_container"
             app:layout_constraintHorizontal_bias="0"
-            android:layout_marginLeft="5dp"/>
+            android:layout_marginStart="5dp"/>
 
         <!-- Image Container -->
         <ImageView
@@ -74,7 +69,6 @@
             android:layout_width="64dp"
             android:layout_height="64dp"
             android:scaleType="centerCrop"
-            android:contentDescription="Recipe Image"
             android:src="@drawable/placeholder_recipe_image"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"

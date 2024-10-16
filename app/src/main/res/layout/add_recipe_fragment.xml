@@ -73,11 +73,24 @@
             android:layout_marginBottom="8dp" />
 
         <CheckBox
+            android:id="@+id/cuisine_vegetarian"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Vegetarian"
+            android:layout_marginLeft="10dp" />
+
+        <CheckBox
+            android:id="@+id/cuisine_non_vegetarian"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Non-Vegetarian"
+            android:layout_marginLeft="10dp" />
+
+        <CheckBox
             android:id="@+id/cuisine_chinese"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Chinese"
-            android:buttonTint="@color/checkbox_tint"
             android:layout_marginLeft="10dp" />
 
         <CheckBox
@@ -85,7 +98,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Thai"
-            android:buttonTint="@color/checkbox_tint"
             android:layout_marginLeft="10dp" />
 
         <CheckBox
@@ -93,7 +105,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="American"
-            android:buttonTint="@color/checkbox_tint"
             android:layout_marginLeft="10dp" />
 
         <CheckBox
@@ -102,7 +113,6 @@
             android:layout_height="wrap_content"
             android:text="Indian"
             android:layout_marginBottom="16dp"
-            android:buttonTint="@color/checkbox_tint"
             android:layout_marginLeft="10dp" />
 
         <!-- Divider -->

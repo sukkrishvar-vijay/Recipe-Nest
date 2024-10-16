@@ -1,13 +1,10 @@
 package com.group2.recipenest
 
 import RecipeCardModel
-import RecipesCarouselAdapter
 import RecipesCarouselModel
 import TrendingRecipeCardsAdapter
 import TrendingRecipeCardsModel
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -67,18 +64,9 @@ class RecipesFragment : Fragment() {
 
         // Sample data for the vertical list
         val moreRecipes = listOf(
-            RecipeCardModel("Recipe 4", "Easy • 20mins • Mexican", "4.3★", R.drawable.placeholder_recipe_image),
-            RecipeCardModel("Recipe 5", "Hard • 50mins • Indian", "4.8★", R.drawable.placeholder_recipe_image),
-            RecipeCardModel("Recipe 6", "Medium • 35mins • Chinese", "4.6★", R.drawable.placeholder_recipe_image),
-            RecipeCardModel("Recipe 4", "Easy • 20mins • Mexican", "4.3★", R.drawable.placeholder_recipe_image),
-            RecipeCardModel("Recipe 5", "Hard • 50mins • Indian", "4.8★", R.drawable.placeholder_recipe_image),
-            RecipeCardModel("Recipe 6", "Medium • 35mins • Chinese", "4.6★", R.drawable.placeholder_recipe_image),
-            RecipeCardModel("Recipe 4", "Easy • 20mins • Mexican", "4.3★", R.drawable.placeholder_recipe_image),
-            RecipeCardModel("Recipe 5", "Hard • 50mins • Indian", "4.8★", R.drawable.placeholder_recipe_image),
-            RecipeCardModel("Recipe 6", "Medium • 35mins • Chinese", "4.6★", R.drawable.placeholder_recipe_image),
-            RecipeCardModel("Recipe 4", "Easy • 20mins • Mexican", "4.3★", R.drawable.placeholder_recipe_image),
-            RecipeCardModel("Recipe 5", "Hard • 50mins • Indian", "4.8★", R.drawable.placeholder_recipe_image),
-            RecipeCardModel("Recipe 6", "Medium • 35mins • Chinese", "4.6★", R.drawable.placeholder_recipe_image)
+            RecipeCardModel("Recipe 4", "Easy", cookingTime = 30, cuisineType = "Non-veg, Thai, Traditional",4.3, R.drawable.placeholder_recipe_image),
+            RecipeCardModel("Recipe 5", "Hard", cookingTime = 30, cuisineType = "Non-veg, Thai, Traditional",4.3, R.drawable.placeholder_recipe_image),
+            RecipeCardModel("Recipe 6", "Medium", cookingTime = 30, cuisineType = "Non-veg, Thai, Traditional",4.3, R.drawable.placeholder_recipe_image)
         )
 
         // Set up the vertical adapter

@@ -1,4 +1,5 @@
 package com.group2.recipenest
+
 import RecipeCardModel
 import android.view.LayoutInflater
 import android.view.View
@@ -8,6 +9,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 
 class RecipeCardsAdapter(private val recipeList: List<RecipeCardModel>) : RecyclerView.Adapter<RecipeCardsAdapter.RecipeViewHolder>() {
+
     class RecipeViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val recipeTitle: TextView = itemView.findViewById(R.id.recipe_title)
         val recipeDescription: TextView = itemView.findViewById(R.id.recipe_description)
@@ -22,9 +24,9 @@ class RecipeCardsAdapter(private val recipeList: List<RecipeCardModel>) : Recycl
 
     override fun onBindViewHolder(holder: RecipeViewHolder, position: Int) {
         val recipe = recipeList[position]
-        holder.recipeTitle.text = recipe.title
-        holder.recipeRating.text = recipe.rating
-        holder.recipeDescription.text = recipe.description
+        holder.recipeTitle.text = recipe.recipeTitle
+        holder.recipeRating.text = "${recipe.avgRating}★"
+        holder.recipeDescription.text = "${recipe.difficultyLevel} • ${recipe.cookingTime}mins • \n${recipe.cuisineType}"
         holder.recipeImage.setImageResource(recipe.imageResId)
     }
 

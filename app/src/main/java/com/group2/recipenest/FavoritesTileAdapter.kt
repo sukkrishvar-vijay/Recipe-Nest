@@ -9,8 +9,14 @@ import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
 
-class FavoritesTileAdapter(private val tileList: List<FavoriteCollectionsTileModel>, private val onClick: (FavoriteCollectionsTileModel) -> Unit) :
+class FavoritesTileAdapter(private var tileList: List<FavoriteCollectionsTileModel>, private val onClick: (FavoriteCollectionsTileModel) -> Unit) :
     RecyclerView.Adapter<FavoritesTileAdapter.TileViewHolder>() {
+
+    // Update tile list when new data is fetched from Firestore
+    fun updateTiles(newTileList: List<FavoriteCollectionsTileModel>) {
+        tileList = newTileList
+        notifyDataSetChanged()  // Notify RecyclerView that the data has changed
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TileViewHolder {
         val view = LayoutInflater.from(parent.context)
@@ -31,10 +37,10 @@ class FavoritesTileAdapter(private val tileList: List<FavoriteCollectionsTileMod
         private val tileLayout: ConstraintLayout = itemView.findViewById(R.id.tile_layout)
 
         fun bind(tile: FavoriteCollectionsTileModel, onClick: (FavoriteCollectionsTileModel) -> Unit) {
+            // Display title with count
             tileTitle.text = "${tile.title} (${tile.count})"
-            trailingIcon.setImageResource(R.drawable.ic_right)
-            tileLayout.setOnClickListener { onClick(tile) }
+            trailingIcon.setImageResource(R.drawable.ic_right)  // Set the trailing icon (right arrow)
+            tileLayout.setOnClickListener { onClick(tile) }  // Handle click event
         }
     }
 }
-
