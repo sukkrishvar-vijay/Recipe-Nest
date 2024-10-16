@@ -90,7 +90,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:backgroundTint="@color/theme"
-            android:contentDescription="@string/standard_icon_btn_desc"
+            android:contentDescription="finger print sign in"
             app:icon="@drawable/baseline_fingerprint_24"
             />
 
