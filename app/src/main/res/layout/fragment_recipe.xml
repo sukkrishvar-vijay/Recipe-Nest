@@ -21,6 +21,14 @@
             android:layout_gravity="center"
             app:srcCompat="@drawable/recipe_nest_colorful_logo" />
 
+        <!-- Carousel (ViewPager2) -->
+        <androidx.viewpager2.widget.ViewPager2
+            android:id="@+id/carouselViewPager"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="16dp" />
+
         <!-- Horizontal RecyclerView for "Recipes Trending Locally" -->
         <TextView
             android:id="@+id/trendingTitle"

@@ -1,9 +1,13 @@
 package com.group2.recipenest
 
 import RecipeCardModel
+import RecipesCarouselAdapter
+import RecipesCarouselModel
 import TrendingRecipeCardsAdapter
 import TrendingRecipeCardsModel
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,11 +15,13 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.viewpager2.widget.ViewPager2
 
 class RecipesFragment : Fragment() {
 
     private lateinit var horizontalRecyclerView: RecyclerView
     private lateinit var verticalRecyclerView: RecyclerView
+    private lateinit var carouselViewPager: ViewPager2
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -26,6 +32,18 @@ class RecipesFragment : Fragment() {
 
         // Hide the Toolbar
         (activity as AppCompatActivity).supportActionBar?.hide()
+
+        // Sample data for the carousel
+        val carouselItems = listOf(
+            RecipesCarouselModel("Recipe 1", R.drawable.placeholder_recipe_image),
+            RecipesCarouselModel("Recipe 2", R.drawable.placeholder_recipe_image),
+            RecipesCarouselModel("Recipe 3", R.drawable.placeholder_recipe_image)
+        )
+
+        // Set up the carousel (ViewPager2)
+        carouselViewPager = rootView.findViewById(R.id.carouselViewPager)
+//        val carouselAdapter = RecipesCarouselAdapter(carouselItems)
+//        carouselViewPager.adapter = carouselAdapter
 
         // Set up the horizontal RecyclerView for "Recipes Trending Locally"
         horizontalRecyclerView = rootView.findViewById(R.id.horizontalRecyclerView)
