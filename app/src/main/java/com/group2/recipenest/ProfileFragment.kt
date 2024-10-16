@@ -33,6 +33,16 @@ class ProfileFragment : Fragment() {
                 .commit()
         }
 
+        // Set click listener on "Update Profile and Settings" tile (list_item_tile2)
+        val updateProfileAndSettingsTile = rootView.findViewById<TextView>(R.id.list_item_title2)
+        updateProfileAndSettingsTile.setOnClickListener{
+            // Navigate to UpdateProfileFragment
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.fragment_container, UpdateProfileFragment())
+                .addToBackStack(null)
+                .commit()
+        }
+
         return rootView
     }
 

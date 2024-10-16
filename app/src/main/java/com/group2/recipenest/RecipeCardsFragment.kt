@@ -39,9 +39,9 @@ class RecipeCardsFragment : Fragment() {
 
         // Sample data (this can be dynamic based on the collection)
         val recipeList = listOf(
-            RecipeCardModel("Recipe 1", "Easy • 30mins • Thai, Vegetarian", R.drawable.placeholder_recipe_image),
-            RecipeCardModel("Recipe 2", "Medium • 45mins • Italian, Vegetarian", R.drawable.placeholder_recipe_image),
-            RecipeCardModel("Recipe 3", "Hard • 60mins • Mexican", R.drawable.placeholder_recipe_image)
+            RecipeCardModel("Recipe 4", "Easy • 20mins • Mexican", "4.3★", R.drawable.placeholder_recipe_image),
+            RecipeCardModel("Recipe 5", "Hard • 50mins • Indian", "4.8★", R.drawable.placeholder_recipe_image),
+            RecipeCardModel("Recipe 6", "Medium • 35mins • Chinese", "4.6★", R.drawable.placeholder_recipe_image)
         )
 
         // Initialize RecyclerView
