@@ -9,7 +9,6 @@ import android.widget.Toast
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import com.google.firebase.auth.FirebaseAuth
-import com.group2.recipenest.com.group2.recipenest.SignInFragment
 
 class ProfileFragment : Fragment() {
 

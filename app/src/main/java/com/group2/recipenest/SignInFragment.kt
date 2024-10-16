@@ -1,4 +1,4 @@
-package com.group2.recipenest.com.group2.recipenest
+package com.group2.recipenest
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -8,7 +8,6 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.group2.recipenest.databinding.SignInPageBinding
 import com.google.firebase.auth.FirebaseAuth
-import com.group2.recipenest.MainActivity
 
 class SignInFragment : Fragment() {
 

@@ -1,12 +1,11 @@
 package com.group2.recipenest
-//vijay develops
+
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.widget.Toolbar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.google.firebase.auth.FirebaseAuth
-import com.group2.recipenest.com.group2.recipenest.SignInFragment
 import com.group2.recipenest.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
