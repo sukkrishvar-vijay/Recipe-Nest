@@ -1,9 +1,12 @@
 package com.group2.recipenest
 //vijay develops
 import android.os.Bundle
+import android.view.View
 import androidx.appcompat.widget.Toolbar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import com.google.firebase.auth.FirebaseAuth
+import com.group2.recipenest.com.group2.recipenest.SignInFragment
 import com.group2.recipenest.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
@@ -26,7 +29,30 @@ class MainActivity : AppCompatActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(false)
         supportActionBar?.setDisplayShowHomeEnabled(false)
 
+        if (!isUserLoggedIn()) {
+            hideBottomNavigation()
+            // Load the sign-in fragment if the user is not logged in
+            loadFragment(SignInFragment())
+        } else {
+            // If logged in, load the default fragment (home page)
+            loadHomePage()
+        }
+
+    }
+
+    // Method to show bottom navigation
+    private fun showBottomNavigation() {
+        binding.bottomNavigation.visibility = View.VISIBLE
+    }
+
+    // Method to hide bottom navigation
+    public fun hideBottomNavigation() {
+        binding.bottomNavigation.visibility = View.GONE
+    }
+
+    public fun loadHomePage(){
         // Load the default fragment
+        showBottomNavigation()
         loadFragment(RecipesFragment())
 
         // Set the BottomNavigationView to show Recipes as selected by default
@@ -42,6 +68,16 @@ class MainActivity : AppCompatActivity() {
             }
             true
         }
+
+    }
+
+    // Helper function to check User Login Status
+    private fun isUserLoggedIn(): Boolean {
+        // Get the current user
+        val currentUser = FirebaseAuth.getInstance().currentUser
+
+        // Check if the user is signed in (not null)
+        return currentUser != null
     }
 
     // Helper function to load fragments
