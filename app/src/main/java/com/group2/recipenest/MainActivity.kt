@@ -27,10 +27,10 @@ class MainActivity : AppCompatActivity() {
         supportActionBar?.setDisplayShowHomeEnabled(false)
 
         // Load the default fragment
-        loadFragment(RecipesFragment())
+        loadFragment(FavoritesFragment())
 
         // Set the BottomNavigationView to show Recipes as selected by default
-        binding.bottomNavigation.selectedItemId = R.id.nav_recipes
+        binding.bottomNavigation.selectedItemId = R.id.nav_favorites
 
         // Set up bottom navigation
         binding.bottomNavigation.setOnItemSelectedListener { item ->

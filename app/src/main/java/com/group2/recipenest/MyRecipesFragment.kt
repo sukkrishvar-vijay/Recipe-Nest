@@ -3,6 +3,7 @@ package com.group2.recipenest
 import AddRecipeFragment
 import RecipeCardModel
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -22,7 +23,9 @@ class MyRecipesFragment : Fragment() {
     private lateinit var firestore: FirebaseFirestore
 
     // User ID to filter recipes
-    private val recipeUserId = "ceZ4r5FauC7TuTyckeRp"
+    private var recipeUserId = "ceZ4r5FauC7TuTyckeRp"
+
+    private lateinit var recipeDescription: String;
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -80,10 +83,13 @@ class MyRecipesFragment : Fragment() {
                     // Safely retrieve each field from Firestore document
                     val recipeTitle = document.getString("recipeTitle") ?: "Untitled"
                     val cookingTime = document.getLong("cookingTime")?.toInt() ?: 0
-                    val avgRating = document.getDouble("avgRating")?: "N/A"
+                    val avgRating = document.getDouble("avgRating")?.toString() ?: "N/A"
                     val difficultyLevel = document.getString("difficultyLevel") ?: ""
                     val cuisineTypeList = document.get("cuisineType") as? List<String>
                     val cuisineType = cuisineTypeList?.joinToString(", ") ?: "Unknown"
+                    recipeDescription = document.getString("recipeDescription") ?: "N/A"
+                    Log.d("Recipes Description", recipeDescription)
+                    recipeUserId = document.getString("recipeUserId") ?: ""
 
                     // Create a RecipeCardModel object and add it to the list
                     val recipe = RecipeCardModel(
@@ -97,13 +103,38 @@ class MyRecipesFragment : Fragment() {
                     recipeList.add(recipe)
                 }
 
-                // Set up the adapter with the fetched recipes
-                recipeAdapter = RecipeCardsAdapter(recipeList)
+                // Set up the adapter with the fetched recipes and handle item click
+                recipeAdapter = RecipeCardsAdapter(recipeList) { recipe ->
+                    navigateToRecipeDetailsFragment(recipe)
+                }
                 recipeRecyclerView.adapter = recipeAdapter
             }
             .addOnFailureListener { exception ->
                 // Handle error case here
                 exception.printStackTrace()
             }
+    }
+
+    // Navigate to RecipeDetailsFragment and pass the recipe document
+    private fun navigateToRecipeDetailsFragment(recipe: RecipeCardModel) {
+        val recipeDetailsFragment = RecipeDetailsFragment()
+
+        // Pass recipe details to the fragment using a bundle
+        val bundle = Bundle()
+        bundle.putString("recipeUserId", recipeUserId)
+        bundle.putString("recipeDescription", recipeDescription)
+        bundle.putString("recipeTitle", recipe.recipeTitle)
+        bundle.putString("avgRating", recipe.avgRating.toString())
+        bundle.putString("difficultyLevel", recipe.difficultyLevel)
+        bundle.putInt("cookingTime", recipe.cookingTime)
+        bundle.putString("cuisineType", recipe.cuisineType)
+
+        recipeDetailsFragment.arguments = bundle
+
+        // Navigate to RecipeDetailsFragment
+        parentFragmentManager.beginTransaction()
+            .replace(R.id.fragment_container, recipeDetailsFragment)
+            .addToBackStack(null)
+            .commit()
     }
 }

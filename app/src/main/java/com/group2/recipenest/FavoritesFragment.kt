@@ -3,6 +3,7 @@ package com.group2.recipenest
 import FavoriteCollectionsTileModel
 import android.app.AlertDialog
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -96,7 +97,7 @@ class FavoritesFragment : Fragment() {
                     // Each map contains one key-value pair
                     collection.forEach { (category, recipeIds) ->
                         // Add a new tile with the key as the title and the count as the array size
-                        updatedTileList.add(FavoriteCollectionsTileModel(category, recipeIds.size))
+                        updatedTileList.add(FavoriteCollectionsTileModel(category.uppercase(), recipeIds.size))
                     }
                 }
 
