@@ -1,4 +1,6 @@
 data class RecipeCardModel(
+    val recipeDescription: String,
+    val recipeUserId: String,
     val recipeTitle: String,
     val difficultyLevel: String,
     val cookingTime: Int,

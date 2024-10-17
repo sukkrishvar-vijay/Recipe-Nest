@@ -23,9 +23,7 @@ class MyRecipesFragment : Fragment() {
     private lateinit var firestore: FirebaseFirestore
 
     // User ID to filter recipes
-    private var recipeUserId = "ceZ4r5FauC7TuTyckeRp"
-
-    private lateinit var recipeDescription: String;
+    private var currentUserId = "ceZ4r5FauC7TuTyckeRp"
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -65,16 +63,19 @@ class MyRecipesFragment : Fragment() {
         recipeRecyclerView = view.findViewById(R.id.my_recipe_recycler_view)
         recipeRecyclerView.layoutManager = LinearLayoutManager(requireContext())
 
-        // Fetch recipes from Firestore
-        fetchUserRecipes()
-
         return view
+    }
+
+    override fun onResume() {
+        super.onResume()
+        // Refresh the data every time the fragment is resumed
+        fetchUserRecipes()
     }
 
     // Function to fetch user-specific recipes from Firestore
     private fun fetchUserRecipes() {
         firestore.collection("Recipes")
-            .whereEqualTo("recipeUserId", recipeUserId)
+            .whereEqualTo("recipeUserId", currentUserId)
             .get()
             .addOnSuccessListener { documents ->
                 val recipeList = mutableListOf<RecipeCardModel>()
@@ -87,12 +88,14 @@ class MyRecipesFragment : Fragment() {
                     val difficultyLevel = document.getString("difficultyLevel") ?: ""
                     val cuisineTypeList = document.get("cuisineType") as? List<String>
                     val cuisineType = cuisineTypeList?.joinToString(", ") ?: "Unknown"
-                    recipeDescription = document.getString("recipeDescription") ?: "N/A"
+                    val recipeDescription = document.getString("recipeDescription") ?: "N/A"
                     Log.d("Recipes Description", recipeDescription)
-                    recipeUserId = document.getString("recipeUserId") ?: ""
+                    val recipeUserId = document.getString("recipeUserId") ?: ""
 
                     // Create a RecipeCardModel object and add it to the list
                     val recipe = RecipeCardModel(
+                        recipeUserId = recipeUserId,
+                        recipeDescription = recipeDescription,
                         recipeTitle = recipeTitle,
                         cookingTime = cookingTime,
                         avgRating = avgRating,
@@ -121,8 +124,8 @@ class MyRecipesFragment : Fragment() {
 
         // Pass recipe details to the fragment using a bundle
         val bundle = Bundle()
-        bundle.putString("recipeUserId", recipeUserId)
-        bundle.putString("recipeDescription", recipeDescription)
+        bundle.putString("recipeUserId", recipe.recipeUserId)
+        bundle.putString("recipeDescription", recipe.recipeDescription)
         bundle.putString("recipeTitle", recipe.recipeTitle)
         bundle.putString("avgRating", recipe.avgRating.toString())
         bundle.putString("difficultyLevel", recipe.difficultyLevel)

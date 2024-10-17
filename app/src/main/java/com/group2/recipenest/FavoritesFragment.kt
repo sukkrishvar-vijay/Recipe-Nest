@@ -26,6 +26,8 @@ class FavoritesFragment : Fragment() {
     // User ID
     private val userId = "ceZ4r5FauC7TuTyckeRp"
 
+    private lateinit var adapter: FavoritesTileAdapter
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -40,7 +42,7 @@ class FavoritesFragment : Fragment() {
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
 
         // Set up the adapter with an empty list initially
-        val adapter = FavoritesTileAdapter(emptyList()) { tile ->
+        adapter = FavoritesTileAdapter(emptyList()) { tile ->
             // Pass the tile title to RecipeCardsFragment
             val recipeCardsFragment = RecipeCardsFragment.newInstance(tile.title)
             parentFragmentManager.beginTransaction()
@@ -51,7 +53,7 @@ class FavoritesFragment : Fragment() {
         recyclerView.adapter = adapter
 
         // Fetch the favorite collections when the page loads
-        fetchFavoriteCollections(adapter)
+        fetchFavoriteCollections()
 
         // Set the toolbar title
         val toolbar: Toolbar = requireActivity().findViewById(R.id.toolbar)
@@ -77,10 +79,13 @@ class FavoritesFragment : Fragment() {
 
         // Remove the navigation icon (back button)
         toolbar.navigationIcon = null
+
+        // Refresh the favorite collections when the fragment is resumed
+        fetchFavoriteCollections()
     }
 
     // Function to fetch favorite collections and update the counts
-    private fun fetchFavoriteCollections(adapter: FavoritesTileAdapter) {
+    private fun fetchFavoriteCollections() {
         // Fetch the User document from Firestore
         val userRef = firestore.collection("User").document(userId)
 
@@ -131,11 +136,47 @@ class FavoritesFragment : Fragment() {
 
         dialogView.findViewById<Button>(R.id.add_button).setOnClickListener {
             val collectionName = dialogView.findViewById<EditText>(R.id.input_collection_name).text.toString()
-            // Handle the entered collection name here (e.g., save it or display a message)
+
+            if (collectionName.isNotEmpty()) {
+                // Call the function to add the new collection to Firestore
+                addNewCollection(collectionName.lowercase())
+            }
+
             dialog.dismiss() // Close the dialog
         }
 
         // Show the dialog
         dialog.show()
+    }
+
+    // Function to add a new collection to the favoriteCollection array field in Firestore
+    private fun addNewCollection(newCollectionName: String) {
+        val userRef = firestore.collection("User").document(userId)
+
+        // Add a new map entry for the new collection
+        userRef.get().addOnSuccessListener { document ->
+            if (document.exists()) {
+                val favoriteCollection = document.get("favoriteCollection") as? List<Map<String, List<String>>>
+
+                // Create a new map for the new collection
+                val newCollection = mapOf(newCollectionName to listOf<String>())
+
+                // Update the existing collection by adding the new collection map
+                val updatedCollection = favoriteCollection?.toMutableList() ?: mutableListOf()
+                updatedCollection.add(newCollection)
+
+                // Update the favoriteCollection field in Firestore
+                userRef.update("favoriteCollection", updatedCollection).addOnSuccessListener {
+                    // After adding, refresh the page
+                    fetchFavoriteCollections()
+                }.addOnFailureListener { exception ->
+                    // Handle error while updating the collection
+                    exception.printStackTrace()
+                }
+            }
+        }.addOnFailureListener { exception ->
+            // Handle error in fetching user data
+            exception.printStackTrace()
+        }
     }
 }

@@ -26,10 +26,6 @@ class RecipesFragment : Fragment() {
     private lateinit var firestore: FirebaseFirestore
     private lateinit var verticalAdapter: RecipeCardsAdapter
 
-    // User ID to filter recipes
-    private lateinit var recipeUserId: String
-
-    private lateinit var recipeDescription: String
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -102,10 +98,12 @@ class RecipesFragment : Fragment() {
                     val difficultyLevel = document.getString("difficultyLevel") ?: ""
                     val cuisineTypeList = document.get("cuisineType") as? List<String>
                     val cuisineType = cuisineTypeList?.joinToString(", ") ?: "Unknown"
-                    recipeDescription = document.getString("recipeDescription") ?:""
-                    recipeUserId = document.getString("recipeUserId") ?:""
+                    val recipeDescription = document.getString("recipeDescription") ?:""
+                    val recipeUserId = document.getString("recipeUserId") ?:""
 
                     val recipe = RecipeCardModel(
+                        recipeUserId = recipeUserId,
+                        recipeDescription = recipeDescription,
                         recipeTitle = recipeTitle,
                         cookingTime = cookingTime,
                         avgRating = avgRating,
@@ -130,8 +128,8 @@ class RecipesFragment : Fragment() {
         val recipeDetailsFragment = RecipeDetailsFragment()
 
         val bundle = Bundle()
-        bundle.putString("recipeUserId", recipeUserId)
-        bundle.putString("recipeDescription", recipeDescription)
+        bundle.putString("recipeUserId", recipe.recipeUserId)
+        bundle.putString("recipeDescription", recipe.recipeDescription)
         bundle.putString("recipeTitle", recipe.recipeTitle)
         bundle.putString("avgRating", recipe.avgRating.toString())
         bundle.putString("difficultyLevel", recipe.difficultyLevel)

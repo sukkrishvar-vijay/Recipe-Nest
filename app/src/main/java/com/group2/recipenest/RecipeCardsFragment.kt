@@ -21,8 +21,6 @@ class RecipeCardsFragment : Fragment() {
 
     // User ID to filter recipes (based on passed userId, adjust as needed)
     private var currentUserId = "ceZ4r5FauC7TuTyckeRp"
-    private lateinit var recipeDescription: String
-    private lateinit var recipeUserId: String
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -110,11 +108,13 @@ class RecipeCardsFragment : Fragment() {
                         val difficultyLevel = document.getString("difficultyLevel") ?: ""
                         val cuisineTypeList = document.get("cuisineType") as? List<String>
                         val cuisineType = cuisineTypeList?.joinToString(", ") ?: "Unknown"
-                        recipeDescription = document.getString("recipeDescription") ?: ""
-                        recipeUserId = document.getString("recipeUserId") ?: ""
+                        val recipeDescription = document.getString("recipeDescription") ?: ""
+                        val recipeUserId = document.getString("recipeUserId") ?: ""
 
                         // Create a RecipeCardModel object and add it to the list
                         val recipe = RecipeCardModel(
+                            recipeDescription = recipeDescription,
+                            recipeUserId = recipeUserId,
                             recipeTitle = recipeTitle,
                             cookingTime = cookingTime,
                             avgRating = avgRating,
@@ -148,8 +148,8 @@ class RecipeCardsFragment : Fragment() {
 
         // Pass recipe details to the fragment using a bundle
         val bundle = Bundle()
-        bundle.putString("recipeUserId", recipeUserId)
-        bundle.putString("recipeDescription", recipeDescription)
+        bundle.putString("recipeUserId", recipe.recipeUserId)
+        bundle.putString("recipeDescription", recipe.recipeDescription)
         bundle.putString("recipeTitle", recipe.recipeTitle)
         bundle.putString("avgRating", recipe.avgRating.toString())
         bundle.putString("difficultyLevel", recipe.difficultyLevel)
