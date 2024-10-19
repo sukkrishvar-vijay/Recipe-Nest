@@ -100,7 +100,7 @@ class AddRecipeFragment : Fragment() {
                 R.id.time_30 -> 30
                 R.id.time_45 -> 45
                 R.id.time_60 -> 60
-                else -> 0 // Default to 0 if no selection
+                else -> 0
             }
 
             val cuisineType = mutableListOf<String>()
@@ -167,12 +167,6 @@ class AddRecipeFragment : Fragment() {
             "dateRecipeAdded" to Date(),
             "avgRating" to 0.0,
             "comments" to emptyList<Any>()
-//            "comments" to listOf(
-//                mapOf("breakfast" to emptyList<String>()),
-//                mapOf("lunch" to emptyList<String>()),
-//                mapOf("snack" to emptyList<String>()),
-//                mapOf("dinner" to emptyList<String>())
-//            )
         )
 
         firestore.collection("Recipes")

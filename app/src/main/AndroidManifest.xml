@@ -24,8 +24,6 @@
             </intent-filter>
         </activity>
 
-        <!-- Add your RecipeCardsListActivity here -->
-        <activity android:name=".RecipeCardsListActivity" />
 
     </application>
 

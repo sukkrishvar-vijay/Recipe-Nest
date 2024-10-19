@@ -1,14 +1,16 @@
 package com.group2.recipenest
 
+import android.app.AlertDialog
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.TextView
+import android.widget.*
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -19,15 +21,20 @@ class RecipeDetailsFragment : Fragment() {
     private lateinit var shortDetailTextView: TextView
     private lateinit var longDetailTextView: TextView
     private lateinit var recipeOwnerTextView: TextView
-    private lateinit var ratingsCommentsButton: Button  // Now declared as a Button
-    private lateinit var currentRecipeId: String  // Store the recipeId
-    private lateinit var firestore: FirebaseFirestore  // Firestore instance
+    private lateinit var ratingsCommentsButton: Button
+    private lateinit var favoriteButton: ImageButton
+    private lateinit var currentRecipeId: String
+    private lateinit var firestore: FirebaseFirestore
+    private var isFavorite = false
+    private var currentFavoriteCategory: String? = null  // Track the current favorite category
+
+    // User ID to be used for checking the favorite status
+    private val currentUserId = "ceZ4r5FauC7TuTyckeRp"
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
         val rootView = inflater.inflate(R.layout.recipe_detail, container, false)
 
         // Initialize Firestore
@@ -38,12 +45,13 @@ class RecipeDetailsFragment : Fragment() {
         avgRatingTextView = rootView.findViewById(R.id.ratingText)
         shortDetailTextView = rootView.findViewById(R.id.selectedFilters)
         longDetailTextView = rootView.findViewById(R.id.aboutRecipeDetails)
-        ratingsCommentsButton = rootView.findViewById(R.id.ratingsCommentsButton)  // Initialize as Button
+        ratingsCommentsButton = rootView.findViewById(R.id.ratingsCommentsButton)
+        favoriteButton = rootView.findViewById(R.id.favoriteButton)
 
-        // Set data passed from the arguments
+        // Set recipe details from the arguments
         setRecipeDetails()
 
-        // Set up the floating action button for adding a comment
+        // Floating action button for adding a comment
         val fabWriteComment: FloatingActionButton = rootView.findViewById(R.id.fab_write_comment)
         fabWriteComment.setOnClickListener {
             navigateToPostCommentFragment()
@@ -52,24 +60,29 @@ class RecipeDetailsFragment : Fragment() {
         // Fetch comments, avgRating and update the button text
         fetchAndSetCommentsAndAvgRating()
 
+        // Check if the recipe is already a favorite
+        checkIfFavorite(currentRecipeId)
+
+        // Handle favorite button click
+        favoriteButton.setOnClickListener {
+            showFavoriteDialog(currentRecipeId)
+        }
+
         return rootView
     }
 
-    // Function to set recipe details in the views
     private fun setRecipeDetails() {
-        // Ensure arguments are available before trying to retrieve them
         val arguments = arguments ?: return
 
-        // Get the arguments passed from the previous fragment
         val recipeTitle = arguments.getString("recipeTitle") ?: "Recipe Details"
         val recipeOwner = arguments.getString("recipeUserId") ?: "Unknown"
         val recipeDescription = arguments.getString("recipeDescription") ?: "No description available"
         val difficultyLevel = arguments.getString("difficultyLevel") ?: "Unknown"
         val cookingTime = arguments.getInt("cookingTime", 0)
         val cuisineType = arguments.getString("cuisineType") ?: "Unknown"
-        currentRecipeId = arguments.getString("recipeId") ?: "Unknown"  // Retrieve the recipeId
+        currentRecipeId = arguments.getString("recipeId") ?: "Unknown"
 
-        // Fetch and set the recipe owner's details
+        // Fetch and set recipe owner details
         fetchAndSetRecipeOwnerDetails(recipeOwner)
 
         // Set other recipe details
@@ -79,85 +92,192 @@ class RecipeDetailsFragment : Fragment() {
         // Update the toolbar title with the recipe title
         val toolbar: Toolbar = requireActivity().findViewById(R.id.toolbar)
         toolbar.title = recipeTitle
-        toolbar.setTitleTextColor(resources.getColor(android.R.color.black, null))
     }
 
-    // Function to fetch recipe owner details from Firestore and set them in the TextView
     private fun fetchAndSetRecipeOwnerDetails(recipeUserId: String) {
-        // Reference to the User document
         val userRef = firestore.collection("User").document(recipeUserId)
-
-        // Fetch the user data
         userRef.get().addOnSuccessListener { document ->
             if (document.exists()) {
-                // Extract user details
                 val firstName = document.getString("firstName") ?: ""
                 val lastName = document.getString("lastName") ?: ""
                 val username = document.getString("username") ?: ""
-
-                // Set the formatted text in the TextView
                 recipeOwnerTextView.text = "$firstName $lastName • $username"
             } else {
-                // Handle the case where the document doesn't exist
                 recipeOwnerTextView.text = "Unknown User"
             }
         }.addOnFailureListener {
-            // Handle any errors during the fetch
             recipeOwnerTextView.text = "Error loading user"
         }
     }
 
-    // Function to fetch comments, avgRating and update the button text and ratingText
     private fun fetchAndSetCommentsAndAvgRating() {
-        // Reference to the recipe document
         val recipeRef = firestore.collection("Recipes").document(currentRecipeId)
-
-        // Fetch the recipe details
         recipeRef.get().addOnSuccessListener { document ->
             if (document.exists()) {
-                // Fetch the comments array
                 val comments = document.get("comments") as? List<Map<String, Any>>
                 val commentCount = comments?.size ?: 0
-
-                // Update the button text with the number of comments
                 ratingsCommentsButton.text = "Ratings and Comments ($commentCount)"
 
-                // Fetch and update avgRating
                 val avgRating = document.getDouble("avgRating") ?: 0.0
-                avgRatingTextView.text = String.format("%.1f★", avgRating)  // Display avgRating with 1 decimal place
+                avgRatingTextView.text = String.format("%.1f★", avgRating)
             } else {
-                // Handle the case where the document doesn't exist
                 ratingsCommentsButton.text = "Ratings and Comments (0)"
                 avgRatingTextView.text = "N/A★"
             }
         }.addOnFailureListener {
-            // Handle any errors during the fetch
             ratingsCommentsButton.text = "Ratings and Comments (0)"
             avgRatingTextView.text = "N/A★"
         }
     }
 
-    // Navigate to PostCommentFragment and pass the recipeId
-    private fun navigateToPostCommentFragment() {
-        val postCommentFragment = PostCommentFragment()
+    private fun checkIfFavorite(recipeId: String) {
+        firestore.collection("User").document(currentUserId).get().addOnSuccessListener { document ->
+            if (document.exists()) {
+                val favorites = document.get("favoriteCollection") as? List<Map<String, List<String>>>
+                favorites?.forEach { categoryMap ->
+                    categoryMap.forEach { (category, recipeIds) ->
+                        if (recipeIds.contains(recipeId)) {
+                            isFavorite = true
+                            currentFavoriteCategory = category  // Set current favorite category
+                        }
+                    }
+                }
+                updateFavoriteIcon(isFavorite)
+            }
+        }.addOnFailureListener {
+            Toast.makeText(requireContext(), "Failed to check favorites", Toast.LENGTH_SHORT).show()
+        }
+    }
 
-        // Pass the recipeId to PostCommentFragment using a bundle
-        val bundle = Bundle()
-        bundle.putString("recipeId", currentRecipeId)  // Pass the recipeId
-        postCommentFragment.arguments = bundle
+    private fun showFavoriteDialog(recipeId: String) {
+        val userRef = firestore.collection("User").document(currentUserId)
+        userRef.get().addOnSuccessListener { document ->
+            if (document.exists()) {
+                val favoriteCollection = document.get("favoriteCollection") as? List<Map<String, List<String>>>
+                val favoriteCategories = favoriteCollection?.map { it.keys.first() } ?: emptyList()
 
-        parentFragmentManager.beginTransaction()
-            .replace(R.id.fragment_container, postCommentFragment)
-            .addToBackStack(null)  // This allows the user to navigate back to this fragment
-            .commit()
+                val builder = AlertDialog.Builder(requireContext())
+                builder.setTitle("Select Favorite Category")
+
+                val options = favoriteCategories.toTypedArray()
+                var selectedOption: String? = currentFavoriteCategory
+
+                builder.setSingleChoiceItems(options, options.indexOf(currentFavoriteCategory)) { _, which ->
+                    selectedOption = options[which]
+                }
+
+                builder.setPositiveButton("Save") { _, _ ->
+                    if (!selectedOption.isNullOrEmpty()) {
+                        if (currentFavoriteCategory != null && currentFavoriteCategory != selectedOption) {
+                            // Remove from current favorite category and add to the new one
+                            Log.d("Category to delete from", currentFavoriteCategory!!)
+                            removeRecipeFromCurrentCategory(recipeId, currentFavoriteCategory!!)
+                            addRecipeToFavoriteCategory(recipeId, selectedOption!!)
+                        } else if (currentFavoriteCategory == null) {
+                            // If not already in favorites, add to the selected category
+                            addRecipeToFavoriteCategory(recipeId, selectedOption!!)
+                        }
+                    }
+                }
+
+                builder.setNegativeButton("Cancel", null)
+                builder.create().show()
+            }
+        }.addOnFailureListener {
+            Toast.makeText(requireContext(), "Failed to load favorite categories", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun addRecipeToFavoriteCategory(recipeId: String, category: String) {
+        firestore.collection("User").document(currentUserId).get().addOnSuccessListener { document ->
+            if (document.exists()) {
+                val favoriteCollection = document.get("favoriteCollection") as? List<Map<String, List<String>>>
+                val updatedFavorites = favoriteCollection?.map {
+                    if (it.containsKey(category)) {
+                        it.toMutableMap().apply {
+                            this[category] = this[category]!!.plus(recipeId)  // Add the recipeId to the correct category
+                        }
+                    } else {
+                        it
+                    }
+                }?.toList()
+
+                firestore.collection("User").document(currentUserId)
+                    .update("favoriteCollection", updatedFavorites)
+                    .addOnSuccessListener {
+                        isFavorite = true
+                        currentFavoriteCategory = category
+                        updateFavoriteIcon(isFavorite)
+                        Toast.makeText(requireContext(), "Added to $category", Toast.LENGTH_SHORT).show()
+                    }
+                    .addOnFailureListener {
+                        Toast.makeText(requireContext(), "Failed to add favorite", Toast.LENGTH_SHORT).show()
+                    }
+            }
+        }.addOnFailureListener {
+            Toast.makeText(requireContext(), "Failed to retrieve favorite categories", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun removeRecipeFromCurrentCategory(recipeId: String, category: String) {
+        val userRef = firestore.collection("User").document(currentUserId)
+
+        userRef.get().addOnSuccessListener { document ->
+            if (document.exists()) {
+                val favoriteCollection = document.get("favoriteCollection") as? List<Map<String, List<String>>>
+
+                if (favoriteCollection != null) {
+                    val updatedFavorites = favoriteCollection.map { categoryMap ->
+                        if (categoryMap.containsKey(category)) {
+                            // Remove the recipeId from the list of recipes in the current category
+                            categoryMap.toMutableMap().apply {
+                                this[category] = this[category]!!.filterNot { it == recipeId }
+                            }
+                        } else {
+                            categoryMap // Return the map as is if the category doesn't match
+                        }
+                    }
+
+                    Log.d("Updated Category", updatedFavorites.toString())
+
+                    // Update the favoriteCollection in Firestore
+                    userRef.update("favoriteCollection", updatedFavorites)
+                        .addOnSuccessListener {
+                            Toast.makeText(requireContext(), "Removed from $category", Toast.LENGTH_SHORT).show()
+                        }
+                        .addOnFailureListener {
+                            Toast.makeText(requireContext(), "Failed to remove favorite", Toast.LENGTH_SHORT).show()
+                        }
+                }
+            }
+        }.addOnFailureListener {
+            Toast.makeText(requireContext(), "Failed to retrieve favorite categories", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+
+    private fun updateFavoriteIcon(isFavorite: Boolean) {
+        if (isFavorite) {
+            favoriteButton.setImageResource(R.drawable.ic_favorite_filled)
+        } else {
+            favoriteButton.setImageResource(R.drawable.ic_favorite_outline)
+        }
     }
 
     override fun onResume() {
         super.onResume()
-        // Ensure the toolbar title is updated every time the fragment is resumed
         setRecipeDetails()
-
-        // Fetch and update comments and avgRating when the fragment is resumed
         fetchAndSetCommentsAndAvgRating()
+    }
+
+    private fun navigateToPostCommentFragment() {
+        val postCommentFragment = PostCommentFragment()
+        val bundle = Bundle()
+        bundle.putString("recipeId", currentRecipeId)
+        postCommentFragment.arguments = bundle
+        parentFragmentManager.beginTransaction()
+            .replace(R.id.fragment_container, postCommentFragment)
+            .addToBackStack(null)
+            .commit()
     }
 }

@@ -41,6 +41,7 @@
             android:layout_height="wrap_content"
             android:hint="Title"
             android:background="#F7F4E9"
+            android:textColor="@color/black"
             android:padding="12dp"
             android:layout_marginBottom="16dp" />
 
@@ -51,10 +52,14 @@
             android:layout_height="250dp"
             android:hint="Add description for your recipe"
             android:background="#F7F4E9"
-            android:gravity="top|start"
+            android:gravity="top"
             android:inputType="textMultiLine"
+            android:textColor="@color/black"
             android:padding="12dp"
-            android:layout_marginBottom="16dp" />
+            android:layout_marginBottom="16dp"
+            android:scrollbars="vertical"
+            android:overScrollMode="always"
+            android:maxLines="10" />
 
         <!-- Divider -->
         <View
@@ -142,7 +147,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="15mins"
-                android:buttonTint="@color/radiobutton_tint"
                 android:layout_marginLeft="10dp" />
 
             <RadioButton
@@ -150,7 +154,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="30mins"
-                android:buttonTint="@color/radiobutton_tint"
                 android:layout_marginLeft="10dp" />
 
             <RadioButton
@@ -158,7 +161,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="45mins"
-                android:buttonTint="@color/radiobutton_tint"
                 android:layout_marginLeft="10dp" />
 
             <RadioButton
@@ -166,7 +168,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="60mins"
-                android:buttonTint="@color/radiobutton_tint"
                 android:layout_marginLeft="10dp" />
         </RadioGroup>
 
@@ -197,28 +198,28 @@
                 android:id="@+id/easy_button"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:textColor="@color/black"
                 android:layout_weight="1"
                 android:text="Easy"
-                android:backgroundTint="#FFFCD7"
-                android:textColor="@color/black"/>
+                app:backgroundTint="@color/difficulty_level_button_selector" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/medium_button"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:textColor="@color/black"
                 android:text="Medium"
-                android:backgroundTint="#FFFCD7"
-                android:textColor="@color/black"/>
+                app:backgroundTint="@color/difficulty_level_button_selector" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/hard_button"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:textColor="@color/black"
                 android:text="Hard"
-                android:backgroundTint="#FFFCD7"
-                android:textColor="@color/black"/>
+                app:backgroundTint="@color/difficulty_level_button_selector" />
         </com.google.android.material.button.MaterialButtonToggleGroup>
 
         <!-- Submit Button -->

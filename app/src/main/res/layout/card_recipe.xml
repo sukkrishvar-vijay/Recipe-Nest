@@ -39,7 +39,7 @@
         <!-- Recipe Title -->
         <TextView
             android:id="@+id/recipe_title"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:textSize="18sp"
             android:textStyle="bold"
@@ -48,7 +48,10 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/image_container"
             app:layout_constraintHorizontal_bias="0"
-            android:layout_marginLeft="5dp"/>
+            android:layout_marginLeft="5dp"
+            android:maxLines="1"
+            android:ellipsize="end"/>
+
 
         <!-- Recipe Description -->
         <TextView

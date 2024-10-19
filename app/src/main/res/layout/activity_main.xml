@@ -29,8 +29,6 @@
         android:layout_height="wrap_content"
         android:background="#D1C300"
         app:menu="@menu/bottom_nav_menu"
-        app:itemIconTint="@color/nav_item_icon_color"
-        app:itemTextColor="@color/nav_item_label_color"
         app:labelVisibilityMode="labeled" />
 
 </LinearLayout>

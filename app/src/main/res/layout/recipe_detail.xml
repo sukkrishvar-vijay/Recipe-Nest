@@ -15,15 +15,33 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="16dp">
+            android:paddingTop="10dp"
+            android:paddingHorizontal="10dp">
 
-            <!-- Recipe Image -->
-            <ImageView
-                android:id="@+id/recipeImage"
+            <!-- FrameLayout for Recipe Image and Favorite Button -->
+            <FrameLayout
                 android:layout_width="match_parent"
-                android:layout_height="232dp"
-                android:scaleType="centerCrop"
-                app:srcCompat="@drawable/placeholder_recipe_image" />
+                android:layout_height="232dp">
+
+                <!-- Recipe Image -->
+                <ImageView
+                    android:id="@+id/recipeImage"
+                    android:layout_width="match_parent"
+                    android:layout_height="232dp"
+                    android:scaleType="centerCrop"
+                    app:srcCompat="@drawable/placeholder_recipe_image" />
+
+                <!-- Favorite Button positioned at the top-right corner -->
+                <ImageButton
+                    android:id="@+id/favoriteButton"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_gravity="top|end"
+                    android:layout_margin="8dp"
+                    android:background="@android:color/transparent"
+                    app:srcCompat="@drawable/ic_favorite_outline" />
+
+            </FrameLayout>
 
             <!-- Recipe Owner Name and Username in a Single TextView -->
             <TextView

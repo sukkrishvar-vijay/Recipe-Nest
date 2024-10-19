@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<selector xmlns:android="http://schemas.android.com/apk/res/android">
-    <!-- Selected state with the icon color of your choice -->
-    <item android:color="#ACA000" android:state_checked="true" />
-    <!-- Default (unselected) state with a different color -->
-    <item android:color="#000000" android:state_checked="false" />
-</selector>
