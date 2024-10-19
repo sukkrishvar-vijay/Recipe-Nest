@@ -1,3 +1,5 @@
+package com.group2.recipenest
+
 import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -20,7 +22,7 @@ class AddRecipeFragment : Fragment() {
     private lateinit var firestore: FirebaseFirestore
 
     // User ID to be used for storing the recipe
-    private val recipeUserId = "ceZ4r5FauC7TuTyckeRp"
+    private val currentUserId = "ceZ4r5FauC7TuTyckeRp"
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -161,8 +163,16 @@ class AddRecipeFragment : Fragment() {
             "cookingTime" to cookingTime,
             "difficultyLevel" to difficultyLevel,
             "cuisineType" to cuisineType,
-            "recipeUserId" to recipeUserId,
-            "dateRecipeAdded" to Date()
+            "recipeUserId" to currentUserId,
+            "dateRecipeAdded" to Date(),
+            "avgRating" to 0.0,
+            "comments" to emptyList<Any>()
+//            "comments" to listOf(
+//                mapOf("breakfast" to emptyList<String>()),
+//                mapOf("lunch" to emptyList<String>()),
+//                mapOf("snack" to emptyList<String>()),
+//                mapOf("dinner" to emptyList<String>())
+//            )
         )
 
         firestore.collection("Recipes")

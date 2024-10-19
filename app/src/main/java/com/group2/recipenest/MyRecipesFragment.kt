@@ -1,9 +1,7 @@
 package com.group2.recipenest
 
-import AddRecipeFragment
 import RecipeCardModel
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -89,8 +87,8 @@ class MyRecipesFragment : Fragment() {
                     val cuisineTypeList = document.get("cuisineType") as? List<String>
                     val cuisineType = cuisineTypeList?.joinToString(", ") ?: "Unknown"
                     val recipeDescription = document.getString("recipeDescription") ?: "N/A"
-                    Log.d("Recipes Description", recipeDescription)
                     val recipeUserId = document.getString("recipeUserId") ?: ""
+                    val recipeId = document.id
 
                     // Create a RecipeCardModel object and add it to the list
                     val recipe = RecipeCardModel(
@@ -101,7 +99,8 @@ class MyRecipesFragment : Fragment() {
                         avgRating = avgRating,
                         imageResId = R.drawable.placeholder_recipe_image,
                         difficultyLevel = difficultyLevel,
-                        cuisineType = cuisineType
+                        cuisineType = cuisineType,
+                        recipeId = recipeId  // Pass the recipeId here
                     )
                     recipeList.add(recipe)
                 }
@@ -118,7 +117,7 @@ class MyRecipesFragment : Fragment() {
             }
     }
 
-    // Navigate to RecipeDetailsFragment and pass the recipe document
+    // Navigate to RecipeDetailsFragment and pass the recipe document including the recipeId
     private fun navigateToRecipeDetailsFragment(recipe: RecipeCardModel) {
         val recipeDetailsFragment = RecipeDetailsFragment()
 
@@ -131,6 +130,7 @@ class MyRecipesFragment : Fragment() {
         bundle.putString("difficultyLevel", recipe.difficultyLevel)
         bundle.putInt("cookingTime", recipe.cookingTime)
         bundle.putString("cuisineType", recipe.cuisineType)
+        bundle.putString("recipeId", recipe.recipeId)  // Pass the recipeId here
 
         recipeDetailsFragment.arguments = bundle
 

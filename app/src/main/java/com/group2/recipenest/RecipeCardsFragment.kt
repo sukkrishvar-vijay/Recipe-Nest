@@ -110,6 +110,7 @@ class RecipeCardsFragment : Fragment() {
                         val cuisineType = cuisineTypeList?.joinToString(", ") ?: "Unknown"
                         val recipeDescription = document.getString("recipeDescription") ?: ""
                         val recipeUserId = document.getString("recipeUserId") ?: ""
+                        val recipeId = document.id
 
                         // Create a RecipeCardModel object and add it to the list
                         val recipe = RecipeCardModel(
@@ -121,7 +122,11 @@ class RecipeCardsFragment : Fragment() {
                             imageResId = R.drawable.placeholder_recipe_image,
                             difficultyLevel = difficultyLevel,
                             cuisineType = cuisineType,
+                            recipeId = recipeId
                         )
+
+                        // Add document ID (recipeId) to the recipe model
+                        recipe.recipeId = recipeId
                         recipeList.add(recipe)
 
                         // Update the adapter once all recipes are fetched
@@ -155,6 +160,7 @@ class RecipeCardsFragment : Fragment() {
         bundle.putString("difficultyLevel", recipe.difficultyLevel)
         bundle.putInt("cookingTime", recipe.cookingTime)
         bundle.putString("cuisineType", recipe.cuisineType)
+        bundle.putString("recipeId", recipe.recipeId)  // Pass the document ID (recipeId)
 
         recipeDetailsFragment.arguments = bundle
 

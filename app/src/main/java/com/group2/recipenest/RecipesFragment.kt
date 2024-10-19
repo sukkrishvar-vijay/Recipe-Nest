@@ -100,6 +100,7 @@ class RecipesFragment : Fragment() {
                     val cuisineType = cuisineTypeList?.joinToString(", ") ?: "Unknown"
                     val recipeDescription = document.getString("recipeDescription") ?:""
                     val recipeUserId = document.getString("recipeUserId") ?:""
+                    val recipeId = document.id
 
                     val recipe = RecipeCardModel(
                         recipeUserId = recipeUserId,
@@ -109,7 +110,8 @@ class RecipesFragment : Fragment() {
                         avgRating = avgRating,
                         imageResId = R.drawable.placeholder_recipe_image,
                         difficultyLevel = difficultyLevel,
-                        cuisineType = cuisineType
+                        cuisineType = cuisineType,
+                        recipeId = recipeId
                     )
                     recipeList.add(recipe)
                 }

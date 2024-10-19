@@ -1,4 +1,5 @@
 data class RecipeCardModel(
+    var recipeId: String,
     val recipeDescription: String,
     val recipeUserId: String,
     val recipeTitle: String,

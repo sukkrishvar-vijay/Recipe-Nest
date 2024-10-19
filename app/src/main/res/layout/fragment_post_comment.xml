@@ -1,0 +1,127 @@
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:gravity="center_horizontal"
+    android:background="#FFFFFF">
+
+    <!-- Add Review Title -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="24dp"
+        android:layout_marginBottom="24dp"
+        android:text="Add a Review"
+        android:textColor="#000000"
+        android:textStyle="bold"
+        android:textSize="24sp" />
+
+    <!-- Comment Text Field with Rounded Edges -->
+    <EditText
+        android:id="@+id/commentText"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:layout_marginBottom="16dp"
+        android:gravity="top|start"
+        android:hint="Comment"
+        android:padding="16dp"
+        android:textColorHint="#C7C7C7"
+        android:background="#F7F4E9"
+        android:elevation="4dp" />
+
+    <!-- Rate Text and Stars -->
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginBottom="24dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Rate"
+            android:textColor="#000000"
+            android:textSize="20sp"
+            android:layout_marginEnd="16dp" />
+
+        <!-- Star Rating -->
+        <ImageView
+            android:id="@+id/star1"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:src="@drawable/ic_star_outline" />
+
+        <ImageView
+            android:id="@+id/star2"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginStart="8dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:src="@drawable/ic_star_outline" />
+
+        <ImageView
+            android:id="@+id/star3"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginStart="8dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:src="@drawable/ic_star_outline" />
+
+        <ImageView
+            android:id="@+id/star4"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginStart="8dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:src="@drawable/ic_star_outline" />
+
+        <ImageView
+            android:id="@+id/star5"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginStart="8dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:src="@drawable/ic_star_outline" />
+    </LinearLayout>
+
+
+    <!-- Audio and Record Button Layout -->
+    <Button
+        android:id="@+id/recordButton"
+        android:layout_width="250dp"
+        android:layout_height="wrap_content"
+        android:backgroundTint="#D1C300"
+        android:drawableStart="@drawable/ic_mic"
+        android:drawablePadding="8dp"
+        android:elevation="4dp"
+        android:gravity="center"
+        android:padding="12dp"
+        android:text="Press and Hold to Record Audio"
+        android:textColor="@color/black"
+        android:textSize="14sp" />
+
+
+    <!-- Post Button -->
+    <Button
+        android:id="@+id/postButton"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="100dp"
+        android:backgroundTint="#D1C300"
+        android:elevation="4dp"
+        android:minHeight="48dp"
+        android:padding="16dp"
+        android:text="Post"
+        android:textColor="@color/black" />
+
+</LinearLayout>
