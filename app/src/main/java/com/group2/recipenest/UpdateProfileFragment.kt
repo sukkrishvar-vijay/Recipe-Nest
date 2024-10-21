@@ -100,13 +100,9 @@ class UpdateProfileFragment : Fragment() {
                 bioEditText.setText(document.getString("bio"))
                 emailEditText.setText(document.getString("email"))
             } else {
-                // Handle case where document does not exist
-                Log.d("UpdateProfileFragment", "No such user document found")
                 Toast.makeText(requireContext(), "User data not found", Toast.LENGTH_SHORT).show()
             }
         }.addOnFailureListener { exception ->
-            // Handle errors in getting document
-            Log.e("UpdateProfileFragment", "Error fetching user data", exception)
             Toast.makeText(requireContext(), "Error fetching user data", Toast.LENGTH_SHORT).show()
         }
     }
