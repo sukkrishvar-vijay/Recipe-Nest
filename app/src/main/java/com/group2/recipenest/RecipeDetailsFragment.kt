@@ -68,6 +68,11 @@ class RecipeDetailsFragment : Fragment() {
             showFavoriteDialog(currentRecipeId)
         }
 
+        // Set the click listener for the Ratings and Comments button
+        ratingsCommentsButton.setOnClickListener {
+            openReviewFragment()
+        }
+
         return rootView
     }
 
@@ -170,7 +175,6 @@ class RecipeDetailsFragment : Fragment() {
                     if (!selectedOption.isNullOrEmpty()) {
                         if (currentFavoriteCategory != null && currentFavoriteCategory != selectedOption) {
                             // Remove from current favorite category and add to the new one
-                            Log.d("Category to delete from", currentFavoriteCategory!!)
                             removeRecipeFromCurrentCategory(recipeId, currentFavoriteCategory!!)
                             addRecipeToFavoriteCategory(recipeId, selectedOption!!)
                         } else if (currentFavoriteCategory == null) {
@@ -255,6 +259,17 @@ class RecipeDetailsFragment : Fragment() {
         }
     }
 
+    // Function to open the ReviewFragment when Ratings and Comments button is clicked
+    private fun openReviewFragment() {
+        val reviewFragment = ReviewFragment() // Create an instance of your ReviewFragment
+        val bundle = Bundle()
+        bundle.putString("recipeId", currentRecipeId) // Pass the recipeId
+        reviewFragment.arguments = bundle
+        parentFragmentManager.beginTransaction()
+            .replace(R.id.fragment_container, reviewFragment)
+            .addToBackStack(null)
+            .commit()
+    }
 
     private fun updateFavoriteIcon(isFavorite: Boolean) {
         if (isFavorite) {

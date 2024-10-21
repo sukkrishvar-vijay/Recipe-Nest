@@ -1,22 +1,22 @@
 package com.group2.recipenest
 
-import ReviewAdapter
-import Reviews
+import ReviewModel
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.google.android.material.bottomsheet.BottomSheetBehavior
-import com.google.android.material.bottomsheet.BottomSheetDialog
-import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.google.firebase.firestore.FirebaseFirestore
 
-class ReviewFragment : BottomSheetDialogFragment() {
+class ReviewFragment : Fragment() {
 
-    private lateinit var ratingRecyclerView: RecyclerView
-    private lateinit var reviewAdapter: ReviewAdapter
-    private lateinit var reviewList: List<Reviews>
+    private lateinit var reviewsRecyclerView: RecyclerView
+    private lateinit var adapter: ReviewAdapter
+    private lateinit var firestore: FirebaseFirestore
+    private var currentRecipeId: String? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -24,39 +24,77 @@ class ReviewFragment : BottomSheetDialogFragment() {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_rating_and_comments, container, false)
 
-        // Initialize RecyclerView
-        ratingRecyclerView = view.findViewById(R.id.ratings_recycler_view)
-        ratingRecyclerView.layoutManager = LinearLayoutManager(context)
+        // Initialize Firestore
+        firestore = FirebaseFirestore.getInstance()
 
-        // Initialize Review List (this could be populated from a database or API)
-        reviewList = listOf(
-            Reviews("Tony Stark", "tonystark", "23 Sep 2024", "I tried this recipe and it’s delicious.", 4.0f),
-            Reviews("Bruce Banner", "hulk", "22 Sep 2024", "Love this! Easy to follow and tasty!", 5.0f),
+        // Get the passed recipeId
+        currentRecipeId = arguments?.getString("recipeId")
 
-            )
+        // Set up RecyclerView
+        reviewsRecyclerView = view.findViewById(R.id.ratings_recycler_view)
+        reviewsRecyclerView.layoutManager = LinearLayoutManager(context)
 
-        // Set up Adapter
-        reviewAdapter = ReviewAdapter(reviewList)
-        ratingRecyclerView.adapter = reviewAdapter
+        // Initialize with an empty list for the adapter
+        adapter = ReviewAdapter(listOf())
+        reviewsRecyclerView.adapter = adapter
+
+        // Fetch comments for the current recipe
+        fetchComments()
 
         return view
     }
 
-    override fun onStart() {
-        super.onStart()
+    private fun fetchComments() {
+        currentRecipeId?.let { recipeId ->
+            firestore.collection("Recipes").document(recipeId)
+                .get()
+                .addOnSuccessListener { document ->
+                    if (document.exists()) {
+                        val comments = document.get("comments") as? List<Map<String, Any>> ?: emptyList()
+                        val reviewList = mutableListOf<ReviewModel>()
 
-        // Set up the bottom sheet to display initially at half the screen height
-        val dialog = dialog as BottomSheetDialog
-        val bottomSheet = dialog.findViewById<View>(R.id.design_bottom_sheet)
+                        // Loop through each comment and fetch commenter details
+                        for (comment in comments) {
+                            val commenterId = comment["commenter"] as? String ?: continue
+                            val commentText = comment["comment"] as? String ?: ""
+                            val rating = (comment["rating"] as? Long)?.toInt() ?: 0
+                            val dateCommented = comment["dateCommented"] as? String ?: ""
 
-        bottomSheet?.let {
-            val behavior = BottomSheetBehavior.from(it)
-            behavior.state = BottomSheetBehavior.STATE_HALF_EXPANDED
-            behavior.peekHeight = (resources.displayMetrics.heightPixels * 0.5).toInt()
+                            // Fetch commenter details
+                            fetchCommenterDetails(commenterId) { firstName, lastName, username ->
+                                val fullName = "$firstName $lastName"
+                                val review = ReviewModel(fullName, username, commentText, dateCommented, rating)
+                                reviewList.add(review)
 
-            // Enable the bottom sheet to expand fully when swiped up
-            behavior.isFitToContents = false // Ensures that the sheet can expand to its full height
-            behavior.isHideable = true // Allows the sheet to be dismissed when swiped down
+                                // Update the adapter once all reviews are loaded
+                                adapter.updateReviews(reviewList)
+                            }
+                        }
+                    }
+                }
+                .addOnFailureListener { exception ->
+                    Toast.makeText(requireContext(), "Failed to fetch comments: ${exception.message}", Toast.LENGTH_SHORT).show()
+                }
         }
+    }
+
+    // Fetch the commenter's firstName, lastName, and username from the User collection
+    private fun fetchCommenterDetails(commenterId: String, callback: (String, String, String) -> Unit) {
+        firestore.collection("User").document(commenterId)
+            .get()
+            .addOnSuccessListener { document ->
+                if (document.exists()) {
+                    val firstName = document.getString("firstName") ?: "Unknown"
+                    val lastName = document.getString("lastName") ?: "Unknown"
+                    val username = document.getString("username") ?: "Unknown"
+                    callback(firstName, lastName, username)
+                } else {
+                    callback("Unknown", "User", "")
+                }
+            }
+            .addOnFailureListener { exception ->
+                callback("Unknown", "User", "")
+                Toast.makeText(requireContext(), "Failed to fetch user details: ${exception.message}", Toast.LENGTH_SHORT).show()
+            }
     }
 }
