@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:padding="16dp"
-    android:background="#FFE5B4">
+    android:background="#F7F4E9">
 
     <!-- Bottom Sheet Draggable Icon -->
     <ImageView

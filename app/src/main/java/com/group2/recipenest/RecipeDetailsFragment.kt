@@ -126,7 +126,7 @@ class RecipeDetailsFragment : Fragment() {
                 ratingsCommentsButton.text = "Ratings and Comments ($commentCount)"
 
                 val avgRating = document.getDouble("avgRating") ?: 0.0
-                avgRatingTextView.text = String.format("%.1f★", avgRating)
+                avgRatingTextView.text = "${avgRating}★"
             } else {
                 ratingsCommentsButton.text = "Ratings and Comments (0)"
                 avgRatingTextView.text = "N/A★"
@@ -270,14 +270,16 @@ class RecipeDetailsFragment : Fragment() {
     // Function to open the ReviewFragment when Ratings and Comments button is clicked
     private fun openReviewFragment() {
         val reviewFragment = ReviewFragment() // Create an instance of your ReviewFragment
+
+        // Pass any necessary arguments, e.g., the recipeId
         val bundle = Bundle()
-        bundle.putString("recipeId", currentRecipeId) // Pass the recipeId
+        bundle.putString("recipeId", currentRecipeId)
         reviewFragment.arguments = bundle
-        parentFragmentManager.beginTransaction()
-            .replace(R.id.fragment_container, reviewFragment)
-            .addToBackStack(null)
-            .commit()
+
+        // Show as a bottom sheet dialog
+        reviewFragment.show(requireActivity().supportFragmentManager, reviewFragment.tag)
     }
+
 
     private fun updateFavoriteIcon(isFavorite: Boolean) {
         if (isFavorite) {
