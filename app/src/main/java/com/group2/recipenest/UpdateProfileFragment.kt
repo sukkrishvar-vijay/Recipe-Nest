@@ -58,7 +58,6 @@ class UpdateProfileFragment : Fragment() {
         val usernameEditText = view.findViewById<EditText>(R.id.username)
         val bioEditText = view.findViewById<EditText>(R.id.user_bio)
         val emailEditText = view.findViewById<EditText>(R.id.email)
-        val passwordEditText = view.findViewById<EditText>(R.id.password)
         val authSwitch = view.findViewById<SwitchMaterial>(R.id.auth_switch)
         val updateButton = view.findViewById<Button>(R.id.update_button)
 
