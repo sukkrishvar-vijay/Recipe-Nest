@@ -1,8 +1,6 @@
 package com.group2.recipenest
 
 import RecipeCardModel
-import RecipesCarouselAdapter
-import RecipesCarouselModel
 import TrendingRecipeCardsAdapter
 import TrendingRecipeCardsModel
 import android.os.Bundle
@@ -13,7 +11,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import androidx.viewpager2.widget.ViewPager2
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -22,10 +19,9 @@ class RecipesFragment : Fragment() {
 
     private lateinit var horizontalRecyclerView: RecyclerView
     private lateinit var verticalRecyclerView: RecyclerView
-    private lateinit var carouselViewPager: ViewPager2
     private lateinit var firestore: FirebaseFirestore
     private lateinit var verticalAdapter: RecipeCardsAdapter
-
+    private lateinit var horizontalAdapter: TrendingRecipeCardsAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -40,32 +36,15 @@ class RecipesFragment : Fragment() {
         // Hide the Toolbar
         (activity as AppCompatActivity).supportActionBar?.hide()
 
-        // Sample data for the carousel
-        val carouselItems = listOf(
-            RecipesCarouselModel("Recipe 1", R.drawable.placeholder_recipe_image),
-            RecipesCarouselModel("Recipe 2", R.drawable.placeholder_recipe_image),
-            RecipesCarouselModel("Recipe 3", R.drawable.placeholder_recipe_image)
-        )
-
-        // Set up the carousel (ViewPager2)
-        carouselViewPager = rootView.findViewById(R.id.carouselViewPager)
-        val carouselAdapter = RecipesCarouselAdapter(carouselItems) // Assume this adapter is implemented
-        carouselViewPager.adapter = carouselAdapter
-
         // Set up the horizontal RecyclerView for "Recipes Trending Locally"
         horizontalRecyclerView = rootView.findViewById(R.id.horizontalRecyclerView)
         horizontalRecyclerView.layoutManager =
             LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
 
-        // Sample data for the horizontal list
-        val trendingRecipes = listOf(
-            TrendingRecipeCardsModel("Recipe 1", "Easy • 30mins • Thai", "4.5★", R.drawable.placeholder_recipe_image),
-            TrendingRecipeCardsModel("Recipe 2", "Medium • 45mins • Italian", "4.7★", R.drawable.placeholder_recipe_image),
-            TrendingRecipeCardsModel("Recipe 3", "Hard • 60mins • French", "4.9★", R.drawable.placeholder_recipe_image)
-        )
-
         // Set up the horizontal adapter
-        val horizontalAdapter = TrendingRecipeCardsAdapter(trendingRecipes)
+        horizontalAdapter = TrendingRecipeCardsAdapter(listOf()) { recipe ->
+            navigateToRecipeDetailsFragment(recipe)
+        }
         horizontalRecyclerView.adapter = horizontalAdapter
 
         // Set up the vertical RecyclerView for "More Recipes"
@@ -79,29 +58,33 @@ class RecipesFragment : Fragment() {
         }
         verticalRecyclerView.adapter = verticalAdapter
 
-        // Fetch recipes from Firestore for vertical list
+        // Fetch recipes from Firestore for both vertical and horizontal lists
         fetchRecipesFromFirestore()
 
         return rootView
     }
 
-    // Function to fetch recipes from Firestore and update the vertical list
+    // Function to fetch recipes from Firestore and update the vertical and horizontal lists
     private fun fetchRecipesFromFirestore() {
         firestore.collection("Recipes")
             .get()
             .addOnSuccessListener { documents ->
                 val recipeList = mutableListOf<RecipeCardModel>()
+                val recipeList2 = mutableListOf<TrendingRecipeCardsModel>()
+
                 for (document in documents) {
+                    // Safely retrieve each field from Firestore document
                     val recipeTitle = document.getString("recipeTitle") ?: "Untitled"
                     val cookingTime = document.getLong("cookingTime")?.toInt() ?: 0
                     val avgRating = document.getDouble("avgRating")?.toString() ?: "N/A"
                     val difficultyLevel = document.getString("difficultyLevel") ?: ""
                     val cuisineTypeList = document.get("cuisineType") as? List<String>
                     val cuisineType = cuisineTypeList?.joinToString(", ") ?: "Unknown"
-                    val recipeDescription = document.getString("recipeDescription") ?:""
-                    val recipeUserId = document.getString("recipeUserId") ?:""
+                    val recipeDescription = document.getString("recipeDescription") ?: "N/A"
+                    val recipeUserId = document.getString("recipeUserId") ?: ""
                     val recipeId = document.id
 
+                    // Create a RecipeCardModel object and add it to the vertical list
                     val recipe = RecipeCardModel(
                         recipeUserId = recipeUserId,
                         recipeDescription = recipeDescription,
@@ -113,11 +96,27 @@ class RecipesFragment : Fragment() {
                         cuisineType = cuisineType,
                         recipeId = recipeId
                     )
+
+                    // Create a TrendingRecipeCardsModel object and add it to the horizontal list
+                    val recipeAnother = TrendingRecipeCardsModel(
+                        recipeUserId = recipeUserId,
+                        recipeDescription = recipeDescription,
+                        recipeTitle = recipeTitle,
+                        cookingTime = cookingTime,
+                        avgRating = avgRating,
+                        imageResId = R.drawable.placeholder_recipe_image,
+                        difficultyLevel = difficultyLevel,
+                        cuisineType = cuisineType,
+                        recipeId = recipeId
+                    )
+
                     recipeList.add(recipe)
+                    recipeList2.add(recipeAnother)
                 }
 
-                // Update the vertical adapter with the fetched recipes
+                // Update the vertical and horizontal adapters with the fetched recipes
                 verticalAdapter.updateRecipes(recipeList)
+                horizontalAdapter.updateTrendingRecipes(recipeList2)
             }
             .addOnFailureListener { exception ->
                 // Handle the error if fetching the data fails
@@ -125,21 +124,44 @@ class RecipesFragment : Fragment() {
             }
     }
 
-    // Navigate to RecipeDetailsFragment (this method can be customized)
-    private fun navigateToRecipeDetailsFragment(recipe: RecipeCardModel) {
+    // Navigate to RecipeDetailsFragment and pass the recipe document including the recipeId
+    private fun navigateToRecipeDetailsFragment(recipe: Any) {
         val recipeDetailsFragment = RecipeDetailsFragment()
 
+        // Create a bundle to pass the recipe details to the RecipeDetailsFragment
         val bundle = Bundle()
-        bundle.putString("recipeUserId", recipe.recipeUserId)
-        bundle.putString("recipeDescription", recipe.recipeDescription)
-        bundle.putString("recipeTitle", recipe.recipeTitle)
-        bundle.putString("avgRating", recipe.avgRating.toString())
-        bundle.putString("difficultyLevel", recipe.difficultyLevel)
-        bundle.putInt("cookingTime", recipe.cookingTime)
-        bundle.putString("cuisineType", recipe.cuisineType)
+
+        // Use 'when' to check if recipe is RecipeCardModel or TrendingRecipeCardsModel
+        when (recipe) {
+            is RecipeCardModel -> {
+                bundle.putString("recipeUserId", recipe.recipeUserId)
+                bundle.putString("recipeDescription", recipe.recipeDescription)
+                bundle.putString("recipeTitle", recipe.recipeTitle)
+                bundle.putString("avgRating", recipe.avgRating.toString())
+                bundle.putString("difficultyLevel", recipe.difficultyLevel)
+                bundle.putInt("cookingTime", recipe.cookingTime)
+                bundle.putString("cuisineType", recipe.cuisineType)
+                bundle.putString("recipeId", recipe.recipeId)
+            }
+            is TrendingRecipeCardsModel -> {
+                bundle.putString("recipeUserId", recipe.recipeUserId)
+                bundle.putString("recipeDescription", recipe.recipeDescription)
+                bundle.putString("recipeTitle", recipe.recipeTitle)
+                bundle.putString("avgRating", recipe.avgRating.toString())
+                bundle.putString("difficultyLevel", recipe.difficultyLevel)
+                bundle.putInt("cookingTime", recipe.cookingTime)
+                bundle.putString("cuisineType", recipe.cuisineType)
+                bundle.putString("recipeId", recipe.recipeId)
+            }
+            else -> {
+                // Handle the case where the recipe object is not recognized
+                return
+            }
+        }
 
         recipeDetailsFragment.arguments = bundle
 
+        // Navigate to RecipeDetailsFragment
         parentFragmentManager.beginTransaction()
             .replace(R.id.fragment_container, recipeDetailsFragment)
             .addToBackStack(null)
@@ -149,6 +171,12 @@ class RecipesFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         // Show the Toolbar again when the fragment is destroyed
-        (activity as AppCompatActivity).supportActionBar?.show()
+        (activity as? AppCompatActivity)?.supportActionBar?.show()
+    }
+
+    // Hide the toolbar again when the fragment is resumed
+    override fun onResume() {
+        super.onResume()
+        (activity as? AppCompatActivity)?.supportActionBar?.hide()
     }
 }

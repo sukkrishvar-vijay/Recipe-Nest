@@ -1,8 +1,8 @@
 package com.group2.recipenest
 
 import RecipeCardModel
+import android.app.AlertDialog
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,6 +13,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.button.MaterialButton
+import com.google.android.material.chip.Chip
 import com.google.firebase.firestore.FirebaseFirestore
 
 class SearchFragment : Fragment() {
@@ -20,6 +22,15 @@ class SearchFragment : Fragment() {
     private lateinit var searchResultsRecyclerView: RecyclerView
     private lateinit var adapter: RecipeCardsAdapter
     private lateinit var firestore: FirebaseFirestore
+
+    private lateinit var difficultyLevelChip: Chip
+    private lateinit var cookingTimeChip: Chip
+    private lateinit var cuisineTypeChip: Chip
+    private lateinit var clearFiltersButton: MaterialButton
+
+    private var selectedDifficultyLevel: String? = null
+    private var selectedCookingTime: String? = null
+    private val selectedCuisineTypes = mutableSetOf<String>()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -38,7 +49,6 @@ class SearchFragment : Fragment() {
         adapter = RecipeCardsAdapter(listOf()) { recipe ->
             // Handle recipe card click
             Toast.makeText(requireContext(), "Clicked on: ${recipe.recipeTitle}", Toast.LENGTH_SHORT).show()
-            // You can navigate to a detailed recipe screen if required here
         }
         searchResultsRecyclerView.adapter = adapter
 
@@ -56,12 +66,25 @@ class SearchFragment : Fragment() {
             }
         }
 
+        // Access the chips and clear button
+        difficultyLevelChip = view.findViewById(R.id.difficultyLevelChip)
+        cookingTimeChip = view.findViewById(R.id.cookingTimeChip)
+        cuisineTypeChip = view.findViewById(R.id.cuisineTypeChip)
+        clearFiltersButton = view.findViewById(R.id.clearFiltersButton)
+
+        // Set click listeners for chips to show dialog
+        difficultyLevelChip.setOnClickListener { showDifficultyLevelDialog(difficultyLevelChip) }
+        cookingTimeChip.setOnClickListener { showCookingTimeDialog(cookingTimeChip) }
+        cuisineTypeChip.setOnClickListener { showCuisineTypeDialog(cuisineTypeChip) }
+
+        // Handle Clear Filters Button
+        clearFiltersButton.setOnClickListener { clearAllFilters() }
+
         return view
     }
 
     // Fetch recipes from Firestore based on search query
     private fun fetchRecipes(query: String) {
-
         firestore.collection("Recipes")
             .whereGreaterThanOrEqualTo("recipeTitle", query)
             .whereLessThanOrEqualTo("recipeTitle", query + '\uf8ff')
@@ -69,7 +92,6 @@ class SearchFragment : Fragment() {
             .addOnSuccessListener { documents ->
                 val recipeList = mutableListOf<RecipeCardModel>()
                 for (document in documents) {
-                    // Safely retrieve each field from Firestore document
                     val recipeTitle = document.getString("recipeTitle") ?: "Untitled"
                     val cookingTime = document.getLong("cookingTime")?.toInt() ?: 0
                     val avgRating = document.getDouble("avgRating")?.toString() ?: "N/A"
@@ -80,7 +102,6 @@ class SearchFragment : Fragment() {
                     val recipeUserId = document.getString("recipeUserId") ?: ""
                     val recipeId = document.id
 
-                    // Create a RecipeCardModel object and add it to the list
                     val recipe = RecipeCardModel(
                         recipeUserId = recipeUserId,
                         recipeDescription = recipeDescription,
@@ -90,29 +111,108 @@ class SearchFragment : Fragment() {
                         imageResId = R.drawable.placeholder_recipe_image,
                         difficultyLevel = difficultyLevel,
                         cuisineType = cuisineType,
-                        recipeId = recipeId  // Pass the recipeId here
+                        recipeId = recipeId
                     )
                     recipeList.add(recipe)
                 }
-                // Update the adapter with the fetched recipes
                 adapter.updateRecipes(recipeList)
             }
             .addOnFailureListener { exception ->
-                // Handle any errors
                 Toast.makeText(requireContext(), "Failed to fetch recipes: ${exception.message}", Toast.LENGTH_SHORT).show()
             }
     }
 
+    // Show difficulty level dialog
+    private fun showDifficultyLevelDialog(difficultyLevelChip: Chip) {
+        val options = arrayOf("Easy", "Medium", "Hard")
+        var selectedOption = selectedDifficultyLevel
+
+        val builder = AlertDialog.Builder(requireContext())
+        builder.setTitle("Select Difficulty Level")
+        builder.setSingleChoiceItems(options, options.indexOf(selectedOption)) { _, which ->
+            selectedOption = options[which]
+        }
+        builder.setPositiveButton("OK") { _, _ ->
+            selectedDifficultyLevel = selectedOption
+            difficultyLevelChip.isCheckable = true
+            difficultyLevelChip.isChecked = true
+            difficultyLevelChip.text = selectedDifficultyLevel // Update chip text
+        }
+        builder.setNegativeButton("Cancel", null)
+        builder.show()
+    }
+
+    // Show cooking time dialog
+    private fun showCookingTimeDialog(cookingTimeChip: Chip) {
+        val options = arrayOf("15 mins", "30 mins", "45 mins", "60 mins")
+        var selectedOption = selectedCookingTime
+
+        val builder = AlertDialog.Builder(requireContext())
+        builder.setTitle("Select Cooking Time")
+        builder.setSingleChoiceItems(options, options.indexOf(selectedOption)) { _, which ->
+            selectedOption = options[which]
+        }
+        builder.setPositiveButton("OK") { _, _ ->
+            selectedCookingTime = selectedOption
+            cookingTimeChip.isCheckable = true
+            cookingTimeChip.isChecked = true
+            cookingTimeChip.text = selectedCookingTime // Update chip text
+        }
+        builder.setNegativeButton("Cancel", null)
+        builder.show()
+    }
+
+    // Show cuisine type dialog
+    private fun showCuisineTypeDialog(cuisineTypeChip: Chip) {
+        val options = arrayOf("Vegetarian", "Non-Vegetarian", "Chinese", "Thai", "American", "Indian")
+        val checkedItems = BooleanArray(options.size) { selectedCuisineTypes.contains(options[it]) }
+
+        val builder = AlertDialog.Builder(requireContext())
+        builder.setTitle("Select Cuisine Types")
+        builder.setMultiChoiceItems(options, checkedItems) { _, which, isChecked ->
+            if (isChecked) {
+                selectedCuisineTypes.add(options[which])
+            } else {
+                selectedCuisineTypes.remove(options[which])
+            }
+        }
+        builder.setPositiveButton("OK") { _, _ ->
+            cuisineTypeChip.isCheckable = true
+            cuisineTypeChip.isChecked = selectedCuisineTypes.isNotEmpty()
+            cuisineTypeChip.text = if (selectedCuisineTypes.isEmpty()) {
+                "Cuisine Type"
+            } else {
+                selectedCuisineTypes.joinToString(", ") // Update chip text
+            }
+        }
+        builder.setNegativeButton("Cancel", null)
+        builder.show()
+    }
+
+    // Function to clear all filter selections
+    private fun clearAllFilters() {
+        selectedDifficultyLevel = null
+        selectedCookingTime = null
+        selectedCuisineTypes.clear()
+
+        // Reset the chips to their default state
+        difficultyLevelChip.isChecked = false
+        difficultyLevelChip.text = "Difficulty Level"
+
+        cookingTimeChip.isChecked = false
+        cookingTimeChip.text = "Cooking Time"
+
+        cuisineTypeChip.isChecked = false
+        cuisineTypeChip.text = "Cuisine Type"
+    }
 
     override fun onResume() {
         super.onResume()
-        // Hide the AppBar if it's visible
         (activity as? AppCompatActivity)?.supportActionBar?.hide()
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
-        // Show the AppBar again when leaving the fragment
         (activity as? AppCompatActivity)?.supportActionBar?.show()
     }
 }

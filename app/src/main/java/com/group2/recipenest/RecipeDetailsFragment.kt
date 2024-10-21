@@ -1,16 +1,15 @@
 package com.group2.recipenest
 
-import android.app.AlertDialog
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -50,6 +49,9 @@ class RecipeDetailsFragment : Fragment() {
 
         // Set recipe details from the arguments
         setRecipeDetails()
+
+        // Set up the toolbar with a back button
+        setUpToolbarWithBackButton()
 
         // Floating action button for adding a comment
         val fabWriteComment: FloatingActionButton = rootView.findViewById(R.id.fab_write_comment)
@@ -154,6 +156,14 @@ class RecipeDetailsFragment : Fragment() {
         }
     }
 
+    private fun setUpToolbarWithBackButton() {
+        val toolbar: Toolbar = requireActivity().findViewById(R.id.toolbar)
+        toolbar.setNavigationIcon(R.drawable.ic_back_arrow) // Use your custom back icon
+        toolbar.setNavigationOnClickListener {
+            requireActivity().onBackPressed() // Navigate back
+        }
+    }
+
     private fun showFavoriteDialog(recipeId: String) {
         val userRef = firestore.collection("User").document(currentUserId)
         userRef.get().addOnSuccessListener { document ->
@@ -241,8 +251,6 @@ class RecipeDetailsFragment : Fragment() {
                             categoryMap // Return the map as is if the category doesn't match
                         }
                     }
-
-                    Log.d("Updated Category", updatedFavorites.toString())
 
                     // Update the favoriteCollection in Firestore
                     userRef.update("favoriteCollection", updatedFavorites)

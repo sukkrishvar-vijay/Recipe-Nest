@@ -6,8 +6,10 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.group2.recipenest.R
 
-class TrendingRecipeCardsAdapter(private val recipes: List<TrendingRecipeCardsModel>) :
-    RecyclerView.Adapter<TrendingRecipeCardsAdapter.RecipeViewHolder>() {
+class TrendingRecipeCardsAdapter(
+    private var recipes: List<TrendingRecipeCardsModel>,
+    private val onClick: (TrendingRecipeCardsModel) -> Unit
+) : RecyclerView.Adapter<TrendingRecipeCardsAdapter.RecipeViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecipeViewHolder {
         val view = LayoutInflater.from(parent.context)
@@ -17,14 +19,24 @@ class TrendingRecipeCardsAdapter(private val recipes: List<TrendingRecipeCardsMo
 
     override fun onBindViewHolder(holder: RecipeViewHolder, position: Int) {
         val recipe = recipes[position]
-        holder.recipeImageView.setImageResource(recipe.imageId)
-        holder.recipeTitleTextView.text = recipe.name
-        holder.recipeDetailsTextView.text = recipe.details
-        holder.recipeRatingTextView.text = recipe.rating
+        holder.recipeImageView.setImageResource(recipe.imageResId)
+        holder.recipeTitleTextView.text = recipe.recipeTitle
+        holder.recipeDetailsTextView.text = "${recipe.difficultyLevel} • ${recipe.cookingTime} mins • ${recipe.cuisineType}"
+        holder.recipeRatingTextView.text = "${recipe.avgRating}★"
 
+        // Set click listener for the card
+        holder.itemView.setOnClickListener {
+            onClick(recipe)
+        }
     }
 
     override fun getItemCount(): Int = recipes.size
+
+    // Function to update the recipes list and notify the adapter
+    fun updateTrendingRecipes(newRecipes: List<TrendingRecipeCardsModel>) {
+        recipes = newRecipes
+        notifyDataSetChanged()  // Notify the adapter that the data has changed
+    }
 
     inner class RecipeViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val recipeImageView: ImageView = itemView.findViewById(R.id.recipeImageView)

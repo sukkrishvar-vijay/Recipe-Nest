@@ -9,7 +9,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="16dp"
+        android:padding="10dp"
         android:gravity="center_horizontal">
 
         <!-- Top Vector Image -->
@@ -121,20 +121,17 @@
                     app:chipStrokeWidth="1dp"
                     android:textColor="@android:color/black" />
 
-                <!-- Clear Filters Chip -->
-                <com.google.android.material.chip.Chip
-                    android:id="@+id/clearFiltersChip"
-                    style="@style/Widget.Material3.Chip.Input"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Clear Filters"
-                    android:background="@color/white"
-                    app:chipStrokeColor="@color/black"
-                    app:chipStrokeWidth="1dp"
-                    android:textColor="@android:color/black" />
-
             </com.google.android.material.chip.ChipGroup>
         </LinearLayout>
+
+        <!-- Clear Filters TextButton with Cross Icon -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/clearFiltersButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/white"
+            android:text="Clear Filters"
+            android:textColor="@android:color/black" />
 
         <!-- RecyclerView for Search Results -->
         <androidx.recyclerview.widget.RecyclerView
