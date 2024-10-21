@@ -23,7 +23,7 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:layout_gravity="bottom|start"
-            android:padding="16dp"
+            android:padding="25dp"
             android:background="@android:color/transparent">
 
             <!-- Recipe Title -->
