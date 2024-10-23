@@ -3,6 +3,7 @@ package com.group2.recipenest
 import RecipeCardModel
 import android.app.AlertDialog
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -45,10 +46,9 @@ class SearchFragment : Fragment() {
         searchResultsRecyclerView = view.findViewById(R.id.searchResultsRecyclerView)
         searchResultsRecyclerView.layoutManager = LinearLayoutManager(context)
 
-        // Initialize with an empty list
+        // Initialize with an empty list and set click handling
         adapter = RecipeCardsAdapter(listOf()) { recipe ->
-            // Handle recipe card click
-            Toast.makeText(requireContext(), "Clicked on: ${recipe.recipeTitle}", Toast.LENGTH_SHORT).show()
+            navigateToRecipeDetailsFragment(recipe)
         }
         searchResultsRecyclerView.adapter = adapter
 
@@ -214,5 +214,28 @@ class SearchFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         (activity as? AppCompatActivity)?.supportActionBar?.show()
+    }
+
+    // Navigate to RecipeDetailsFragment
+    private fun navigateToRecipeDetailsFragment(recipe: RecipeCardModel) {
+        val fragment = RecipeDetailsFragment()
+
+        // Pass recipe details to the fragment via arguments
+        val bundle = Bundle().apply {
+            putString("recipeTitle", recipe.recipeTitle)
+            putString("recipeUserId", recipe.recipeUserId)
+            putString("recipeDescription", recipe.recipeDescription)
+            putString("difficultyLevel", recipe.difficultyLevel)
+            putInt("cookingTime", recipe.cookingTime)
+            putString("cuisineType", recipe.cuisineType)
+            putString("recipeId", recipe.recipeId)
+        }
+        fragment.arguments = bundle
+
+        // Navigate to RecipeDetailsFragment
+        parentFragmentManager.beginTransaction()
+            .replace(R.id.fragment_container, fragment)
+            .addToBackStack(null)
+            .commit()
     }
 }
