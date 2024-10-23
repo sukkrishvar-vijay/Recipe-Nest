@@ -27,7 +27,7 @@
         android:id="@+id/bottom_navigation"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#D1C300"
+        android:background="@color/d1c300"
         app:menu="@menu/bottom_nav_menu"
         app:labelVisibilityMode="labeled" />
 

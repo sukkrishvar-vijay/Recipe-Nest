@@ -10,6 +10,7 @@ import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.button.MaterialButtonToggleGroup
+import com.google.android.material.textfield.TextInputEditText
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -41,8 +42,8 @@ class AddRecipeFragment : Fragment() {
 
         // Initialize UI elements
         val uploadImageButton: Button = rootView.findViewById(R.id.upload_image_button)
-        val titleEditText: EditText = rootView.findViewById(R.id.recipe_title)
-        val descriptionEditText: EditText = rootView.findViewById(R.id.recipe_description)
+        val titleEditText: TextInputEditText = rootView.findViewById(R.id.recipe_title)
+        val descriptionEditText: TextInputEditText = rootView.findViewById(R.id.recipe_description)
         val cuisineVegetarian: CheckBox = rootView.findViewById(R.id.cuisine_vegetarian)
         val cuisineNonVegetarian: CheckBox = rootView.findViewById(R.id.cuisine_non_vegetarian)
         val cuisineChinese: CheckBox = rootView.findViewById(R.id.cuisine_chinese)

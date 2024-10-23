@@ -1,20 +1,21 @@
 <ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="16dp">
+    android:padding="10dp">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        tools:ignore="ExtraText">
 
         <!-- ImageView with Button in the middle -->
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="200dp"
-            android:layout_marginBottom="16dp"
             android:background="@drawable/add_recipe_placeholder_image">
 
             <ImageView
@@ -35,97 +36,127 @@
         </FrameLayout>
 
         <!-- Title EditText -->
-        <EditText
-            android:id="@+id/recipe_title"
+        <com.google.android.material.textfield.TextInputLayout
+            style="?attr/textInputFilledStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="10sp"
             android:hint="Title"
-            android:background="#F7F4E9"
-            android:textColor="@color/black"
-            android:padding="12dp"
-            android:layout_marginBottom="16dp" />
+            app:hintTextColor="@color/black"
+            app:boxStrokeColor="@color/d1c300">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/recipe_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:backgroundTint="#2ED1C300"
+                />
+        </com.google.android.material.textfield.TextInputLayout>
 
         <!-- Description Text Area -->
-        <EditText
-            android:id="@+id/recipe_description"
+        <com.google.android.material.textfield.TextInputLayout
+            style="?attr/textInputFilledStyle"
             android:layout_width="match_parent"
-            android:layout_height="250dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10sp"
             android:hint="Add description for your recipe"
-            android:background="#F7F4E9"
-            android:gravity="top"
-            android:inputType="textMultiLine"
-            android:textColor="@color/black"
-            android:padding="12dp"
-            android:layout_marginBottom="16dp"
-            android:scrollbars="vertical"
-            android:overScrollMode="always"
-            android:maxLines="10" />
+            app:hintTextColor="@color/black"
+            app:boxStrokeColor="@color/d1c300">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/recipe_description"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:backgroundTint="#2ED1C300"
+                android:inputType="textMultiLine"
+                android:minLines="10"
+                android:gravity="top"
+                />
+        </com.google.android.material.textfield.TextInputLayout>
 
         <!-- Divider -->
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:background="#D1C300"
-            android:layout_marginBottom="16dp" />
+            android:layout_marginVertical="10dp" />
 
         <!-- Cuisine Types Checkboxes -->
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Cuisine Type(s)"
             android:textStyle="bold"
             android:textSize="18sp"
-            android:layout_marginBottom="8dp" />
+            />
 
         <CheckBox
             android:id="@+id/cuisine_vegetarian"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Vegetarian"
-            android:layout_marginLeft="10dp" />
+            android:layout_marginLeft="10dp"
+            app:buttonTint="@color/d1c300"
+            app:buttonIconTint="@color/white"
+            />
 
         <CheckBox
             android:id="@+id/cuisine_non_vegetarian"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Non-Vegetarian"
-            android:layout_marginLeft="10dp" />
+            android:layout_marginLeft="10dp"
+            app:buttonTint="@color/d1c300"
+            app:buttonIconTint="@color/white"
+            />
 
         <CheckBox
             android:id="@+id/cuisine_chinese"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Chinese"
-            android:layout_marginLeft="10dp" />
+            android:layout_marginLeft="10dp"
+            app:buttonTint="@color/d1c300"
+            app:buttonIconTint="@color/white"
+            />
 
         <CheckBox
             android:id="@+id/cuisine_thai"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Thai"
-            android:layout_marginLeft="10dp" />
+            android:layout_marginLeft="10dp"
+            app:buttonTint="@color/d1c300"
+            app:buttonIconTint="@color/white"
+            />
 
         <CheckBox
             android:id="@+id/cuisine_american"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="American"
-            android:layout_marginLeft="10dp" />
+            android:layout_marginLeft="10dp"
+            app:buttonTint="@color/d1c300"
+            app:buttonIconTint="@color/white"
+            />
 
         <CheckBox
             android:id="@+id/cuisine_indian"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Indian"
-            android:layout_marginBottom="16dp"
-            android:layout_marginLeft="10dp" />
+            android:layout_marginLeft="10dp"
+            app:buttonTint="@color/d1c300"
+            app:buttonIconTint="@color/white"
+            />
 
         <!-- Divider -->
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:background="#D1C300"
-            android:layout_marginBottom="16dp" />
+            android:layout_marginVertical="10dp" />
 
         <!-- Cooking Time Radio Buttons -->
         <TextView
@@ -134,7 +165,7 @@
             android:text="Cooking Time"
             android:textStyle="bold"
             android:textSize="18sp"
-            android:layout_marginBottom="8dp" />
+            />
 
         <RadioGroup
             android:id="@+id/cooking_time_group"
@@ -147,28 +178,32 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="15mins"
-                android:layout_marginLeft="10dp" />
+                android:layout_marginLeft="10dp"
+                app:buttonTint="@color/d1c300"/>
 
             <RadioButton
                 android:id="@+id/time_30"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="30mins"
-                android:layout_marginLeft="10dp" />
+                android:layout_marginLeft="10dp"
+                app:buttonTint="@color/d1c300"/>
 
             <RadioButton
                 android:id="@+id/time_45"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="45mins"
-                android:layout_marginLeft="10dp" />
+                android:layout_marginLeft="10dp"
+                app:buttonTint="@color/d1c300"/>
 
             <RadioButton
                 android:id="@+id/time_60"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="60mins"
-                android:layout_marginLeft="10dp" />
+                android:layout_marginLeft="10dp"
+                app:buttonTint="@color/d1c300"/>
         </RadioGroup>
 
         <!-- Divider -->
@@ -176,7 +211,7 @@
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:background="#D1C300"
-            android:layout_marginBottom="16dp" />
+            android:layout_marginVertical="10dp" />
 
         <!-- Difficulty Level Segmented Buttons -->
         <TextView
@@ -230,6 +265,7 @@
             android:text="Submit"
             android:textColor="@android:color/black"
             android:backgroundTint="#D1C300"
-            android:layout_marginTop="25dp" />
+            android:layout_marginTop="50dp"
+            android:layout_marginBottom="30dp"/>
     </LinearLayout>
 </ScrollView>

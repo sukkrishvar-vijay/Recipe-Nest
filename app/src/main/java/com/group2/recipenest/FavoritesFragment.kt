@@ -14,6 +14,7 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.android.material.textfield.TextInputEditText
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -135,7 +136,7 @@ class FavoritesFragment : Fragment() {
         }
 
         dialogView.findViewById<Button>(R.id.add_button).setOnClickListener {
-            val collectionName = dialogView.findViewById<EditText>(R.id.input_collection_name).text.toString()
+            val collectionName = dialogView.findViewById<TextInputEditText>(R.id.input_collection_name).text.toString()
 
             if (collectionName.isNotEmpty()) {
                 // Call the function to add the new collection to Firestore

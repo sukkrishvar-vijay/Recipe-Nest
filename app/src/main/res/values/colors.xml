@@ -8,4 +8,5 @@
     <color name="checkedColor">#D1C300</color>
     <color name="theme">#D1C300</color>
     <color name="text_blue">#083A70</color>
+    <color name="bottomNavColor">#ACA000</color>
 </resources>

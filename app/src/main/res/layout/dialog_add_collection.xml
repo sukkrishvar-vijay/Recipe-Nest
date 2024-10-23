@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:padding="24dp"
     android:elevation="10dp"
@@ -18,30 +18,38 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
-        android:text="Add Personalized Collection"
+        android:text="New Collection"
         android:layout_gravity="start"
         android:textAlignment="viewStart"
         android:textColor="@android:color/black"
         android:textSize="20sp" />
 
     <!-- Text Input for Collection Name -->
-    <EditText
-        android:id="@+id/input_collection_name"
+    <com.google.android.material.textfield.TextInputLayout
+        style="?attr/textInputFilledStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text=""
-        android:background="#F7F4E9"
-        android:padding="10dp"
-        android:textSize="16sp"
-        android:layout_marginBottom="24dp"
-        android:inputType="text" />
+        android:layout_marginTop="5sp"
+        android:hint="e.g. Mini Snacks"
+        app:hintTextColor="@color/black"
+        app:boxStrokeColor="@color/d1c300"
+        >
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/input_collection_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:backgroundTint="#2ED1C300"
+            />
+    </com.google.android.material.textfield.TextInputLayout>
 
     <!-- Buttons: Cancel and Add -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:gravity="end">
+        android:gravity="end"
+        android:layout_marginTop="5dp">
 
         <Button
             android:id="@+id/cancel_button"
