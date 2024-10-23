@@ -28,7 +28,7 @@ class RecipeDetailsFragment : Fragment() {
     private var currentFavoriteCategory: String? = null  // Track the current favorite category
 
     // User ID to be used for checking the favorite status
-    private val currentUserId = "ceZ4r5FauC7TuTyckeRp"
+    private val currentUserId = userSignInData.UserDocId
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,

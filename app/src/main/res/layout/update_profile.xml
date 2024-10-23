@@ -16,7 +16,8 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:gravity="center"
-            android:layout_marginBottom="20dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="10dp"
             android:layout_gravity="center">
 
             <ImageView
@@ -39,92 +40,132 @@
                 android:gravity="center" />
         </LinearLayout>
 
-        <!-- First Name and Last Name Fields -->
+        <!-- Firstname and Lastname Field -->
         <LinearLayout
+            android:id="@+id/userNameFields"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:layout_marginBottom="8dp">
+            android:gravity="center"
+            android:layout_marginTop="20sp">
 
-            <EditText
-                android:id="@+id/first_name"
-                android:layout_width="0dp"
+            <com.google.android.material.textfield.TextInputLayout
+                style="?attr/textInputFilledStyle"
                 android:layout_height="wrap_content"
+                android:layout_width="0dp"
+                android:layout_marginRight="5sp"
                 android:layout_weight="1"
                 android:hint="First Name"
-                android:background="#F7F4E9"
-                android:padding="12dp"/>
+                app:hintTextColor="@color/black"
+                app:boxStrokeColor="@color/d1c300">
 
-            <View
-                android:layout_width="16dp"
-                android:layout_height="wrap_content" />
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/first_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:backgroundTint="#2ED1C300"
+                    />
+            </com.google.android.material.textfield.TextInputLayout>
 
-            <EditText
-                android:id="@+id/last_name"
-                android:layout_width="0dp"
+            <com.google.android.material.textfield.TextInputLayout
+                style="?attr/textInputFilledStyle"
                 android:layout_height="wrap_content"
+                android:layout_width="0dp"
+                android:layout_marginLeft="5sp"
                 android:layout_weight="1"
                 android:hint="Last Name"
-                android:background="#F7F4E9"
-                android:padding="12dp"/>
+                app:hintTextColor="@color/black"
+                app:boxStrokeColor="@color/d1c300">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/last_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:backgroundTint="#2ED1C300"
+                    />
+            </com.google.android.material.textfield.TextInputLayout>
+
         </LinearLayout>
 
         <!-- Username Field -->
-        <EditText
-            android:id="@+id/username"
+        <com.google.android.material.textfield.TextInputLayout
+            style="?attr/textInputFilledStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="5sp"
             android:hint="Username"
-            android:background="#F7F4E9"
-            android:padding="12dp"
-            android:layout_marginBottom="8dp"/>
+            app:hintTextColor="@color/black"
+            app:boxStrokeColor="@color/d1c300">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/username"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:backgroundTint="#2ED1C300"
+                />
+        </com.google.android.material.textfield.TextInputLayout>
 
         <!-- Bio/Description TextArea -->
-        <EditText
-            android:id="@+id/user_bio"
+        <com.google.android.material.textfield.TextInputLayout
+            style="?attr/textInputFilledStyle"
             android:layout_width="match_parent"
-            android:layout_height="100dp"
-            android:hint="tell about yourself"
-            android:background="#F7F4E9"
-            android:layout_marginBottom="8dp"
-            android:padding="12dp"
-            android:inputType="textMultiLine"
-            android:gravity="top|start" />
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5sp"
+            android:hint="Tell about yourself (optional)"
+            app:hintTextColor="@color/black"
+            app:boxStrokeColor="@color/d1c300">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/user_bio"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:backgroundTint="#2ED1C300"
+                android:inputType="textMultiLine"
+                android:minLines="8"
+                android:gravity="top"
+                />
+        </com.google.android.material.textfield.TextInputLayout>
 
         <!-- Divider -->
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:background="#D1C300"
-            android:layout_marginBottom="8dp" />
+            android:layout_marginVertical="10dp" />
 
         <!-- Email Field -->
-        <EditText
-            android:id="@+id/email"
+        <com.google.android.material.textfield.TextInputLayout
+            style="?attr/textInputFilledStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Email"
-            android:background="#F7F4E9"
-            android:padding="12dp"
-            android:inputType="none"
-            android:focusable="false"
-            android:clickable="false"
-            android:layout_marginBottom="20dp" />
+            app:hintTextColor="@color/black"
+            app:boxStrokeColor="@color/d1c300">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/email"
+                android:enabled="false"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:backgroundTint="#2ED1C300"
+                />
+        </com.google.android.material.textfield.TextInputLayout>
 
         <!-- Divider -->
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:background="#D1C300"
-            android:layout_marginBottom="20dp" />
+            android:layout_marginVertical="10dp" />
 
         <!-- Authentication Switch -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:layout_marginBottom="70dp"
-            android:gravity="center_vertical">
+            android:layout_marginBottom="16dp"
+            android:gravity="center_vertical"
+            android:background="#2ED1C300">
 
             <TextView
                 android:id="@+id/authentication_text"
@@ -135,17 +176,24 @@
                 android:layout_weight="1"
                 android:padding="12dp"/>
 
-            <com.google.android.material.switchmaterial.SwitchMaterial
-                android:id="@+id/auth_switch"
+            <com.google.android.material.materialswitch.MaterialSwitch
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_height="match_parent"
+                android:id="@+id/auth_switch"
+                android:layout_marginRight="20sp"
+                android:checked="true"
+                app:trackTint="@color/switch_track"
+                />
         </LinearLayout>
 
         <!-- Update Button -->
         <Button
             android:id="@+id/update_button"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:paddingStart="60sp"
+            android:paddingEnd="60sp"
             android:text="Update"
             android:backgroundTint="#D1C300"
             android:textColor="@android:color/black"

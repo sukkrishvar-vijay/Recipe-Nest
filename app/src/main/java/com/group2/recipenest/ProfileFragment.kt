@@ -5,8 +5,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
+import com.google.firebase.auth.FirebaseAuth
 
 class ProfileFragment : Fragment() {
 
@@ -43,7 +45,29 @@ class ProfileFragment : Fragment() {
                 .commit()
         }
 
+        val logoutTile = rootView.findViewById<TextView>(R.id.list_item_title3)
+        logoutTile.setOnClickListener {
+            // Navigate to SignInFragment
+            logOutUser()
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.fragment_container, SignInFragment())
+                .commit()
+        }
+
         return rootView
+    }
+
+    private fun logOutUser() {
+        // Sign out from Firebase Authentication
+        FirebaseAuth.getInstance().signOut()
+        clearSignInUserData()
+        // Optionally, redirect to the login page or show a confirmation message
+        Toast.makeText(requireContext(), "You have been logged out.", Toast.LENGTH_SHORT).show()
+    }
+
+    private fun clearSignInUserData() {
+        userSignInData.UserUID = ""
+        userSignInData.UserDocId = ""
     }
 
     override fun onResume() {

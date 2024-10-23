@@ -20,7 +20,7 @@ class RecipeCardsFragment : Fragment() {
     private lateinit var firestore: FirebaseFirestore
 
     // User ID to filter recipes (based on passed userId, adjust as needed)
-    private var currentUserId = "ceZ4r5FauC7TuTyckeRp"
+    private var currentUserId = userSignInData.UserDocId
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,

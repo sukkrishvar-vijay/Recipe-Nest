@@ -85,36 +85,43 @@ class SearchFragment : Fragment() {
 
     // Fetch recipes from Firestore based on search query
     private fun fetchRecipes(query: String) {
+        // Convert query to lowercase for case-insensitive search
+        val searchQuery = query.lowercase()
+
+        // Use Firestore's arrayContains query technique
         firestore.collection("Recipes")
-            .whereGreaterThanOrEqualTo("recipeTitle", query)
-            .whereLessThanOrEqualTo("recipeTitle", query + '\uf8ff')
-            .get()
+            .get() // Get all recipes (you can optimize by applying filters)
             .addOnSuccessListener { documents ->
                 val recipeList = mutableListOf<RecipeCardModel>()
                 for (document in documents) {
                     val recipeTitle = document.getString("recipeTitle") ?: "Untitled"
-                    val cookingTime = document.getLong("cookingTime")?.toInt() ?: 0
-                    val avgRating = document.getDouble("avgRating")?.toString() ?: "N/A"
-                    val difficultyLevel = document.getString("difficultyLevel") ?: ""
-                    val cuisineTypeList = document.get("cuisineType") as? List<*>
-                    val cuisineType = cuisineTypeList?.joinToString(", ") ?: "Unknown"
-                    val recipeDescription = document.getString("recipeDescription") ?: "N/A"
-                    val recipeUserId = document.getString("recipeUserId") ?: ""
-                    val recipeId = document.id
 
-                    val recipe = RecipeCardModel(
-                        recipeUserId = recipeUserId,
-                        recipeDescription = recipeDescription,
-                        recipeTitle = recipeTitle,
-                        cookingTime = cookingTime,
-                        avgRating = avgRating,
-                        imageResId = R.drawable.placeholder_recipe_image,
-                        difficultyLevel = difficultyLevel,
-                        cuisineType = cuisineType,
-                        recipeId = recipeId
-                    )
-                    recipeList.add(recipe)
+                    // Check if the recipe title contains the search query (case-insensitive)
+                    if (recipeTitle.lowercase().contains(searchQuery)) {
+                        val cookingTime = document.getLong("cookingTime")?.toInt() ?: 0
+                        val avgRating = document.getDouble("avgRating")?.toString() ?: "N/A"
+                        val difficultyLevel = document.getString("difficultyLevel") ?: ""
+                        val cuisineTypeList = document.get("cuisineType") as? List<*>
+                        val cuisineType = cuisineTypeList?.joinToString(", ") ?: "Unknown"
+                        val recipeDescription = document.getString("recipeDescription") ?: "N/A"
+                        val recipeUserId = document.getString("recipeUserId") ?: ""
+                        val recipeId = document.id
+
+                        val recipe = RecipeCardModel(
+                            recipeUserId = recipeUserId,
+                            recipeDescription = recipeDescription,
+                            recipeTitle = recipeTitle,
+                            cookingTime = cookingTime,
+                            avgRating = avgRating,
+                            imageResId = R.drawable.placeholder_recipe_image,
+                            difficultyLevel = difficultyLevel,
+                            cuisineType = cuisineType,
+                            recipeId = recipeId
+                        )
+                        recipeList.add(recipe)
+                    }
                 }
+                // Update the adapter with the filtered recipes
                 adapter.updateRecipes(recipeList)
             }
             .addOnFailureListener { exception ->
@@ -125,42 +132,66 @@ class SearchFragment : Fragment() {
     // Show difficulty level dialog
     private fun showDifficultyLevelDialog(difficultyLevelChip: Chip) {
         val options = arrayOf("Easy", "Medium", "Hard")
-        var selectedOption = selectedDifficultyLevel
+        var selectedOption: String? = null // Default to null to indicate no selection
 
         val builder = AlertDialog.Builder(requireContext())
-        builder.setTitle("Select Difficulty Level")
-        builder.setSingleChoiceItems(options, options.indexOf(selectedOption)) { _, which ->
+        builder.setTitle("Difficulty Level")
+        builder.setSingleChoiceItems(options, options.indexOf(selectedDifficultyLevel)) { _, which ->
             selectedOption = options[which]
         }
         builder.setPositiveButton("OK") { _, _ ->
-            selectedDifficultyLevel = selectedOption
-            difficultyLevelChip.isCheckable = true
-            difficultyLevelChip.isChecked = true
-            difficultyLevelChip.text = selectedDifficultyLevel // Update chip text
+            if (selectedOption != null) {
+                selectedDifficultyLevel = selectedOption
+                difficultyLevelChip.isChecked = true
+                difficultyLevelChip.text = selectedDifficultyLevel // Update chip text
+            } else {
+                // Reset to default state if no selection is made
+                difficultyLevelChip.isChecked = false
+                difficultyLevelChip.text = "Difficulty Level" // Or any default text
+            }
         }
-        builder.setNegativeButton("Cancel", null)
+        builder.setNegativeButton("Cancel") { dialog, _ ->
+            dialog.cancel() // Just dismiss the dialog without changes
+            // Reset to default state if Cancel is clicked
+            difficultyLevelChip.isChecked = false
+            difficultyLevelChip.text = "Difficulty Level" // Or any default text
+        }
         builder.show()
     }
+
+
+
 
     // Show cooking time dialog
     private fun showCookingTimeDialog(cookingTimeChip: Chip) {
         val options = arrayOf("15 mins", "30 mins", "45 mins", "60 mins")
-        var selectedOption = selectedCookingTime
+        var selectedOption: String? = null // Default to null to indicate no selection
 
         val builder = AlertDialog.Builder(requireContext())
-        builder.setTitle("Select Cooking Time")
-        builder.setSingleChoiceItems(options, options.indexOf(selectedOption)) { _, which ->
+        builder.setTitle("Cooking Time")
+        builder.setSingleChoiceItems(options, options.indexOf(selectedCookingTime)) { _, which ->
             selectedOption = options[which]
         }
         builder.setPositiveButton("OK") { _, _ ->
-            selectedCookingTime = selectedOption
-            cookingTimeChip.isCheckable = true
-            cookingTimeChip.isChecked = true
-            cookingTimeChip.text = selectedCookingTime // Update chip text
+            if (selectedOption != null) {
+                selectedCookingTime = selectedOption
+                cookingTimeChip.isChecked = true
+                cookingTimeChip.text = selectedCookingTime // Update chip text
+            } else {
+                // Reset to default state if no selection is made
+                cookingTimeChip.isChecked = false
+                cookingTimeChip.text = "Cooking Time" // Or any default text
+            }
         }
-        builder.setNegativeButton("Cancel", null)
+        builder.setNegativeButton("Cancel") { dialog, _ ->
+            dialog.cancel() // Just dismiss the dialog without changes
+            // Reset to default state if Cancel is clicked
+            cookingTimeChip.isChecked = false
+            cookingTimeChip.text = "Cooking Time" // Or any default text
+        }
         builder.show()
     }
+
 
     // Show cuisine type dialog
     private fun showCuisineTypeDialog(cuisineTypeChip: Chip) {
@@ -168,7 +199,7 @@ class SearchFragment : Fragment() {
         val checkedItems = BooleanArray(options.size) { selectedCuisineTypes.contains(options[it]) }
 
         val builder = AlertDialog.Builder(requireContext())
-        builder.setTitle("Select Cuisine Types")
+        builder.setTitle("Cuisine Types")
         builder.setMultiChoiceItems(options, checkedItems) { _, which, isChecked ->
             if (isChecked) {
                 selectedCuisineTypes.add(options[which])
@@ -177,17 +208,24 @@ class SearchFragment : Fragment() {
             }
         }
         builder.setPositiveButton("OK") { _, _ ->
-            cuisineTypeChip.isCheckable = true
-            cuisineTypeChip.isChecked = selectedCuisineTypes.isNotEmpty()
-            cuisineTypeChip.text = if (selectedCuisineTypes.isEmpty()) {
-                "Cuisine Type"
+            if (selectedCuisineTypes.isNotEmpty()) {
+                cuisineTypeChip.isChecked = true
+                cuisineTypeChip.text = selectedCuisineTypes.joinToString(", ") // Update chip text
             } else {
-                selectedCuisineTypes.joinToString(", ") // Update chip text
+                // Reset to default state if no selection is made
+                cuisineTypeChip.isChecked = false
+                cuisineTypeChip.text = "Cuisine Types" // Or any default text
             }
         }
-        builder.setNegativeButton("Cancel", null)
+        builder.setNegativeButton("Cancel") { dialog, _ ->
+            dialog.cancel() // Just dismiss the dialog without changes
+            // Reset to default state if Cancel is clicked
+            cuisineTypeChip.isChecked = false
+            cuisineTypeChip.text = "Cuisine Types" // Or any default text
+        }
         builder.show()
     }
+
 
     // Function to clear all filter selections
     private fun clearAllFilters() {
@@ -203,7 +241,7 @@ class SearchFragment : Fragment() {
         cookingTimeChip.text = "Cooking Time"
 
         cuisineTypeChip.isChecked = false
-        cuisineTypeChip.text = "Cuisine Type"
+        cuisineTypeChip.text = "Cuisine Types"
     }
 
     override fun onResume() {

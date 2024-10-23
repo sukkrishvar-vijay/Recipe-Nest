@@ -24,7 +24,7 @@ class FavoritesFragment : Fragment() {
     private lateinit var firestore: FirebaseFirestore
 
     // User ID
-    private val userId = "ceZ4r5FauC7TuTyckeRp"
+    private val currentUserId = userSignInData.UserDocId
 
     private lateinit var adapter: FavoritesTileAdapter
 
@@ -87,7 +87,7 @@ class FavoritesFragment : Fragment() {
     // Function to fetch favorite collections and update the counts
     private fun fetchFavoriteCollections() {
         // Fetch the User document from Firestore
-        val userRef = firestore.collection("User").document(userId)
+        val userRef = firestore.collection("User").document(currentUserId)
 
         userRef.get().addOnSuccessListener { document ->
             if (document != null && document.exists()) {
@@ -151,7 +151,7 @@ class FavoritesFragment : Fragment() {
 
     // Function to add a new collection to the favoriteCollection array field in Firestore
     private fun addNewCollection(newCollectionName: String) {
-        val userRef = firestore.collection("User").document(userId)
+        val userRef = firestore.collection("User").document(currentUserId)
 
         // Add a new map entry for the new collection
         userRef.get().addOnSuccessListener { document ->

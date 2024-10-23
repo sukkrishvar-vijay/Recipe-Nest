@@ -22,7 +22,7 @@ class AddRecipeFragment : Fragment() {
     private lateinit var firestore: FirebaseFirestore
 
     // User ID to be used for storing the recipe
-    private val currentUserId = "ceZ4r5FauC7TuTyckeRp"
+    private val currentUserId = userSignInData.UserDocId
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,

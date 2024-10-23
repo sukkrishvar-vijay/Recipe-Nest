@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center_horizontal">
+
+    <ImageView
+        android:id="@+id/logo"
+        android:layout_width="150dp"
+        android:layout_height="120dp"
+        android:layout_marginLeft="20sp"
+        android:layout_marginRight="20sp"
+        android:layout_marginTop="80sp"
+        android:src="@drawable/logo" />
+
+    <LinearLayout
+        android:id="@+id/viewPagerNumbers"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:layout_marginTop="10dp">
+
+        <FrameLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:id="@+id/circle1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/circle_selected"
+                android:scaleType="centerCrop" />
+
+            <TextView
+                android:id="@+id/textView1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="1"
+                android:layout_gravity="center"
+                android:textColor="@android:color/black"
+                android:textSize="18sp"
+                android:background="@android:color/transparent"
+                android:padding="8dp"
+                android:gravity="center" />
+
+        </FrameLayout>
+
+        <ImageView
+            android:id="@+id/line1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/line"
+            android:scaleType="centerCrop" />
+
+        <FrameLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:id="@+id/circle2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/circle_selected"
+                android:scaleType="centerCrop" />
+
+            <TextView
+                android:id="@+id/textView2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="2"
+                android:layout_gravity="center"
+                android:textColor="@android:color/black"
+                android:textSize="18sp"
+                android:background="@android:color/transparent"
+                android:padding="8dp"
+                android:gravity="center" />
+
+        </FrameLayout>
+
+        <ImageView
+            android:id="@+id/line2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/line"
+            android:scaleType="centerCrop" />
+
+        <FrameLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:id="@+id/circle3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/circle_selected"
+                android:scaleType="centerCrop" />
+
+            <TextView
+                android:id="@+id/textView3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="3"
+                android:layout_gravity="center"
+                android:textColor="@android:color/black"
+                android:textSize="18sp"
+                android:background="@android:color/transparent"
+                android:padding="8dp"
+                android:gravity="center" />
+
+        </FrameLayout>
+
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/landingpage_img2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/generic_avatar"
+        android:layout_marginTop="60sp"/>
+
+    <Button
+        android:id="@+id/uploadImageButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:backgroundTint="@color/white"
+        android:textColor="@color/text_blue"
+        android:layout_marginTop="5sp"
+        android:paddingStart="10sp"
+        android:paddingEnd="10sp"
+        android:text="Upload Image"
+        />
+
+    <Button
+        android:id="@+id/previousButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:backgroundTint="@color/white"
+        android:layout_gravity="start"
+        android:textColor="@color/text_blue"
+        android:layout_marginTop="40sp"
+        android:layout_marginLeft="30sp"
+        android:paddingStart="1sp"
+        android:paddingEnd="1sp"
+        android:text="Previous"
+        />
+
+    <Button
+        android:id="@+id/submitButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:backgroundTint="@color/theme"
+        android:layout_marginTop="30sp"
+        android:textColor="@color/black"
+        android:text="Submit"
+        android:paddingStart="80sp"
+        android:paddingEnd="80sp"
+        />
+
+</LinearLayout>

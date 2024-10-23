@@ -16,7 +16,7 @@ import java.util.Date
 
 class PostCommentFragment : Fragment() {
 
-    private val currentUserId = "ceZ4r5FauC7TuTyckeRp"  // Current user ID
+    private val currentUserId = userSignInData.UserDocId  // Current user ID
     private lateinit var recipeId: String  // To hold the passed recipeId
     private lateinit var firestore: FirebaseFirestore  // Firestore instance
 

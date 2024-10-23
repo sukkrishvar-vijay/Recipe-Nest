@@ -11,7 +11,9 @@ import android.widget.ImageView
 import android.widget.Toast
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
+import com.google.android.material.materialswitch.MaterialSwitch
 import com.google.android.material.switchmaterial.SwitchMaterial
+import com.google.android.material.textfield.TextInputEditText
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -22,7 +24,7 @@ class UpdateProfileFragment : Fragment() {
     private lateinit var firestore: FirebaseFirestore
 
     // User ID for querying the Firestore
-    private val userDocumentId = "ceZ4r5FauC7TuTyckeRp"
+    private val userDocumentId = userSignInData.UserDocId
 
     // To store original data for detecting unsaved changes
     private var originalFirstName: String? = null
@@ -30,11 +32,11 @@ class UpdateProfileFragment : Fragment() {
     private var originalUsername: String? = null
     private var originalBio: String? = null
 
-    private lateinit var firstNameEditText: EditText
-    private lateinit var lastNameEditText: EditText
-    private lateinit var usernameEditText: EditText
-    private lateinit var bioEditText: EditText
-    private lateinit var emailEditText: EditText
+    private lateinit var firstNameEditText: TextInputEditText
+    private lateinit var lastNameEditText: TextInputEditText
+    private lateinit var usernameEditText: TextInputEditText
+    private lateinit var bioEditText: TextInputEditText
+    private lateinit var emailEditText: TextInputEditText
     private lateinit var updateButton: Button
 
     override fun onCreateView(
@@ -71,7 +73,7 @@ class UpdateProfileFragment : Fragment() {
         bioEditText = view.findViewById(R.id.user_bio)
         emailEditText = view.findViewById(R.id.email) // Email EditText
         updateButton = view.findViewById(R.id.update_button)
-        val authSwitch = view.findViewById<SwitchMaterial>(R.id.auth_switch)
+        val authSwitch = view.findViewById<MaterialSwitch>(R.id.auth_switch)
 
         // Set email field as read-only
         emailEditText.isEnabled = false

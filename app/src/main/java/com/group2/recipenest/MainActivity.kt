@@ -1,14 +1,20 @@
 package com.group2.recipenest
 
 import android.os.Bundle
+import android.util.Log
+import android.view.View
 import androidx.appcompat.widget.Toolbar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 import com.group2.recipenest.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
+    private val db = Firebase.firestore
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -16,15 +22,64 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        // Change the status bar color
+        window.statusBarColor = getColor(R.color.theme)
 
         // Find the Toolbar and set it as the ActionBar
         val toolbar: Toolbar = findViewById(R.id.toolbar)
         setSupportActionBar(toolbar)
         supportActionBar?.title = ""
+        supportActionBar?.hide()
 
         // Disable the back button in the toolbar (enable where required)
         supportActionBar?.setDisplayHomeAsUpEnabled(false)
         supportActionBar?.setDisplayShowHomeEnabled(false)
+
+        if (isFirstLaunch()) {
+            hideBottomNavigation()
+            // Load the landing pages fragment/activity
+            loadFragment(LandingPage1())
+        } else {
+            if (!isUserLoggedIn()) {
+                hideBottomNavigation()
+                // Load the sign-in fragment if the user is not logged in
+                signInAccount()
+            } else {
+                // If logged in, load the default fragment (home page)
+                loadHomePage()
+            }
+        }
+    }
+
+    private fun isFirstLaunch(): Boolean {
+        val sharedPreferences = getSharedPreferences("RecipeNestPrefs", MODE_PRIVATE)
+        return sharedPreferences.getBoolean("isFirstLaunch", true)
+    }
+
+    // Method to show bottom navigation
+    fun showBottomNavigation() {
+        binding.bottomNavigation.visibility = View.VISIBLE
+    }
+
+    // Method to hide Toolbar
+    fun hideToolbar() {
+        binding.toolbar.visibility = View.GONE
+    }
+
+    // Method to hide bottom navigation
+    fun hideBottomNavigation() {
+        binding.bottomNavigation.visibility = View.GONE
+    }
+
+    // Method to navigate to Sign in fragment
+    private fun signInAccount() {
+        loadFragment(SignInFragment())
+    }
+
+    // Method to load homepage
+    fun loadHomePage() {
+        storeUserDocId()
+        showBottomNavigation()
 
         // Load the default fragment
         loadFragment(RecipesFragment())
@@ -42,6 +97,33 @@ class MainActivity : AppCompatActivity() {
             }
             true
         }
+    }
+
+    // Helper function to check User Login Status
+    private fun isUserLoggedIn(): Boolean {
+        val currentUser = FirebaseAuth.getInstance().currentUser
+        if (currentUser != null) {
+            userSignInData.UserUID = currentUser.uid
+        }
+        return currentUser != null
+    }
+
+    // Method to search database and save user document id in the data class
+    private fun storeUserDocId() {
+        db.collection("User")
+            .get()
+            .addOnSuccessListener { result ->
+                for (document in result) {
+                    val documentUserUID = document.getString("userUID")
+                    if (userSignInData.UserUID == documentUserUID) {
+                        userSignInData.UserDocId = document.id
+                        Log.d("USERDOCID", document.id)
+                    }
+                }
+            }
+            .addOnFailureListener { e ->
+                Log.w("USERDOCID", "error", e)
+            }
     }
 
     // Helper function to load fragments
