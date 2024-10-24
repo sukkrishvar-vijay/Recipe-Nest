@@ -9,8 +9,8 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 
 class RecipesCarouselAdapter(
-    private val carouselItems: List<RecipesCarouselModel>,
-    private val onClick: (RecipesCarouselModel) -> Unit // Callback for handling clicks on each item
+    private var carouselItems: List<RecipesCarouselModel>,
+    private val onClick: (RecipesCarouselModel) -> Unit  // This callback will handle the click event
 ) : RecyclerView.Adapter<RecipesCarouselAdapter.CarouselViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CarouselViewHolder {
@@ -26,16 +26,20 @@ class RecipesCarouselAdapter(
 
     override fun getItemCount(): Int = carouselItems.size
 
+    fun updateCarouselItems(newItems: List<RecipesCarouselModel>) {
+        carouselItems = newItems
+        notifyDataSetChanged()
+    }
+
     inner class CarouselViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        private val imageView: ImageView = itemView.findViewById(R.id.recipeImageView)
-        private val titleTextView: TextView = itemView.findViewById(R.id.recipeTitleTextView)
+        private val imageView: ImageView = itemView.findViewById(R.id.carousel_image_view)
+        private val titleTextView: TextView = itemView.findViewById(R.id.carousel_recipe_title)
 
-        // Bind the data to the views
         fun bind(item: RecipesCarouselModel, onClick: (RecipesCarouselModel) -> Unit) {
-            titleTextView.text = item.recipeTitle
-            imageView.setImageResource(item.imageResId) // Assuming a drawable resource is provided for image
+            imageView.setImageResource(item.imageResId)  // Set the image
+            titleTextView.text = item.recipeTitle  // Set the title
 
-            // Handle click event for the carousel item
+            // Set up click listener to handle item clicks
             itemView.setOnClickListener {
                 onClick(item)
             }

@@ -8,5 +8,9 @@
         <item name="colorControlActivated">#D1C300</item>
     </style>
 
+    <style name="App.Custom.Indicator" parent="Widget.Material3.BottomNavigationView.ActiveIndicator">
+        <item name="android:color">@color/bottomNavColor</item>
+    </style>
+
     <style name="Theme.RecipeNest" parent="Base.Theme.RecipeNest" />
 </resources>

@@ -15,8 +15,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:paddingTop="10dp"
-            android:paddingHorizontal="10dp">
+            android:padding="10dp">
 
             <!-- FrameLayout for Recipe Image and Favorite Button -->
             <FrameLayout
@@ -29,6 +28,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="232dp"
                     android:scaleType="centerCrop"
+                    android:background="@drawable/rounded_image"
+                    android:clipToOutline="true"
                     app:srcCompat="@drawable/placeholder_recipe_image" />
 
                 <!-- Favorite Button positioned at the top-right corner -->

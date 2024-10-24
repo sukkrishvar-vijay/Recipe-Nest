@@ -1,29 +1,39 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+<com.google.android.material.carousel.MaskableFrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/carousel_item_container"
+    android:layout_width="150dp"
+    android:layout_height="match_parent"
+    android:layout_marginStart="4dp"
+    android:layout_marginEnd="4dp"
+    android:foreground="?attr/selectableItemBackground"
+    app:shapeAppearance="?attr/shapeAppearanceCornerExtraLarge">
 
-    <!-- Recipe Image -->
-    <ImageView
-        android:id="@+id/recipeImageView"
+    <!-- FrameLayout to overlay title on top of the image -->
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="200dp"
-        android:scaleType="centerCrop"
-        android:src="@drawable/placeholder_recipe_image" />
+        android:layout_height="match_parent">
 
-    <!-- Title Overlay at Bottom Left -->
-    <TextView
-        android:id="@+id/recipeTitleTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|start"
-        android:layout_marginStart="16dp"
-        android:layout_marginBottom="16dp"
-        android:background="@android:color/transparent"
-        android:padding="8dp"
-        android:text="Recipe Title"
-        android:textColor="@android:color/white"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        android:elevation="5dp" />
+        <!-- Recipe Image -->
+        <ImageView
+            android:id="@+id/carousel_image_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop"
+            android:src="@drawable/placeholder_recipe_image" />
 
-</FrameLayout>
+        <!-- Recipe Title Overlay -->
+        <TextView
+            android:id="@+id/carousel_recipe_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:background="#AA000000"
+            android:padding="10dp"
+            android:text="Recipe Title"
+            android:textSize="16sp"
+            android:textColor="@android:color/white"
+            android:textStyle="bold" />
+
+    </FrameLayout>
+</com.google.android.material.carousel.MaskableFrameLayout>

@@ -29,6 +29,9 @@
         android:layout_height="wrap_content"
         android:background="@color/d1c300"
         app:menu="@menu/bottom_nav_menu"
+        app:itemIconTint="@color/black"
+        app:itemTextColor="@color/black"
+        app:itemActiveIndicatorStyle="@style/App.Custom.Indicator"
         app:labelVisibilityMode="labeled" />
 
 </LinearLayout>
