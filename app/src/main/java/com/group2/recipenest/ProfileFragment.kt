@@ -18,37 +18,42 @@ class ProfileFragment : Fragment() {
     ): View? {
         val rootView = inflater.inflate(R.layout.fragment_profile, container, false)
 
-        // Find the toolbar in the activity
         val toolbar: Toolbar = requireActivity().findViewById(R.id.toolbar)
 
-        // Set the toolbar title directly
+        // Toolbar title setup and customization learned from Android developer documentation
+        // https://developer.android.com/reference/androidx/appcompat/widget/Toolbar
         toolbar.title = "Account"
         toolbar.setTitleTextColor(resources.getColor(android.R.color.black, null))
 
-        // Set click listener on "My Recipes" tile (list_item_title1)
         val myRecipesTile = rootView.findViewById<TextView>(R.id.list_item_title1)
         myRecipesTile.setOnClickListener {
-            // Navigate to MyRecipesFragment
+            // Fragment transaction and navigation based on Android developer documentation
+            // https://developer.android.com/guide/fragments/fragmentmanager
             parentFragmentManager.beginTransaction()
                 .replace(R.id.fragment_container, MyRecipesFragment())
                 .addToBackStack(null)
                 .commit()
         }
 
-        // Set click listener on "Update Profile and Settings" tile (list_item_tile2)
         val updateProfileAndSettingsTile = rootView.findViewById<TextView>(R.id.list_item_title2)
         updateProfileAndSettingsTile.setOnClickListener{
-            // Navigate to UpdateProfileFragment
+            // Fragment transaction and navigation based on Android developer documentation
+            // https://developer.android.com/guide/fragments/fragmentmanager
             parentFragmentManager.beginTransaction()
                 .replace(R.id.fragment_container, UpdateProfileFragment())
+
+                // Handling back navigation in fragment transactions adapted from Android developer guide
+                // https://developer.android.com/guide/navigation/navigation-custom-back
                 .addToBackStack(null)
                 .commit()
         }
 
         val logoutTile = rootView.findViewById<TextView>(R.id.list_item_title3)
         logoutTile.setOnClickListener {
-            // Navigate to SignInFragment
             logOutUser()
+
+            // Fragment transaction and navigation based on Android developer documentation
+            // https://developer.android.com/guide/fragments/fragmentmanager
             parentFragmentManager.beginTransaction()
                 .replace(R.id.fragment_container, SignInFragment())
                 .commit()
@@ -57,11 +62,14 @@ class ProfileFragment : Fragment() {
         return rootView
     }
 
+    // FirebaseAuth sign out logic adapted from Firebase documentation
+    // https://firebase.google.com/docs/auth/android/password-auth
     private fun logOutUser() {
-        // Sign out from Firebase Authentication
         FirebaseAuth.getInstance().signOut()
         clearSignInUserData()
-        // Optionally, redirect to the login page or show a confirmation message
+
+        // Toast messages implementation based on Android developer guide
+        // https://developer.android.com/guide/topics/ui/notifiers/toasts
         Toast.makeText(requireContext(), "You have been logged out.", Toast.LENGTH_SHORT).show()
     }
 
@@ -73,12 +81,10 @@ class ProfileFragment : Fragment() {
     override fun onResume() {
         super.onResume()
 
-        // Reset the toolbar when FavoritesFragment is resumed
         val toolbar: Toolbar = requireActivity().findViewById(R.id.toolbar)
         toolbar.title = "Account"
         toolbar.setTitleTextColor(resources.getColor(android.R.color.black, null))
 
-        // Remove the navigation icon (back button)
-        toolbar.navigationIcon = null  // This removes the back button from the toolbar
+        toolbar.navigationIcon = null
     }
 }

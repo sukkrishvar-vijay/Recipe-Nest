@@ -14,33 +14,28 @@ import com.google.android.material.textfield.TextInputEditText
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-import com.group2.recipenest.R
 import java.util.*
 
 class AddRecipeFragment : Fragment() {
 
-    // Firebase Firestore instance
     private lateinit var firestore: FirebaseFirestore
 
-    // User ID to be used for storing the recipe
     private val currentUserId = userSignInData.UserDocId
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
         val rootView = inflater.inflate(R.layout.add_recipe_fragment, container, false)
 
-        // Initialize Firestore
+        // Firebase Firestore initialization and usage adapted from Firebase documentation
+        // https://firebase.google.com/docs/firestore
         firestore = Firebase.firestore
 
-        // Set the toolbar title
         val toolbar: Toolbar = requireActivity().findViewById(R.id.toolbar)
         toolbar.title = "Add New Recipe"
         toolbar.setTitleTextColor(Color.BLACK)
 
-        // Initialize UI elements
         val uploadImageButton: Button = rootView.findViewById(R.id.upload_image_button)
         val titleEditText: TextInputEditText = rootView.findViewById(R.id.recipe_title)
         val descriptionEditText: TextInputEditText = rootView.findViewById(R.id.recipe_description)
@@ -57,12 +52,16 @@ class AddRecipeFragment : Fragment() {
         val cookingTimeGroup: RadioGroup = rootView.findViewById(R.id.cooking_time_group)
         val saveRecipeButton: Button = rootView.findViewById(R.id.submit_button)
 
-        // Handle image upload click (currently placeholder functionality)
+        // Button click listener implementation learned from Android developer tutorial
+        // https://developer.android.com/guide/topics/ui/controls/button
         uploadImageButton.setOnClickListener {
+            // Toast message usage based on Android developer documentation
+            // https://developer.android.com/guide/topics/ui/notifiers/toasts
             Toast.makeText(activity, "Upload image clicked", Toast.LENGTH_SHORT).show()
         }
 
-        // Handle difficulty level toggle selection
+        // Code handling MaterialButtonToggleGroup adapted from Android developer documentation
+        // https://developer.android.com/reference/com/google/android/material/button/MaterialButtonToggleGroup
         difficultyToggleGroup.addOnButtonCheckedListener { group, checkedId, isChecked ->
             if (isChecked) {
                 val selectedButton: MaterialButton = rootView.findViewById(checkedId)
@@ -84,7 +83,8 @@ class AddRecipeFragment : Fragment() {
             }
         }
 
-        // Handle save recipe button click
+        // Button click listener implementation learned from Android developer tutorial
+        // https://developer.android.com/guide/topics/ui/controls/button
         saveRecipeButton.setOnClickListener {
             val recipeTitle = titleEditText.text.toString()
             val recipeDescription = descriptionEditText.text.toString()
@@ -95,7 +95,6 @@ class AddRecipeFragment : Fragment() {
                 else -> "Unknown"
             }
 
-            // Handle cooking time selection from radio group
             val selectedCookingTime = when (cookingTimeGroup.checkedRadioButtonId) {
                 R.id.time_15 -> 15
                 R.id.time_30 -> 30
@@ -124,13 +123,11 @@ class AddRecipeFragment : Fragment() {
                 cuisineType.add("American")
             }
 
-            // Validate input
             if (recipeTitle.isBlank()) {
                 Toast.makeText(requireContext(), "Please enter a recipe title", Toast.LENGTH_SHORT).show()
             } else if (selectedCookingTime == 0) {
                 Toast.makeText(requireContext(), "Please select a valid cooking time", Toast.LENGTH_SHORT).show()
             } else {
-                // Store the recipe in Firestore
                 storeRecipeInFirestore(recipeTitle, recipeDescription, selectedCookingTime, selectedDifficulty, cuisineType)
             }
         }
@@ -138,19 +135,18 @@ class AddRecipeFragment : Fragment() {
         return rootView
     }
 
-    // Helper to set the selected button state
     private fun setSelectedButtonState(button: MaterialButton) {
-        button.setBackgroundColor(Color.parseColor("#D1C300")) // Set selected background color
-        button.setTextColor(Color.BLACK) // Change text color to black when selected
+        button.setBackgroundColor(Color.parseColor("#D1C300"))
+        button.setTextColor(Color.BLACK)
     }
 
-    // Helper to reset button state to unselected
     private fun resetButtonState(button: MaterialButton) {
         button.setBackgroundColor(Color.parseColor("#FFFCD7"))
         button.setTextColor(Color.BLACK)
     }
 
-    // Function to store the recipe in Firestore
+    // Firestore add data function adapted from Firebase documentation
+    // https://firebase.google.com/docs/firestore/manage-data/add-data
     private fun storeRecipeInFirestore(
         title: String,
         description: String,
@@ -173,11 +169,14 @@ class AddRecipeFragment : Fragment() {
         firestore.collection("Recipes")
             .add(recipe)
             .addOnSuccessListener {
+                // Toast message usage based on Android developer documentation
+                // https://developer.android.com/guide/topics/ui/notifiers/toasts
                 Toast.makeText(requireContext(), "Recipe added successfully!", Toast.LENGTH_SHORT).show()
-                // Close the fragment and go back to the previous screen
                 requireActivity().onBackPressed()
             }
             .addOnFailureListener { exception ->
+                // Toast message usage based on Android developer documentation
+                // https://developer.android.com/guide/topics/ui/notifiers/toasts
                 Toast.makeText(requireContext(), "Failed to add recipe: ${exception.message}", Toast.LENGTH_SHORT).show()
             }
     }

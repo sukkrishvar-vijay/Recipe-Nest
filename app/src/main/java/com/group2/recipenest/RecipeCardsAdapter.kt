@@ -9,11 +9,15 @@ import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
 
+// RecyclerView Adapter and ViewHolder implementation based on Android developer documentation
+// https://developer.android.com/guide/topics/ui/layout/recyclerview
 class RecipeCardsAdapter(
-    private var recipeList: List<RecipeCardModel>, // Start with an empty or initial list
-    private val onClick: (RecipeCardModel) -> Unit // Callback for when an item is clicked
+    private var recipeList: List<RecipeCardModel>,
+    private val onClick: (RecipeCardModel) -> Unit
 ) : RecyclerView.Adapter<RecipeCardsAdapter.RecipeViewHolder>() {
 
+    // ViewHolder creation and view inflation based on Android developer guide
+    // https://developer.android.com/guide/topics/ui/layout/recyclerview
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecipeViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.card_recipe, parent, false)
         return RecipeViewHolder(view)
@@ -28,29 +32,32 @@ class RecipeCardsAdapter(
         return recipeList.size
     }
 
-    // ViewHolder class to hold each item view
     class RecipeViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val recipeTitle: TextView = itemView.findViewById(R.id.recipe_title)
         private val recipeDescription: TextView = itemView.findViewById(R.id.recipe_description)
         private val recipeImage: ImageView = itemView.findViewById(R.id.image_container)
         private val recipeRating: TextView = itemView.findViewById(R.id.recipe_rating)
 
+        // Data binding in RecyclerView ViewHolder adapted from Android developer documentation
+        // https://developer.android.com/guide/topics/ui/layout/recyclerview#bind-data
         fun bind(recipe: RecipeCardModel, onClick: (RecipeCardModel) -> Unit) {
             recipeTitle.text = recipe.recipeTitle
             recipeRating.text = "${recipe.avgRating}★"
             recipeDescription.text = "${recipe.difficultyLevel} • ${recipe.cookingTime} mins\n${recipe.cuisineType}"
             recipeImage.setImageResource(recipe.imageResId)
 
-            // Handle click on the recipe card
+            // Click listener handling in RecyclerView items based on Android developer guide
+            // https://developer.android.com/guide/topics/ui/controls/button
             itemView.setOnClickListener {
-                onClick(recipe) // Trigger the callback with the clicked recipe
+                onClick(recipe)
             }
         }
     }
 
-    // Method to update the list of recipes and notify the adapter of data changes
+    // RecyclerView data update and adapter notification based on Android developer documentation
+    // https://developer.android.com/reference/androidx/recyclerview/widget/RecyclerView.Adapter#notifydatasetchanged
     fun updateRecipes(newRecipes: List<RecipeCardModel>) {
         recipeList = newRecipes
-        notifyDataSetChanged() // Notify RecyclerView to refresh the UI
+        notifyDataSetChanged()
     }
 }

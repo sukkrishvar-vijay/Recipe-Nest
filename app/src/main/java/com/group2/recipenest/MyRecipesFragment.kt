@@ -20,7 +20,6 @@ class MyRecipesFragment : Fragment() {
     private lateinit var recipeAdapter: RecipeCardsAdapter
     private lateinit var firestore: FirebaseFirestore
 
-    // User ID to filter recipes
     private var currentUserId = userSignInData.UserDocId
 
     override fun onCreateView(
@@ -29,35 +28,34 @@ class MyRecipesFragment : Fragment() {
     ): View? {
         val view = inflater.inflate(R.layout.my_recipes_collection, container, false)
 
-        // Initialize Firestore
         firestore = Firebase.firestore
 
-        // Find the toolbar in the activity
         val toolbar: Toolbar = requireActivity().findViewById(R.id.toolbar)
 
-        // Set the toolbar title
+        // Toolbar setup and customization based on Android developer documentation
+        // https://developer.android.com/reference/androidx/appcompat/widget/Toolbar
         toolbar.title = "My Recipes"
         toolbar.setTitleTextColor(resources.getColor(android.R.color.black, null))
 
-        // Set up the back button (up button)
         toolbar.setNavigationIcon(R.drawable.ic_back_arrow)
         toolbar.setNavigationOnClickListener {
             requireActivity().onBackPressedDispatcher.onBackPressed()
         }
 
-        // Handle FAB click to navigate to AddRecipeFragment
+        // FloatingActionButton usage and fragment transaction learned from Android developer guide
+        // https://developer.android.com/reference/com/google/android/material/floatingactionbutton/FloatingActionButton
         val fab: FloatingActionButton = view.findViewById(R.id.fab_add_new_recipe)
         fab.setOnClickListener {
             val addRecipeFragment = AddRecipeFragment()
 
-            // Navigate to AddRecipeFragment
             parentFragmentManager.beginTransaction()
                 .replace(R.id.fragment_container, addRecipeFragment)
                 .addToBackStack(null)
                 .commit()
         }
 
-        // Initialize RecyclerView
+        // RecyclerView setup and LinearLayoutManager usage adapted from Android developer documentation
+        // https://developer.android.com/guide/topics/ui/layout/recyclerview
         recipeRecyclerView = view.findViewById(R.id.my_recipe_recycler_view)
         recipeRecyclerView.layoutManager = LinearLayoutManager(requireContext())
 
@@ -66,11 +64,11 @@ class MyRecipesFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        // Refresh the data every time the fragment is resumed
         fetchUserRecipes()
     }
 
-    // Function to fetch user-specific recipes from Firestore
+    // Firestore query and document retrieval adapted from Firebase documentation
+    // https://firebase.google.com/docs/firestore/query-data/get-data
     private fun fetchUserRecipes() {
         firestore.collection("Recipes")
             .whereEqualTo("recipeUserId", currentUserId)
@@ -79,7 +77,6 @@ class MyRecipesFragment : Fragment() {
                 val recipeList = mutableListOf<RecipeCardModel>()
 
                 for (document in documents) {
-                    // Safely retrieve each field from Firestore document
                     val recipeTitle = document.getString("recipeTitle") ?: "Untitled"
                     val cookingTime = document.getLong("cookingTime")?.toInt() ?: 0
                     val avgRating = document.getDouble("avgRating")?.toString() ?: "N/A"
@@ -90,7 +87,6 @@ class MyRecipesFragment : Fragment() {
                     val recipeUserId = document.getString("recipeUserId") ?: ""
                     val recipeId = document.id
 
-                    // Create a RecipeCardModel object and add it to the list
                     val recipe = RecipeCardModel(
                         recipeUserId = recipeUserId,
                         recipeDescription = recipeDescription,
@@ -100,28 +96,28 @@ class MyRecipesFragment : Fragment() {
                         imageResId = R.drawable.placeholder_recipe_image,
                         difficultyLevel = difficultyLevel,
                         cuisineType = cuisineType,
-                        recipeId = recipeId  // Pass the recipeId here
+                        recipeId = recipeId
                     )
                     recipeList.add(recipe)
                 }
 
-                // Set up the adapter with the fetched recipes and handle item click
+                // RecyclerView adapter binding based on Android developer guide
+                // https://developer.android.com/guide/topics/ui/layout/recyclerview
                 recipeAdapter = RecipeCardsAdapter(recipeList) { recipe ->
                     navigateToRecipeDetailsFragment(recipe)
                 }
                 recipeRecyclerView.adapter = recipeAdapter
             }
             .addOnFailureListener { exception ->
-                // Handle error case here
                 exception.printStackTrace()
             }
     }
 
-    // Navigate to RecipeDetailsFragment and pass the recipe document including the recipeId
     private fun navigateToRecipeDetailsFragment(recipe: RecipeCardModel) {
         val recipeDetailsFragment = RecipeDetailsFragment()
 
-        // Pass recipe details to the fragment using a bundle
+        // Passing data between fragments using Bundle adapted from Android developer documentation
+        // https://developer.android.com/guide/fragments/communicate
         val bundle = Bundle()
         bundle.putString("recipeUserId", recipe.recipeUserId)
         bundle.putString("recipeDescription", recipe.recipeDescription)
@@ -130,11 +126,12 @@ class MyRecipesFragment : Fragment() {
         bundle.putString("difficultyLevel", recipe.difficultyLevel)
         bundle.putInt("cookingTime", recipe.cookingTime)
         bundle.putString("cuisineType", recipe.cuisineType)
-        bundle.putString("recipeId", recipe.recipeId)  // Pass the recipeId here
+        bundle.putString("recipeId", recipe.recipeId)
 
         recipeDetailsFragment.arguments = bundle
 
-        // Navigate to RecipeDetailsFragment
+        // Fragment navigation and transactions adapted from Android developer documentation
+        // https://developer.android.com/guide/fragments/fragmentmanager
         parentFragmentManager.beginTransaction()
             .replace(R.id.fragment_container, recipeDetailsFragment)
             .addToBackStack(null)
