@@ -1,3 +1,10 @@
+/*
+ * Some of the code blocks in this file have been developed with assistance from AI tools, which were used to help in various stages of the project,
+ * including code generation, identifying bugs, and fixing errors related to app crashes. The AI provided guidance in modifying
+ * and improving the structure of the code while adhering to Android development best practices. All generated solutions were reviewed
+ * and tested for functionality before implementation.
+ */
+
 package com.group2.recipenest
 
 import android.os.Bundle

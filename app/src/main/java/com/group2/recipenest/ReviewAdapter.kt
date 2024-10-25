@@ -1,3 +1,10 @@
+/*
+ * Some of the code blocks in this file have been developed with assistance from AI tools, which were used to help in various stages of the project,
+ * including code generation, identifying bugs, and fixing errors related to app crashes. The AI provided guidance in modifying
+ * and improving the structure of the code while adhering to Android development best practices. All generated solutions were reviewed
+ * and tested for functionality before implementation.
+ */
+
 package com.group2.recipenest
 
 import ReviewModel
@@ -31,7 +38,7 @@ class ReviewAdapter(
 
     fun updateReviews(newReviewList: List<ReviewModel>) {
         reviewList = newReviewList
-        notifyDataSetChanged()  // Notify adapter to refresh the view
+        notifyDataSetChanged()
     }
 
     class ReviewViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -40,17 +47,13 @@ class ReviewAdapter(
         private val ratingText: TextView = itemView.findViewById(R.id.rating)
 
         fun bind(review: ReviewModel) {
-            // Format the date to "03 October, 2024"
             val formattedDate = formatDate(review.dateCommented)
 
-            // Combine full name, username, and formatted date into one string
             val fullNameAndDate = "${review.fullName} • ${review.username} • $formattedDate"
             reviewerAndDate.text = fullNameAndDate
 
-            // Display the comment text
             commentText.text = review.comment
 
-            // Format the rating, assuming rating is between 1-5 and display it
             ratingText.text = "${review.rating}★"
         }
 
@@ -59,7 +62,7 @@ class ReviewAdapter(
                 val outputFormat = SimpleDateFormat("dd MMMM, yyyy", Locale.getDefault()) // Output format: "03 October, 2024"
                 outputFormat.format(date)
             } catch (e: Exception) {
-                "" // Return empty string in case of an error
+                e.toString()
             }
         }
     }

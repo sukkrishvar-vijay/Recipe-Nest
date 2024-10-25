@@ -1,3 +1,13 @@
+/*
+ * Some of the code blocks in this file have been developed with assistance from AI tools, which were used to help in various stages of the project,
+ * including code generation, identifying bugs, and fixing errors related to app crashes. The AI provided guidance in modifying
+ * and improving the structure of the code while adhering to Android development best practices. All generated solutions were reviewed
+ * and tested for functionality before implementation.
+ */
+
+package com.group2.recipenest
+
+import TrendingRecipeCardsModel
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -24,7 +34,6 @@ class TrendingRecipeCardsAdapter(
         holder.recipeDetailsTextView.text = "${recipe.difficultyLevel} • ${recipe.cookingTime} mins • ${recipe.cuisineType}"
         holder.recipeRatingTextView.text = "${recipe.avgRating}★"
 
-        // Set click listener for the card
         holder.itemView.setOnClickListener {
             onClick(recipe)
         }
@@ -32,10 +41,9 @@ class TrendingRecipeCardsAdapter(
 
     override fun getItemCount(): Int = recipes.size
 
-    // Function to update the recipes list and notify the adapter
     fun updateTrendingRecipes(newRecipes: List<TrendingRecipeCardsModel>) {
         recipes = newRecipes
-        notifyDataSetChanged()  // Notify the adapter that the data has changed
+        notifyDataSetChanged()
     }
 
     inner class RecipeViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {

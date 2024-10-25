@@ -1,8 +1,14 @@
+/*
+ * Some of the code blocks in this file have been developed with assistance from AI tools, which were used to help in various stages of the project,
+ * including code generation, identifying bugs, and fixing errors related to app crashes. The AI provided guidance in modifying
+ * and improving the structure of the code while adhering to Android development best practices. All generated solutions were reviewed
+ * and tested for functionality before implementation.
+ */
+
 package com.group2.recipenest
 
 import RecipeCardModel
 import RecipesCarouselModel
-import TrendingRecipeCardsAdapter
 import TrendingRecipeCardsModel
 import com.google.android.material.carousel.CarouselLayoutManager
 import com.google.android.material.carousel.HeroCarouselStrategy
@@ -39,30 +45,23 @@ class RecipesFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
         val rootView = inflater.inflate(layout.fragment_recipe, container, false)
 
-        // Initialize Firestore
         firestore = Firebase.firestore
 
-        // Hide the Toolbar
         (activity as AppCompatActivity).supportActionBar?.hide()
 
-        // Set up the RecyclerView for the carousel
         carouselRecyclerView = rootView.findViewById(R.id.carouselViewPager)
         carouselAdapter = RecipesCarouselAdapter(listOf()) { recipe ->
             navigateToRecipeDetailsFragment(recipe)
         }
 
-        // Set up the CarouselLayoutManager with the Hero strategy
         val carouselLayoutManager = CarouselLayoutManager(HeroCarouselStrategy())
         carouselRecyclerView.layoutManager = carouselLayoutManager
         carouselRecyclerView.adapter = carouselAdapter
 
-        // Start continuous auto-scrolling
         startContinuousAutoScroll()
 
-        // Set up the horizontal RecyclerView for "Recipes Trending Locally"
         horizontalRecyclerView = rootView.findViewById(R.id.horizontalRecyclerView)
         horizontalRecyclerView.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
         horizontalAdapter = TrendingRecipeCardsAdapter(listOf()) { recipe ->
@@ -70,7 +69,6 @@ class RecipesFragment : Fragment() {
         }
         horizontalRecyclerView.adapter = horizontalAdapter
 
-        // Set up the vertical RecyclerView for "More Recipes"
         verticalRecyclerView = rootView.findViewById(R.id.verticalRecyclerView)
         verticalRecyclerView.layoutManager = LinearLayoutManager(context)
         verticalAdapter = RecipeCardsAdapter(listOf()) { recipe ->
@@ -78,23 +76,20 @@ class RecipesFragment : Fragment() {
         }
         verticalRecyclerView.adapter = verticalAdapter
 
-        // Fetch recipes from Firestore for both vertical, horizontal, and carousel lists
         fetchRecipesFromFirestore()
 
         return rootView
     }
 
-    // Function to fetch recipes from Firestore and update the vertical, horizontal, and carousel lists
     private fun fetchRecipesFromFirestore() {
         firestore.collection("Recipes")
             .get()
             .addOnSuccessListener { documents ->
-                val recipeList = mutableListOf<RecipeCardModel>()  // For vertical RecyclerView
-                val trendingRecipeList = mutableListOf<TrendingRecipeCardsModel>()  // For horizontal RecyclerView
-                val carouselRecipeListOriginal = mutableListOf<RecipesCarouselModel>()  // For carousel
+                val recipeList = mutableListOf<RecipeCardModel>()
+                val trendingRecipeList = mutableListOf<TrendingRecipeCardsModel>()
+                val carouselRecipeListOriginal = mutableListOf<RecipesCarouselModel>()
 
                 for (document in documents) {
-                    // Safely retrieve each field from Firestore document
                     val recipeTitle = document.getString("recipeTitle") ?: "Untitled"
                     val cookingTime = document.getLong("cookingTime")?.toInt() ?: 0
                     val avgRating = document.getDouble("avgRating")?.toString() ?: "N/A"
@@ -105,7 +100,6 @@ class RecipesFragment : Fragment() {
                     val recipeUserId = document.getString("recipeUserId") ?: ""
                     val recipeId = document.id
 
-                    // Add to vertical list (RecipeCardModel)
                     val recipe = RecipeCardModel(
                         recipeUserId = recipeUserId,
                         recipeDescription = recipeDescription,
@@ -119,7 +113,6 @@ class RecipesFragment : Fragment() {
                     )
                     recipeList.add(recipe)
 
-                    // Add to horizontal list (TrendingRecipeCardsModel)
                     val trendingRecipe = TrendingRecipeCardsModel(
                         recipeUserId = recipeUserId,
                         recipeDescription = recipeDescription,
@@ -133,7 +126,6 @@ class RecipesFragment : Fragment() {
                     )
                     trendingRecipeList.add(trendingRecipe)
 
-                    // Add to carousel list (RecipesCarouselModel)
                     val carouselRecipe = RecipesCarouselModel(
                         recipeUserId = recipeUserId,
                         recipeDescription = recipeDescription,
@@ -148,49 +140,41 @@ class RecipesFragment : Fragment() {
                     carouselRecipeListOriginal.add(carouselRecipe)
                 }
 
-                // Duplicate carousel list for smooth infinite scrolling
                 carouselRecipeList = carouselRecipeListOriginal + carouselRecipeListOriginal
 
-                // Update the adapters
-                verticalAdapter.updateRecipes(recipeList)  // Update the vertical RecyclerView
-                horizontalAdapter.updateTrendingRecipes(trendingRecipeList)  // Update the horizontal RecyclerView
-                carouselAdapter.updateCarouselItems(carouselRecipeList)  // Update the carousel RecyclerView
+                verticalAdapter.updateRecipes(recipeList)
+                horizontalAdapter.updateTrendingRecipes(trendingRecipeList)
+                carouselAdapter.updateCarouselItems(carouselRecipeList)
             }
             .addOnFailureListener { exception ->
-                // Handle any errors that occur during Firestore fetch
                 exception.printStackTrace()
             }
     }
 
-    // Function to start continuous auto-scrolling the carousel
     private fun startContinuousAutoScroll() {
         handler.postDelayed(object : Runnable {
             override fun run() {
                 scrollPosition = (scrollPosition + 1) % carouselAdapter.itemCount
                 carouselRecyclerView.smoothScrollToPosition(scrollPosition)
 
-                // Reset position to simulate infinite scrolling
                 if (scrollPosition == carouselRecipeList.size / 2) {
                     scrollPosition = 0
                     carouselRecyclerView.scrollToPosition(0)
                 }
 
-                handler.postDelayed(this, 2000)  // Scroll every 2 seconds
+                handler.postDelayed(this, 2000)
             }
-        }, 2000)  // Initial delay
+        }, 2000)
     }
 
-    // Function to stop auto-scrolling when fragment is destroyed
     private fun stopAutoScroll() {
         handler.removeCallbacksAndMessages(null)
     }
 
-    // Handle navigation to details for different models
     private fun navigateToRecipeDetailsFragment(recipe: Any) {
         val recipeDetailsFragment = RecipeDetailsFragment()
         val bundle = Bundle()
 
-        // Handle RecipeCardModel, TrendingRecipeCardsModel, and RecipesCarouselModel types
         when (recipe) {
             is RecipeCardModel -> {
                 bundle.putString("recipeUserId", recipe.recipeUserId)
@@ -225,10 +209,8 @@ class RecipesFragment : Fragment() {
             else -> return
         }
 
-        // Pass the bundle with the recipe details to RecipeDetailsFragment
         recipeDetailsFragment.arguments = bundle
 
-        // Navigate to RecipeDetailsFragment
         parentFragmentManager.beginTransaction()
             .replace(R.id.fragment_container, recipeDetailsFragment)
             .addToBackStack(null)
@@ -237,7 +219,7 @@ class RecipesFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        stopAutoScroll()  // Stop auto-scrolling when the view is destroyed
+        stopAutoScroll()
         (activity as? AppCompatActivity)?.supportActionBar?.show()
     }
 

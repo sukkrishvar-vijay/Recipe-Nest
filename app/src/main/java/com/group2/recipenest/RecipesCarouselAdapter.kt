@@ -1,3 +1,10 @@
+/*
+ * Some of the code blocks in this file have been developed with assistance from AI tools, which were used to help in various stages of the project,
+ * including code generation, identifying bugs, and fixing errors related to app crashes. The AI provided guidance in modifying
+ * and improving the structure of the code while adhering to Android development best practices. All generated solutions were reviewed
+ * and tested for functionality before implementation.
+ */
+
 package com.group2.recipenest
 
 import RecipesCarouselModel
@@ -8,11 +15,15 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 
+// RecyclerView Adapter implementation based on Android developer documentation
+// https://developer.android.com/guide/topics/ui/layout/recyclerview
 class RecipesCarouselAdapter(
     private var carouselItems: List<RecipesCarouselModel>,
-    private val onClick: (RecipesCarouselModel) -> Unit  // This callback will handle the click event
+    private val onClick: (RecipesCarouselModel) -> Unit
 ) : RecyclerView.Adapter<RecipesCarouselAdapter.CarouselViewHolder>() {
 
+    // ViewHolder creation and view inflation based on Android developer documentation
+    // https://developer.android.com/reference/androidx/recyclerview/widget/RecyclerView.ViewHolder
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CarouselViewHolder {
         val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.carousel_item, parent, false)
@@ -26,6 +37,8 @@ class RecipesCarouselAdapter(
 
     override fun getItemCount(): Int = carouselItems.size
 
+    // Updating RecyclerView data and notifying adapter adapted from Android developer documentation
+    // https://developer.android.com/reference/androidx/recyclerview/widget/RecyclerView.Adapter#notifydatasetchanged
     fun updateCarouselItems(newItems: List<RecipesCarouselModel>) {
         carouselItems = newItems
         notifyDataSetChanged()
@@ -35,11 +48,14 @@ class RecipesCarouselAdapter(
         private val imageView: ImageView = itemView.findViewById(R.id.carousel_image_view)
         private val titleTextView: TextView = itemView.findViewById(R.id.carousel_recipe_title)
 
+        // Data binding in RecyclerView ViewHolder adapted from Android developer documentation
+        // https://developer.android.com/guide/topics/ui/layout/recyclerview#bind-data
         fun bind(item: RecipesCarouselModel, onClick: (RecipesCarouselModel) -> Unit) {
-            imageView.setImageResource(item.imageResId)  // Set the image
-            titleTextView.text = item.recipeTitle  // Set the title
+            imageView.setImageResource(item.imageResId)
+            titleTextView.text = item.recipeTitle
 
-            // Set up click listener to handle item clicks
+            // Handling item click events in RecyclerView ViewHolder based on Android developer guide
+            // https://developer.android.com/guide/topics/ui/controls/button
             itemView.setOnClickListener {
                 onClick(item)
             }

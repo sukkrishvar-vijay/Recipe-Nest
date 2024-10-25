@@ -1,3 +1,10 @@
+/*
+ * Some of the code blocks in this file have been developed with assistance from AI tools, which were used to help in various stages of the project,
+ * including code generation, identifying bugs, and fixing errors related to app crashes. The AI provided guidance in modifying
+ * and improving the structure of the code while adhering to Android development best practices. All generated solutions were reviewed
+ * and tested for functionality before implementation.
+ */
+
 package com.group2.recipenest
 
 import ReviewModel
@@ -31,18 +38,14 @@ class ReviewFragment : BottomSheetDialogFragment() {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_rating_and_comments, container, false)
 
-        // Retrieve the recipeId from the arguments
         recipeId = arguments?.getString("recipeId")
 
-        // Initialize RecyclerView
         ratingRecyclerView = view.findViewById(R.id.ratings_recycler_view)
         ratingRecyclerView.layoutManager = LinearLayoutManager(context)
 
-        // Set up Adapter
         reviewAdapter = ReviewAdapter(reviewList)
         ratingRecyclerView.adapter = reviewAdapter
 
-        // Fetch reviews from Firestore based on the recipeId
         fetchComments()
 
         return view
@@ -101,7 +104,6 @@ class ReviewFragment : BottomSheetDialogFragment() {
     override fun onStart() {
         super.onStart()
 
-        // Set up the bottom sheet to display initially at half the screen height
         val dialog = dialog as BottomSheetDialog
         val bottomSheet = dialog.findViewById<View>(R.id.design_bottom_sheet)
 
@@ -110,9 +112,8 @@ class ReviewFragment : BottomSheetDialogFragment() {
             behavior.state = BottomSheetBehavior.STATE_HALF_EXPANDED
             behavior.peekHeight = (resources.displayMetrics.heightPixels * 0.5).toInt()
 
-            // Enable the bottom sheet to expand fully when swiped up
-            behavior.isFitToContents = false // Ensures that the sheet can expand to its full height
-            behavior.isHideable = true // Allows the sheet to be dismissed when swiped down
+            behavior.isFitToContents = false
+            behavior.isHideable = true
         }
     }
 }

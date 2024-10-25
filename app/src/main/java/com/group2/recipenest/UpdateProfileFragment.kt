@@ -1,3 +1,10 @@
+/*
+ * Some of the code blocks in this file have been developed with assistance from AI tools, which were used to help in various stages of the project,
+ * including code generation, identifying bugs, and fixing errors related to app crashes. The AI provided guidance in modifying
+ * and improving the structure of the code while adhering to Android development best practices. All generated solutions were reviewed
+ * and tested for functionality before implementation.
+ */
+
 package com.group2.recipenest
 
 import android.content.Context
@@ -20,13 +27,10 @@ import com.google.firebase.ktx.Firebase
 
 class UpdateProfileFragment : Fragment() {
 
-    // Firestore instance
     private lateinit var firestore: FirebaseFirestore
 
-    // User ID for querying the Firestore
     private val userDocumentId = userSignInData.UserDocId
 
-    // To store original data for detecting unsaved changes
     private var originalFirstName: String? = null
     private var originalLastName: String? = null
     private var originalUsername: String? = null
@@ -49,44 +53,35 @@ class UpdateProfileFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Initialize Firestore
         firestore = Firebase.firestore
 
-        // Find the toolbar in the activity
         val toolbar: Toolbar = requireActivity().findViewById(R.id.toolbar)
 
-        // Set the toolbar title directly
         toolbar.title = "Settings"
         toolbar.setTitleTextColor(resources.getColor(android.R.color.black, null))
 
-        // Set up the back button (up button)
         toolbar.setNavigationIcon(R.drawable.ic_back_arrow)
         toolbar.setNavigationOnClickListener {
             requireActivity().onBackPressedDispatcher.onBackPressed()
         }
 
-        // Access UI elements
         val profileImage = view.findViewById<ImageView>(R.id.profile_image)
         firstNameEditText = view.findViewById(R.id.first_name)
         lastNameEditText = view.findViewById(R.id.last_name)
         usernameEditText = view.findViewById(R.id.username)
         bioEditText = view.findViewById(R.id.user_bio)
-        emailEditText = view.findViewById(R.id.email) // Email EditText
+        emailEditText = view.findViewById(R.id.email)
         updateButton = view.findViewById(R.id.update_button)
         val authSwitch = view.findViewById<MaterialSwitch>(R.id.auth_switch)
 
-        // Set email field as read-only
         emailEditText.isEnabled = false
 
-        // Query Firestore to get user profile data
         getUserProfileData(userDocumentId)
 
-        // Set OnClickListener for Update button
         updateButton.setOnClickListener {
             updateUserProfile()
         }
 
-        // Handle biometric authentication toggle and save locally
         val sharedPreferences = requireActivity().getSharedPreferences("UserSettings", Context.MODE_PRIVATE)
         val biometricEnabled = sharedPreferences.getBoolean("biometricEnabled", false)
         authSwitch.isChecked = biometricEnabled
@@ -101,24 +96,22 @@ class UpdateProfileFragment : Fragment() {
         }
     }
 
-    // Function to query Firestore and fetch user profile data
     private fun getUserProfileData(userId: String) {
         val userRef = firestore.collection("User").document(userId)
 
         userRef.get().addOnSuccessListener { document ->
             if (document != null && document.exists()) {
-                // Extract the data and populate EditText fields
                 originalFirstName = document.getString("firstName")
                 originalLastName = document.getString("lastName")
                 originalUsername = document.getString("username")
                 originalBio = document.getString("bio")
-                val email = document.getString("email") // Fetch the email from Firestore
+                val email = document.getString("email")
 
                 firstNameEditText.setText(originalFirstName)
                 lastNameEditText.setText(originalLastName)
                 usernameEditText.setText(originalUsername)
                 bioEditText.setText(originalBio)
-                emailEditText.setText(email) // Set email in read-only field
+                emailEditText.setText(email)
             } else {
                 Toast.makeText(requireContext(), "User data not found", Toast.LENGTH_SHORT).show()
             }
@@ -127,7 +120,6 @@ class UpdateProfileFragment : Fragment() {
         }
     }
 
-    // Function to update user profile in Firestore
     private fun updateUserProfile() {
         val updatedFirstName = firstNameEditText.text.toString()
         val updatedLastName = lastNameEditText.text.toString()
@@ -146,7 +138,6 @@ class UpdateProfileFragment : Fragment() {
         userRef.update(updates)
             .addOnSuccessListener {
                 Toast.makeText(requireContext(), "Profile Updated", Toast.LENGTH_SHORT).show()
-                // Update original values after saving
                 originalFirstName = updatedFirstName
                 originalLastName = updatedLastName
                 originalUsername = updatedUsername

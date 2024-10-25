@@ -4,5 +4,5 @@ data class Reviews(
     val date: String,
     val reviewText: String,
     val rating: Float,
-    val audioFilePath: String? = null  // Optional audio file path
+    val audioFilePath: String? = null
 )
