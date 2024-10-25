@@ -89,6 +89,7 @@ class MainActivity : AppCompatActivity() {
         showBottomNavigation()
 
         // Load the default fragment
+        showBottomNavigation()
         loadFragment(RecipesFragment())
 
         // Set the BottomNavigationView to show Recipes as selected by default
@@ -104,6 +105,16 @@ class MainActivity : AppCompatActivity() {
             }
             true
         }
+
+    }
+
+    // Helper function to check User Login Status
+    private fun isUserLoggedIn(): Boolean {
+        // Get the current user
+        val currentUser = FirebaseAuth.getInstance().currentUser
+
+        // Check if the user is signed in (not null)
+        return currentUser != null
     }
 
     // Helper function to check User Login Status
