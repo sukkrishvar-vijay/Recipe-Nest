@@ -26,7 +26,6 @@ class ForgotPasswordFragment: Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        // Inflate the layout for this fragment using ViewBinding
         _binding = PasswordResetBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -34,22 +33,21 @@ class ForgotPasswordFragment: Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        // Adding callback feature in case if the users doesn't wants to change his password
         val callback = requireActivity().onBackPressedDispatcher.addCallback(this){
             loadFragment(SignInFragment())
         }
 
+        //https://firebase.google.com/docs/auth/android/manage-users
         binding.resetPasswordButton.setOnClickListener {
             val email = binding.emailtextField.editText?.text.toString().trim()
-            //(activity as MainActivity).signInAccount()
             if(email != ""){
                 FirebaseAuth.getInstance().sendPasswordResetEmail(email)
                     .addOnCompleteListener { task ->
                         if (task.isSuccessful) {
-                            // Password reset email sent successfully
                             Log.d("PasswordReset", "Email sent.")
                             loadFragment(SignInFragment())
                         } else {
-                            // Failed to send reset email
                             Log.e("PasswordReset", "Error: ${task.exception?.message}")
                         }
                     }
@@ -63,6 +61,8 @@ class ForgotPasswordFragment: Fragment() {
 
     }
 
+    //https://medium.com/@Max_Sir/mastering-android-fragments-managers-transactions-and-best-practices-in-kotlin-af00cb9b44ac
+    //https://developer.android.com/guide/fragments/fragmentmanager
     private fun loadFragment(fragment: Fragment) {
         parentFragmentManager.beginTransaction()
             .replace(R.id.fragment_container, fragment)

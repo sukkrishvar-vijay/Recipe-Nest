@@ -50,6 +50,7 @@
             android:gravity="center"
             android:layout_marginTop="20sp">
 
+            <!--https://github.com/material-components/material-components-android/blob/master/docs/components/TextField.md-->
             <com.google.android.material.textfield.TextInputLayout
                 style="?attr/textInputFilledStyle"
                 android:layout_height="wrap_content"
@@ -68,6 +69,7 @@
                     />
             </com.google.android.material.textfield.TextInputLayout>
 
+            <!--https://github.com/material-components/material-components-android/blob/master/docs/components/TextField.md-->
             <com.google.android.material.textfield.TextInputLayout
                 style="?attr/textInputFilledStyle"
                 android:layout_height="wrap_content"
@@ -89,6 +91,7 @@
         </LinearLayout>
 
         <!-- Username Field -->
+        <!--https://github.com/material-components/material-components-android/blob/master/docs/components/TextField.md-->
         <com.google.android.material.textfield.TextInputLayout
             style="?attr/textInputFilledStyle"
             android:layout_width="match_parent"
@@ -107,6 +110,7 @@
         </com.google.android.material.textfield.TextInputLayout>
 
         <!-- Bio/Description TextArea -->
+        <!--https://github.com/material-components/material-components-android/blob/master/docs/components/TextField.md-->
         <com.google.android.material.textfield.TextInputLayout
             style="?attr/textInputFilledStyle"
             android:layout_width="match_parent"
@@ -135,6 +139,7 @@
             android:layout_marginVertical="10dp" />
 
         <!-- Email Field -->
+        <!--https://github.com/material-components/material-components-android/blob/master/docs/components/TextField.md-->
         <com.google.android.material.textfield.TextInputLayout
             style="?attr/textInputFilledStyle"
             android:layout_width="match_parent"
@@ -160,6 +165,7 @@
             android:layout_marginVertical="10dp" />
 
         <!-- Authentication Switch -->
+        <!--https://github.com/material-components/material-components-android/blob/master/docs/components/Switch.md-->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

@@ -27,7 +27,6 @@ class SignInFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        // Inflate the layout for this fragment using ViewBinding
         _binding = SignInPageBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -52,22 +51,20 @@ class SignInFragment : Fragment() {
             }
         }
 
-        // Handle "Create Account" button click
         binding.createAccountButton.setOnClickListener {
-            //(activity as MainActivity).createAccount()
             // Navigate to the create account screen
-            // You can use FragmentManager to load the create account fragment if you have it
             loadFragment(SignUpFragment())
         }
 
-        // Handle "Forgot Password" button click
         binding.forgotPasswordButton.setOnClickListener {
-            // Navigate to the forgot password screen or implement reset logic here
+            // Navigate to the forgot password screen
             loadFragment(ForgotPasswordFragment())
         }
     }
 
     // Sign in user with Firebase Authentication
+    //https://firebase.google.com/docs/auth/android/password-auth
+    //https://pillar-soft.com/blogs/Firebase_Auth_Android/
     private fun signInUser(email: String, password: String) {
         auth.signInWithEmailAndPassword(email, password)
             .addOnCompleteListener(requireActivity()) { task ->
@@ -87,6 +84,8 @@ class SignInFragment : Fragment() {
             }
     }
 
+    //https://medium.com/@Max_Sir/mastering-android-fragments-managers-transactions-and-best-practices-in-kotlin-af00cb9b44ac
+    //https://developer.android.com/guide/fragments/fragmentmanager
     private fun loadFragment(fragment: Fragment) {
         parentFragmentManager.beginTransaction()
             .replace(R.id.fragment_container, fragment)

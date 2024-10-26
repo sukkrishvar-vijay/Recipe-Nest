@@ -51,7 +51,8 @@ class SignUpFragment3: Fragment() {
             val email = userData.email
             val password = userData.password
 
-
+            //https://firebase.google.com/docs/auth/android/password-auth
+            //https://stackoverflow.com/questions/65604918/createuserwithemailandpassword-addoncompletelistener-wont-work
             auth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(requireActivity()) { task ->
                     if (task.isSuccessful) {
@@ -73,6 +74,7 @@ class SignUpFragment3: Fragment() {
         }
     }
 
+    // Method to write user sign up details to User collection in firebase
     private fun writeUserToFirebase(){
         val user = hashMapOf(
             "firstName" to userData.firstName,
@@ -90,6 +92,7 @@ class SignUpFragment3: Fragment() {
             ),
             )
 
+        //https://firebase.google.com/docs/firestore/manage-data/add-data
         db.collection("User")
             .add(user)
             .addOnSuccessListener{documentReference ->
@@ -103,6 +106,7 @@ class SignUpFragment3: Fragment() {
             }
     }
 
+    //clearing the data class
     private fun clearUserData() {
         userData.firstName = ""
         userData.lastName = ""
@@ -113,7 +117,8 @@ class SignUpFragment3: Fragment() {
         userData.profileimage = ""
     }
 
-
+    //https://medium.com/@Max_Sir/mastering-android-fragments-managers-transactions-and-best-practices-in-kotlin-af00cb9b44ac
+    //https://developer.android.com/guide/fragments/fragmentmanager
     private fun loadFragment(fragment: Fragment) {
         parentFragmentManager.beginTransaction()
             .replace(R.id.fragment_container, fragment)
