@@ -49,6 +49,8 @@ class LandingPage2: Fragment() {
     }
 
     // Detect swipe gestures
+    //https://stackoverflow.com/questions/17390873/onfling-motionevent-e1-null
+    //https://www.geeksforgeeks.org/how-to-detect-swipe-direction-in-android/
     inner class SwipeGestureListener : GestureDetector.SimpleOnGestureListener() {
         private val SWIPE_THRESHOLD = 100
         private val SWIPE_VELOCITY_THRESHOLD = 100
@@ -90,6 +92,8 @@ class LandingPage2: Fragment() {
         loadFragment(LandingPage1())
     }
 
+    //https://medium.com/@Max_Sir/mastering-android-fragments-managers-transactions-and-best-practices-in-kotlin-af00cb9b44ac
+    //https://developer.android.com/guide/fragments/fragmentmanager
     private fun loadFragment(fragment: Fragment) {
         parentFragmentManager.beginTransaction()
             .replace(R.id.fragment_container, fragment)
