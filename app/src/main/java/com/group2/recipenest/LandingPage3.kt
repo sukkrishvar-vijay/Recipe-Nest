@@ -30,7 +30,6 @@ class LandingPage3: Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        // Inflate the layout for this fragment using ViewBinding
         _binding = LandingPage3Binding.inflate(inflater, container, false)
         return binding.root
     }
@@ -39,13 +38,12 @@ class LandingPage3: Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Initialize the GestureDetector
         gestureDetector = GestureDetector(requireContext(), SwipeGestureListener())
 
-        // Set an OnTouchListener on the root view to detect swipe gestures
+        // OnTouchListener to detect swipe gestures
         binding.root.setOnTouchListener { _, event ->
-            gestureDetector.onTouchEvent(event) // Pass the MotionEvent to the GestureDetector
-            true // Return true to indicate the touch event was handled
+            gestureDetector.onTouchEvent(event)
+            true
         }
 
         binding.getStartedButton.setOnClickListener {
@@ -68,17 +66,15 @@ class LandingPage3: Fragment() {
             velocityX: Float,
             velocityY: Float
         ): Boolean {
-            // Check if e1 is not null
             if (e1 == null) return false
 
             val diffX = e2.x - e1.x
             val diffY = e2.y - e1.y
 
-            if (abs(diffX) > abs(diffY)) { // Detect horizontal swipe
+            if (abs(diffX) > abs(diffY)) {
                 if (abs(diffX) > SWIPE_THRESHOLD && abs(velocityX) > SWIPE_VELOCITY_THRESHOLD) {
                     if (diffX > 0) {
-                        // Right swipe detected
-                        onSwipeRight()
+                        onSwipeLeft()
                     }
                     return true
                 }
@@ -87,13 +83,14 @@ class LandingPage3: Fragment() {
         }
     }
 
-    private fun onSwipeRight() {
-        // Load the previous landing page or do nothing if on the first page
-        // Replace with the fragment for LandingPage3
-        // For this example, let's assume LandingPage3 is the previous fragment
+    // Action for left swipe
+    private fun onSwipeLeft() {
         loadFragment(LandingPage2())
     }
 
+    // Function to update the shared preferences so that landing pages won't show up the next time
+    //https://stackoverflow.com/questions/7217578/check-if-application-is-on-its-first-run
+    
     private fun setFirstLaunchCompleted() {
         val sharedPreferences = requireContext().getSharedPreferences("RecipeNestPrefs", MODE_PRIVATE)
         sharedPreferences.edit().putBoolean("isFirstLaunch", false).apply()

@@ -28,7 +28,6 @@ class LandingPage2: Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        // Inflate the layout for this fragment using ViewBinding
         _binding = LandingPage2Binding.inflate(inflater, container, false)
         return binding.root
     }
@@ -37,13 +36,12 @@ class LandingPage2: Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Initialize the GestureDetector
         gestureDetector = GestureDetector(requireContext(), SwipeGestureListener())
 
-        // Set an OnTouchListener on the root view to detect swipe gestures
+        // OnTouchListener to detect swipe gestures
         binding.root.setOnTouchListener { _, event ->
-            gestureDetector.onTouchEvent(event) // Pass the MotionEvent to the GestureDetector
-            true // Return true to indicate the touch event was handled
+            gestureDetector.onTouchEvent(event)
+            true
         }
 
     }
@@ -61,16 +59,14 @@ class LandingPage2: Fragment() {
             velocityX: Float,
             velocityY: Float
         ): Boolean {
-            // Check if e1 is not null
             if (e1 == null) return false
 
             val diffX = e2.x - e1.x
             val diffY = e2.y - e1.y
 
-            if (abs(diffX) > abs(diffY)) { // Detect horizontal swipe
+            if (abs(diffX) > abs(diffY)) {
                 if (abs(diffX) > SWIPE_THRESHOLD && abs(velocityX) > SWIPE_VELOCITY_THRESHOLD) {
                     if (diffX < 0) {
-                        // Right swipe detected
                         onSwipeLeft()
                     }
                     else{
@@ -83,11 +79,12 @@ class LandingPage2: Fragment() {
         }
     }
 
-    // Action for left swipe (load previous fragment or do nothing)
+    // Action for left swipe
     private fun onSwipeLeft() {
         loadFragment(LandingPage3())
     }
 
+    // Action for right swipe
     private fun onSwipeRight() {
         loadFragment(LandingPage1())
     }

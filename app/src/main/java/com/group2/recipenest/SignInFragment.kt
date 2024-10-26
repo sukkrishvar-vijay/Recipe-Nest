@@ -55,7 +55,7 @@ class SignInFragment : Fragment() {
             // Navigate to the create account screen
             loadFragment(SignUpFragment())
         }
-        
+
         binding.forgotPasswordButton.setOnClickListener {
             // Navigate to the forgot password screen
             loadFragment(ForgotPasswordFragment())
