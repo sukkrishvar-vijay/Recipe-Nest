@@ -45,11 +45,9 @@ class ForgotPasswordFragment: Fragment() {
                 FirebaseAuth.getInstance().sendPasswordResetEmail(email)
                     .addOnCompleteListener { task ->
                         if (task.isSuccessful) {
-                            // Password reset email sent successfully
                             Log.d("PasswordReset", "Email sent.")
                             loadFragment(SignInFragment())
                         } else {
-                            // Failed to send reset email
                             Log.e("PasswordReset", "Error: ${task.exception?.message}")
                         }
                     }
