@@ -1,5 +1,6 @@
 package com.group2.recipenest
 
+// data class to store user data when he sign up and use it to his detail in firebase firestore and authentication
 data class SignUpUserData(
     var firstName: String,
     var lastName: String,
