@@ -108,14 +108,6 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-    // Helper function to check User Login Status
-    private fun isUserLoggedIn(): Boolean {
-        // Get the current user
-        val currentUser = FirebaseAuth.getInstance().currentUser
-
-        // Check if the user is signed in (not null)
-        return currentUser != null
-    }
 
     // Helper function to check User Login Status
     private fun isUserLoggedIn(): Boolean {

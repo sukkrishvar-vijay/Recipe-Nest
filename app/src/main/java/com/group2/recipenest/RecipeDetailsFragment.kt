@@ -1,10 +1,3 @@
-/*
- * Some of the code blocks in this file have been developed with assistance from AI tools, which were used to help in various stages of the project,
- * including code generation, identifying bugs, and fixing errors related to app crashes. The AI provided guidance in modifying
- * and improving the structure of the code while adhering to Android development best practices. All generated solutions were reviewed
- * and tested for functionality before implementation.
- */
-
 package com.group2.recipenest
 
 import android.os.Bundle
@@ -32,8 +25,9 @@ class RecipeDetailsFragment : Fragment() {
     private lateinit var currentRecipeId: String
     private lateinit var firestore: FirebaseFirestore
     private var isFavorite = false
-    private var currentFavoriteCategory: String? = null
+    private var currentFavoriteCategory: String? = null  // Track the current favorite category
 
+    // User ID to be used for checking the favorite status
     private val currentUserId = userSignInData.UserDocId
 
     override fun onCreateView(
@@ -42,8 +36,10 @@ class RecipeDetailsFragment : Fragment() {
     ): View? {
         val rootView = inflater.inflate(R.layout.recipe_detail, container, false)
 
+        // Initialize Firestore
         firestore = Firebase.firestore
 
+        // Initialize the views
         recipeOwnerTextView = rootView.findViewById(R.id.ownerNameAndUsername)
         avgRatingTextView = rootView.findViewById(R.id.ratingText)
         shortDetailTextView = rootView.findViewById(R.id.selectedFilters)
@@ -51,25 +47,30 @@ class RecipeDetailsFragment : Fragment() {
         ratingsCommentsButton = rootView.findViewById(R.id.ratingsCommentsButton)
         favoriteButton = rootView.findViewById(R.id.favoriteButton)
 
+        // Set recipe details from the arguments
         setRecipeDetails()
 
+        // Set up the toolbar with a back button
         setUpToolbarWithBackButton()
 
-        // FloatingActionButton usage and event handling based on Android developer guide
-        // https://developer.android.com/reference/com/google/android/material/floatingactionbutton/FloatingActionButton
+        // Floating action button for adding a comment
         val fabWriteComment: FloatingActionButton = rootView.findViewById(R.id.fab_write_comment)
         fabWriteComment.setOnClickListener {
             navigateToPostCommentFragment()
         }
 
+        // Fetch comments, avgRating and update the button text
         fetchAndSetCommentsAndAvgRating()
 
+        // Check if the recipe is already a favorite
         checkIfFavorite(currentRecipeId)
 
+        // Handle favorite button click
         favoriteButton.setOnClickListener {
             showFavoriteDialog(currentRecipeId)
         }
 
+        // Set the click listener for the Ratings and Comments button
         ratingsCommentsButton.setOnClickListener {
             openReviewFragment()
         }
@@ -77,8 +78,6 @@ class RecipeDetailsFragment : Fragment() {
         return rootView
     }
 
-    // Retrieving fragment arguments using Bundle and updating UI based on Android developer documentation
-    // https://developer.android.com/guide/fragments/communicate
     private fun setRecipeDetails() {
         val arguments = arguments ?: return
 
@@ -90,11 +89,14 @@ class RecipeDetailsFragment : Fragment() {
         val cuisineType = arguments.getString("cuisineType") ?: "Unknown"
         currentRecipeId = arguments.getString("recipeId") ?: "Unknown"
 
+        // Fetch and set recipe owner details
         fetchAndSetRecipeOwnerDetails(recipeOwner)
 
+        // Set other recipe details
         shortDetailTextView.text = "$difficultyLevel • $cookingTime mins • $cuisineType"
         longDetailTextView.text = recipeDescription
 
+        // Update the toolbar title with the recipe title
         val toolbar: Toolbar = requireActivity().findViewById(R.id.toolbar)
         toolbar.title = recipeTitle
     }
@@ -116,8 +118,6 @@ class RecipeDetailsFragment : Fragment() {
     }
 
     private fun fetchAndSetCommentsAndAvgRating() {
-        // Firestore document retrieval and querying based on Firebase documentation
-        // https://firebase.google.com/docs/firestore/query-data/get-data
         val recipeRef = firestore.collection("Recipes").document(currentRecipeId)
         recipeRef.get().addOnSuccessListener { document ->
             if (document.exists()) {
@@ -137,11 +137,7 @@ class RecipeDetailsFragment : Fragment() {
         }
     }
 
-    // Firestore document retrieval and updates based on Firebase documentation
-    // https://firebase.google.com/docs/firestore/query-data/get-data
     private fun checkIfFavorite(recipeId: String) {
-        // Firestore document retrieval and updates based on Firebase documentation
-        // https://firebase.google.com/docs/firestore/query-data/get-data
         firestore.collection("User").document(currentUserId).get().addOnSuccessListener { document ->
             if (document.exists()) {
                 val favorites = document.get("favoriteCollection") as? List<Map<String, List<String>>>
@@ -149,7 +145,7 @@ class RecipeDetailsFragment : Fragment() {
                     categoryMap.forEach { (category, recipeIds) ->
                         if (recipeIds.contains(recipeId)) {
                             isFavorite = true
-                            currentFavoriteCategory = category
+                            currentFavoriteCategory = category  // Set current favorite category
                         }
                     }
                 }
@@ -160,27 +156,21 @@ class RecipeDetailsFragment : Fragment() {
         }
     }
 
-    // Toolbar navigation setup based on Android developer guide
-    // https://developer.android.com/reference/androidx/appcompat/widget/Toolbar
     private fun setUpToolbarWithBackButton() {
         val toolbar: Toolbar = requireActivity().findViewById(R.id.toolbar)
-        toolbar.setNavigationIcon(R.drawable.ic_back_arrow)
+        toolbar.setNavigationIcon(R.drawable.ic_back_arrow) // Use your custom back icon
         toolbar.setNavigationOnClickListener {
-            requireActivity().onBackPressed()
+            requireActivity().onBackPressed() // Navigate back
         }
     }
 
     private fun showFavoriteDialog(recipeId: String) {
-        // Firestore document retrieval and updates based on Firebase documentation
-        // https://firebase.google.com/docs/firestore/query-data/get-data
         val userRef = firestore.collection("User").document(currentUserId)
         userRef.get().addOnSuccessListener { document ->
             if (document.exists()) {
                 val favoriteCollection = document.get("favoriteCollection") as? List<Map<String, List<String>>>
                 val favoriteCategories = favoriteCollection?.map { it.keys.first() } ?: emptyList()
 
-                // AlertDialog creation and handling based on Android developer documentation
-                // https://developer.android.com/reference/androidx/appcompat/app/AlertDialog
                 val builder = AlertDialog.Builder(requireContext())
                 builder.setTitle("Select Favorite Category")
 
@@ -194,9 +184,12 @@ class RecipeDetailsFragment : Fragment() {
                 builder.setPositiveButton("Save") { _, _ ->
                     if (!selectedOption.isNullOrEmpty()) {
                         if (currentFavoriteCategory != null && currentFavoriteCategory != selectedOption) {
-                            removeRecipeFromCurrentCategory(recipeId, currentFavoriteCategory!!)
-                            addRecipeToFavoriteCategory(recipeId, selectedOption!!)
+                            // Remove from current favorite category and then add to the new one
+                            removeRecipeFromCurrentCategory(recipeId, currentFavoriteCategory!!) {
+                                addRecipeToFavoriteCategory(recipeId, selectedOption!!)
+                            }
                         } else if (currentFavoriteCategory == null) {
+                            // If not already in favorites, just add to the selected category
                             addRecipeToFavoriteCategory(recipeId, selectedOption!!)
                         }
                     }
@@ -210,9 +203,7 @@ class RecipeDetailsFragment : Fragment() {
         }
     }
 
-    // Firestore document retrieval, array modification, and update logic based on Firebase documentation
-    // https://firebase.google.com/docs/firestore/query-data/get-data
-    // https://firebase.google.com/docs/firestore/manage-data/add-data#update_elements_in_an_array
+
     private fun addRecipeToFavoriteCategory(recipeId: String, category: String) {
         firestore.collection("User").document(currentUserId).get().addOnSuccessListener { document ->
             if (document.exists()) {
@@ -220,7 +211,7 @@ class RecipeDetailsFragment : Fragment() {
                 val updatedFavorites = favoriteCollection?.map {
                     if (it.containsKey(category)) {
                         it.toMutableMap().apply {
-                            this[category] = this[category]!!.plus(recipeId)
+                            this[category] = this[category]!!.plus(recipeId)  // Add the recipeId to the correct category
                         }
                     } else {
                         it
@@ -244,10 +235,7 @@ class RecipeDetailsFragment : Fragment() {
         }
     }
 
-    // Firestore document retrieval and update logic based on Firebase documentation
-    // https://firebase.google.com/docs/firestore/query-data/get-data
-    // https://firebase.google.com/docs/firestore/manage-data/add-data#update_elements_in_an_array
-    private fun removeRecipeFromCurrentCategory(recipeId: String, category: String) {
+    private fun removeRecipeFromCurrentCategory(recipeId: String, category: String, onComplete: () -> Unit) {
         val userRef = firestore.collection("User").document(currentUserId)
 
         userRef.get().addOnSuccessListener { document ->
@@ -257,17 +245,20 @@ class RecipeDetailsFragment : Fragment() {
                 if (favoriteCollection != null) {
                     val updatedFavorites = favoriteCollection.map { categoryMap ->
                         if (categoryMap.containsKey(category)) {
+                            // Remove the recipeId from the list of recipes in the current category
                             categoryMap.toMutableMap().apply {
                                 this[category] = this[category]!!.filterNot { it == recipeId }
                             }
                         } else {
-                            categoryMap
+                            categoryMap // Return the map as is if the category doesn't match
                         }
                     }
 
+                    // Update the favoriteCollection in Firestore
                     userRef.update("favoriteCollection", updatedFavorites)
                         .addOnSuccessListener {
                             Toast.makeText(requireContext(), "Removed from $category", Toast.LENGTH_SHORT).show()
+                            onComplete() // Trigger the next action (add to new category)
                         }
                         .addOnFailureListener {
                             Toast.makeText(requireContext(), "Failed to remove favorite", Toast.LENGTH_SHORT).show()
@@ -279,23 +270,20 @@ class RecipeDetailsFragment : Fragment() {
         }
     }
 
-    // Opening fragment with arguments using Bundle and showing fragment as a dialog
-    // based on Android developer documentation
-    // https://developer.android.com/guide/fragments/communicate
+    // Function to open the ReviewFragment when Ratings and Comments button is clicked
     private fun openReviewFragment() {
-        val reviewFragment = ReviewFragment()
+        val reviewFragment = ReviewFragment() // Create an instance of your ReviewFragment
 
+        // Pass any necessary arguments, e.g., the recipeId
         val bundle = Bundle()
         bundle.putString("recipeId", currentRecipeId)
         reviewFragment.arguments = bundle
 
+        // Show as a bottom sheet dialog
         reviewFragment.show(requireActivity().supportFragmentManager, reviewFragment.tag)
     }
 
 
-    // Dynamically updating UI components (ImageButton) based on conditions using setImageResource()
-    // based on Android developer documentation
-    // https://developer.android.com/reference/android/widget/ImageButton#setImageResource(int)
     private fun updateFavoriteIcon(isFavorite: Boolean) {
         if (isFavorite) {
             favoriteButton.setImageResource(R.drawable.ic_favorite_filled)
@@ -312,15 +300,9 @@ class RecipeDetailsFragment : Fragment() {
 
     private fun navigateToPostCommentFragment() {
         val postCommentFragment = PostCommentFragment()
-
-        // Passing data between fragments using Bundle based on Android developer documentation
-        // https://developer.android.com/guide/fragments/communicate
         val bundle = Bundle()
         bundle.putString("recipeId", currentRecipeId)
         postCommentFragment.arguments = bundle
-
-        // Fragment navigation and transaction pattern adapted from Android developer documentation
-        // https://developer.android.com/guide/fragments/fragmentmanager
         parentFragmentManager.beginTransaction()
             .replace(R.id.fragment_container, postCommentFragment)
             .addToBackStack(null)
