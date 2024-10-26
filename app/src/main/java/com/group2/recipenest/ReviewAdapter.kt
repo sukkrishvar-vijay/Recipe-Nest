@@ -59,7 +59,7 @@ class ReviewAdapter(
 
         private fun formatDate(date: Date): String {
             return try {
-                val outputFormat = SimpleDateFormat("dd MMMM, yyyy", Locale.getDefault()) // Output format: "03 October, 2024"
+                val outputFormat = SimpleDateFormat("dd MMMM, yyyy", Locale.getDefault())
                 outputFormat.format(date)
             } catch (e: Exception) {
                 e.toString()

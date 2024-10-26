@@ -1,15 +1,10 @@
-/*
- * Some of the code blocks in this file have been developed with assistance from AI tools, which were used to help in various stages of the project,
- * including code generation, identifying bugs, and fixing errors related to app crashes. The AI provided guidance in modifying
- * and improving the structure of the code while adhering to Android development best practices. All generated solutions were reviewed
- * and tested for functionality before implementation.
- */
-
 package com.group2.recipenest
 
 import RecipeCardModel
 import android.app.AlertDialog
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -24,6 +19,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.chip.Chip
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
+import com.google.firebase.firestore.QuerySnapshot
+import com.google.android.gms.tasks.Tasks
 
 class SearchFragment : Fragment() {
 
@@ -46,19 +44,24 @@ class SearchFragment : Fragment() {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_search, container, false)
 
+        // Initialize Firestore
         firestore = FirebaseFirestore.getInstance()
 
+        // Set up RecyclerView
         searchResultsRecyclerView = view.findViewById(R.id.searchResultsRecyclerView)
         searchResultsRecyclerView.layoutManager = LinearLayoutManager(context)
 
+        // Initialize with an empty list and set click handling
         adapter = RecipeCardsAdapter(listOf()) { recipe ->
             navigateToRecipeDetailsFragment(recipe)
         }
         searchResultsRecyclerView.adapter = adapter
 
+        // Handle Search Bar
         val searchEditText = view.findViewById<EditText>(R.id.searchEditText)
         val searchIcon = view.findViewById<ImageView>(R.id.searchIcon)
 
+        // Trigger search when search icon is pressed
         searchIcon.setOnClickListener {
             val query = searchEditText.text.toString().trim()
             if (query.isNotEmpty()) {
@@ -67,16 +70,28 @@ class SearchFragment : Fragment() {
                 Toast.makeText(requireContext(), "Please enter a recipe to search", Toast.LENGTH_SHORT).show()
             }
         }
+        searchEditText.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable?) {
+                if (s.isNullOrEmpty()) {
+                    adapter.updateRecipes(emptyList()) // Clear the recipe results
+                }
+            }
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+        })
 
+        // Access the chips and clear button
         difficultyLevelChip = view.findViewById(R.id.difficultyLevelChip)
         cookingTimeChip = view.findViewById(R.id.cookingTimeChip)
         cuisineTypeChip = view.findViewById(R.id.cuisineTypeChip)
         clearFiltersButton = view.findViewById(R.id.clearFiltersButton)
 
+        // Set click listeners for chips to show dialog
         difficultyLevelChip.setOnClickListener { showDifficultyLevelDialog(difficultyLevelChip) }
         cookingTimeChip.setOnClickListener { showCookingTimeDialog(cookingTimeChip) }
         cuisineTypeChip.setOnClickListener { showCuisineTypeDialog(cuisineTypeChip) }
 
+        // Handle Clear Filters Button
         clearFiltersButton.setOnClickListener { clearAllFilters() }
 
         return view
@@ -84,24 +99,49 @@ class SearchFragment : Fragment() {
 
     private fun fetchRecipes(query: String) {
         val searchQuery = query.lowercase()
+        var firestoreQuery: Query = firestore.collection("Recipes")
 
-        firestore.collection("Recipes")
-            .get()
+        // Log the filters being applied to help with debugging
+        Log.d("SearchFragment", "Filters - Difficulty: $selectedDifficultyLevel, Cooking Time: $selectedCookingTime, Cuisine Types: $selectedCuisineTypes")
+
+        // Apply Difficulty Level Filter (if selected) directly in the Firestore query
+        selectedDifficultyLevel?.let {
+            firestoreQuery = firestoreQuery.whereEqualTo("difficultyLevel", it)
+        }
+
+        // We don't apply the cuisine type filter in Firestore if there are multiple selections,
+        // because we need to ensure all selected types are present in each recipe.
+
+        // Execute the query to fetch documents based on difficulty and other conditions
+        firestoreQuery.get()
             .addOnSuccessListener { documents ->
                 val recipeList = mutableListOf<RecipeCardModel>()
+
                 for (document in documents) {
                     val recipeTitle = document.getString("recipeTitle") ?: "Untitled"
+                    val cookingTime = document.getLong("cookingTime")?.toInt() ?: 0
+                    val avgRating = document.getDouble("avgRating")?.toString() ?: "N/A"
+                    val difficultyLevel = document.getString("difficultyLevel") ?: ""
+                    val cuisineTypeList = document.get("cuisineType") as? List<*>
+                    val cuisineType = cuisineTypeList?.joinToString(", ") ?: "Unknown"
+                    val recipeDescription = document.getString("recipeDescription") ?: "N/A"
+                    val recipeUserId = document.getString("recipeUserId") ?: ""
+                    val recipeId = document.id
 
-                    if (recipeTitle.lowercase().contains(searchQuery)) {
-                        val cookingTime = document.getLong("cookingTime")?.toInt() ?: 0
-                        val avgRating = document.getDouble("avgRating")?.toString() ?: "N/A"
-                        val difficultyLevel = document.getString("difficultyLevel") ?: ""
-                        val cuisineTypeList = document.get("cuisineType") as? List<*>
-                        val cuisineType = cuisineTypeList?.joinToString(", ") ?: "Unknown"
-                        val recipeDescription = document.getString("recipeDescription") ?: "N/A"
-                        val recipeUserId = document.getString("recipeUserId") ?: ""
-                        val recipeId = document.id
+                    // Check if cooking time matches the filter (in-memory filtering)
+                    val isCookingTimeMatch = selectedCookingTime?.let { cookingTimeText ->
+                        val cookingTimeInMinutes = cookingTimeText.split(" ")[0].toIntOrNull()
+                        cookingTimeInMinutes?.let { cookingTime == it } ?: true
+                    } ?: true
 
+                    // Check if title matches the search query
+                    val isTitleMatch = recipeTitle.lowercase().contains(searchQuery)
+
+                    // Check if the recipe contains all selected cuisine types
+                    val isCuisineTypeMatch = selectedCuisineTypes.all { it in (cuisineTypeList ?: emptyList<String>()) }
+
+                    // If all conditions match, add the recipe to the list
+                    if (isCookingTimeMatch && isTitleMatch && isCuisineTypeMatch) {
                         val recipe = RecipeCardModel(
                             recipeUserId = recipeUserId,
                             recipeDescription = recipeDescription,
@@ -116,13 +156,24 @@ class SearchFragment : Fragment() {
                         recipeList.add(recipe)
                     }
                 }
+
+                // Update the adapter with the filtered recipes
                 adapter.updateRecipes(recipeList)
+
+                // Show toast only if the recipe list is empty
+                if (recipeList.isEmpty()) {
+                    Toast.makeText(requireContext(), "No recipes found with your search", Toast.LENGTH_SHORT).show()
+                }
             }
-            .addOnFailureListener { exception ->
-                Toast.makeText(requireContext(), "Failed to fetch recipes: ${exception.message}", Toast.LENGTH_SHORT).show()
+            .addOnFailureListener {
+                Toast.makeText(requireContext(), "Error fetching recipes. Please try again.", Toast.LENGTH_SHORT).show()
             }
     }
 
+
+
+
+    // Show difficulty level dialog
     private fun showDifficultyLevelDialog(difficultyLevelChip: Chip) {
         val options = arrayOf("Easy", "Medium", "Hard")
         var selectedOption: String? = null
@@ -144,6 +195,7 @@ class SearchFragment : Fragment() {
         }
         builder.setNegativeButton("Cancel") { dialog, _ ->
             dialog.cancel()
+            selectedDifficultyLevel = null // Reset the difficulty level filter
             difficultyLevelChip.isChecked = false
             difficultyLevelChip.text = "Difficulty Level"
         }
@@ -171,12 +223,15 @@ class SearchFragment : Fragment() {
         }
         builder.setNegativeButton("Cancel") { dialog, _ ->
             dialog.cancel()
+            selectedCookingTime = null // Reset the cooking time filter
             cookingTimeChip.isChecked = false
             cookingTimeChip.text = "Cooking Time"
         }
         builder.show()
     }
 
+
+    // Show cuisine type dialog
     private fun showCuisineTypeDialog(cuisineTypeChip: Chip) {
         val options = arrayOf("Vegetarian", "Non-Vegetarian", "Chinese", "Thai", "American", "Indian")
         val checkedItems = BooleanArray(options.size) { selectedCuisineTypes.contains(options[it]) }
@@ -201,12 +256,15 @@ class SearchFragment : Fragment() {
         }
         builder.setNegativeButton("Cancel") { dialog, _ ->
             dialog.cancel()
+            selectedCuisineTypes.clear() // Clear cuisine types filter
             cuisineTypeChip.isChecked = false
             cuisineTypeChip.text = "Cuisine Types"
         }
         builder.show()
     }
 
+
+    // Clear all filter selections
     private fun clearAllFilters() {
         selectedDifficultyLevel = null
         selectedCookingTime = null
@@ -232,9 +290,9 @@ class SearchFragment : Fragment() {
         (activity as? AppCompatActivity)?.supportActionBar?.show()
     }
 
+    // Navigate to RecipeDetailsFragment
     private fun navigateToRecipeDetailsFragment(recipe: RecipeCardModel) {
         val fragment = RecipeDetailsFragment()
-
         val bundle = Bundle().apply {
             putString("recipeTitle", recipe.recipeTitle)
             putString("recipeUserId", recipe.recipeUserId)

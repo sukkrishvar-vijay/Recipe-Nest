@@ -37,7 +37,7 @@ class RecipesFragment : Fragment() {
     private lateinit var verticalAdapter: RecipeCardsAdapter
     private lateinit var horizontalAdapter: TrendingRecipeCardsAdapter
     private lateinit var carouselAdapter: RecipesCarouselAdapter
-    private val handler = Handler(Looper.getMainLooper()) // Handler for auto-scrolling
+    private val handler = Handler(Looper.getMainLooper())
     private var scrollPosition = 0
     private var carouselRecipeList: List<RecipesCarouselModel> = listOf()
 
@@ -51,6 +51,8 @@ class RecipesFragment : Fragment() {
 
         (activity as AppCompatActivity).supportActionBar?.hide()
 
+        // Carousel layout setup with HeroCarouselStrategy based on Material Design documentation
+        // https://developer.android.com/reference/com/google/android/material/carousel/CarouselLayoutManager
         carouselRecyclerView = rootView.findViewById(R.id.carouselViewPager)
         carouselAdapter = RecipesCarouselAdapter(listOf()) { recipe ->
             navigateToRecipeDetailsFragment(recipe)
@@ -62,6 +64,8 @@ class RecipesFragment : Fragment() {
 
         startContinuousAutoScroll()
 
+        // RecyclerView setup with different layout managers based on Android developer documentation
+        // https://developer.android.com/guide/topics/ui/layout/recyclerview
         horizontalRecyclerView = rootView.findViewById(R.id.horizontalRecyclerView)
         horizontalRecyclerView.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
         horizontalAdapter = TrendingRecipeCardsAdapter(listOf()) { recipe ->
@@ -69,6 +73,8 @@ class RecipesFragment : Fragment() {
         }
         horizontalRecyclerView.adapter = horizontalAdapter
 
+        // RecyclerView setup with different layout managers based on Android developer documentation
+        // https://developer.android.com/guide/topics/ui/layout/recyclerview
         verticalRecyclerView = rootView.findViewById(R.id.verticalRecyclerView)
         verticalRecyclerView.layoutManager = LinearLayoutManager(context)
         verticalAdapter = RecipeCardsAdapter(listOf()) { recipe ->
@@ -81,10 +87,15 @@ class RecipesFragment : Fragment() {
         return rootView
     }
 
+    // Firestore data retrieval and querying based on Firebase documentation
+    // https://firebase.google.com/docs/firestore/query-data/get-data
     private fun fetchRecipesFromFirestore() {
         firestore.collection("Recipes")
             .get()
             .addOnSuccessListener { documents ->
+
+                // Retrieving Firestore documents and creating instances of multiple data models based on Firebase documentation
+                // https://firebase.google.com/docs/firestore/query-data/get-data
                 val recipeList = mutableListOf<RecipeCardModel>()
                 val trendingRecipeList = mutableListOf<TrendingRecipeCardsModel>()
                 val carouselRecipeListOriginal = mutableListOf<RecipesCarouselModel>()
@@ -151,6 +162,8 @@ class RecipesFragment : Fragment() {
             }
     }
 
+    // Auto-scrolling RecyclerView carousel pattern based on Android developer community examples
+    // https://developer.android.com/reference/androidx/recyclerview/widget/RecyclerView
     private fun startContinuousAutoScroll() {
         handler.postDelayed(object : Runnable {
             override fun run() {
@@ -171,10 +184,14 @@ class RecipesFragment : Fragment() {
         handler.removeCallbacksAndMessages(null)
     }
 
+    // Passing data between fragments using Bundle based on Android developer documentation
+    // https://developer.android.com/guide/fragments/communicate
     private fun navigateToRecipeDetailsFragment(recipe: Any) {
         val recipeDetailsFragment = RecipeDetailsFragment()
         val bundle = Bundle()
 
+        // Handling multiple data models with `when` expression and passing data using Bundle based on Android developer documentation
+        // https://developer.android.com/guide/fragments/communicate
         when (recipe) {
             is RecipeCardModel -> {
                 bundle.putString("recipeUserId", recipe.recipeUserId)
@@ -217,12 +234,16 @@ class RecipesFragment : Fragment() {
             .commit()
     }
 
+    // Controlling ActionBar visibility in fragments based on Android developer documentation
+    // https://developer.android.com/reference/androidx/appcompat/app/AppCompatActivity#getSupportActionBar()
     override fun onDestroyView() {
         super.onDestroyView()
         stopAutoScroll()
         (activity as? AppCompatActivity)?.supportActionBar?.show()
     }
 
+    // Controlling ActionBar visibility in fragments based on Android developer documentation
+    // https://developer.android.com/reference/androidx/appcompat/app/AppCompatActivity#getSupportActionBar()
     override fun onResume() {
         super.onResume()
         (activity as? AppCompatActivity)?.supportActionBar?.hide()
