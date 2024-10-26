@@ -17,6 +17,8 @@ import androidx.recyclerview.widget.RecyclerView
 import java.text.SimpleDateFormat
 import java.util.*
 
+// RecyclerView Adapter and ViewHolder setup based on Android developer documentation
+// https://developer.android.com/guide/topics/ui/layout/recyclerview
 class ReviewAdapter(
     private var reviewList: List<ReviewModel>
 ) : RecyclerView.Adapter<ReviewAdapter.ReviewViewHolder>() {
@@ -36,6 +38,8 @@ class ReviewAdapter(
         return reviewList.size
     }
 
+    // Updating RecyclerView data and notifying adapter based on Android developer documentation
+    // https://developer.android.com/reference/androidx/recyclerview/widget/RecyclerView.Adapter#notifydatasetchanged
     fun updateReviews(newReviewList: List<ReviewModel>) {
         reviewList = newReviewList
         notifyDataSetChanged()
@@ -46,6 +50,8 @@ class ReviewAdapter(
         private val commentText: TextView = itemView.findViewById(R.id.review_text)
         private val ratingText: TextView = itemView.findViewById(R.id.rating)
 
+        // Binding data to ViewHolder in RecyclerView based on Android developer documentation
+        // https://developer.android.com/guide/topics/ui/layout/recyclerview#bind-data
         fun bind(review: ReviewModel) {
             val formattedDate = formatDate(review.dateCommented)
 
@@ -57,6 +63,8 @@ class ReviewAdapter(
             ratingText.text = "${review.rating}★"
         }
 
+        // Date formatting using SimpleDateFormat in Kotlin based on Java documentation
+        // https://docs.oracle.com/javase/7/docs/api/java/text/SimpleDateFormat.html
         private fun formatDate(date: Date): String {
             return try {
                 val outputFormat = SimpleDateFormat("dd MMMM, yyyy", Locale.getDefault())
