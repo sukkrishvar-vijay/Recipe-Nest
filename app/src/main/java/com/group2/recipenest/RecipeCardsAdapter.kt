@@ -18,6 +18,7 @@ import androidx.recyclerview.widget.RecyclerView
 
 // RecyclerView Adapter and ViewHolder implementation based on Android developer documentation
 // https://developer.android.com/guide/topics/ui/layout/recyclerview
+// https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/
 class RecipeCardsAdapter(
     private var recipeList: List<RecipeCardModel>,
     private val onClick: (RecipeCardModel) -> Unit
@@ -25,6 +26,7 @@ class RecipeCardsAdapter(
 
     // ViewHolder creation and view inflation based on Android developer guide
     // https://developer.android.com/guide/topics/ui/layout/recyclerview
+    // https://developer.android.com/reference/kotlin/android/view/LayoutInflater
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecipeViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.card_recipe, parent, false)
         return RecipeViewHolder(view)
@@ -47,6 +49,7 @@ class RecipeCardsAdapter(
 
         // Data binding in RecyclerView ViewHolder adapted from Android developer documentation
         // https://developer.android.com/guide/topics/ui/layout/recyclerview#bind-data
+        // https://developer.android.com/reference/android/widget/ImageView
         fun bind(recipe: RecipeCardModel, onClick: (RecipeCardModel) -> Unit) {
             recipeTitle.text = recipe.recipeTitle
             recipeRating.text = "${recipe.avgRating}★"
@@ -55,6 +58,7 @@ class RecipeCardsAdapter(
 
             // Click listener handling in RecyclerView items based on Android developer guide
             // https://developer.android.com/guide/topics/ui/controls/button
+            // https://discuss.kotlinlang.org/t/trying-to-understand-onclicklistener/24773
             itemView.setOnClickListener {
                 onClick(recipe)
             }

@@ -41,6 +41,7 @@ class MyRecipesFragment : Fragment() {
 
         // Toolbar setup and customization based on Android developer documentation
         // https://developer.android.com/reference/androidx/appcompat/widget/Toolbar
+        // https://developer.android.com/reference/android/content/res/Resources
         toolbar.title = "My Recipes"
         toolbar.setTitleTextColor(resources.getColor(android.R.color.black, null))
 
@@ -51,6 +52,7 @@ class MyRecipesFragment : Fragment() {
 
         // FloatingActionButton usage and fragment transaction learned from Android developer guide
         // https://developer.android.com/reference/com/google/android/material/floatingactionbutton/FloatingActionButton
+       //  https://discuss.kotlinlang.org/t/findviewbyid-with-variable/26344
         val fab: FloatingActionButton = view.findViewById(R.id.fab_add_new_recipe)
         fab.setOnClickListener {
             val addRecipeFragment = AddRecipeFragment()
@@ -76,6 +78,8 @@ class MyRecipesFragment : Fragment() {
 
     // Firestore query and document retrieval adapted from Firebase documentation
     // https://firebase.google.com/docs/firestore/query-data/get-data
+    // https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/to-string.html
+
     private fun fetchUserRecipes() {
         firestore.collection("Recipes")
             .whereEqualTo("recipeUserId", currentUserId)
@@ -125,6 +129,7 @@ class MyRecipesFragment : Fragment() {
 
         // Passing data between fragments using Bundle adapted from Android developer documentation
         // https://developer.android.com/guide/fragments/communicate
+        // https://developer.android.com/reference/kotlin/android/os/Bundle
         val bundle = Bundle()
         bundle.putString("recipeUserId", recipe.recipeUserId)
         bundle.putString("recipeDescription", recipe.recipeDescription)
@@ -139,6 +144,7 @@ class MyRecipesFragment : Fragment() {
 
         // Fragment navigation and transactions adapted from Android developer documentation
         // https://developer.android.com/guide/fragments/fragmentmanager
+        //https://rohitksingh.medium.com/what-is-addtobackstack-in-fragment-661ac01a6507
         parentFragmentManager.beginTransaction()
             .replace(R.id.fragment_container, recipeDetailsFragment)
             .addToBackStack(null)

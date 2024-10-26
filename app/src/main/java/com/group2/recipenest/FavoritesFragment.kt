@@ -42,6 +42,7 @@ class FavoritesFragment : Fragment() {
 
         // RecyclerView setup with adapter adapted from Android documentation
         // https://developer.android.com/guide/topics/ui/layout/recyclerview
+        // https://youtu.be/Mc0XT58A1Z4?si=CflzfraJ1Kckzmy3
         val recyclerView = rootView.findViewById<RecyclerView>(R.id.favoritesRecyclerView)
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
 
@@ -58,6 +59,7 @@ class FavoritesFragment : Fragment() {
 
         // Toolbar title setup and customization based on Android developer documentation
         // https://developer.android.com/reference/androidx/appcompat/widget/Toolbar
+        // https://developer.android.com/reference/android/content/res/Resources
         val toolbar: Toolbar = requireActivity().findViewById(R.id.toolbar)
         toolbar.title = "Favorites"
         toolbar.setTitleTextColor(resources.getColor(android.R.color.black, null))
@@ -86,6 +88,7 @@ class FavoritesFragment : Fragment() {
 
     // Firestore document retrieval adapted from Firebase documentation
     // https://firebase.google.com/docs/firestore/query-data/get-data
+    // https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-mutable-list/
     private fun fetchFavoriteCollections() {
         val userRef = firestore.collection("User").document(currentUserId)
 
@@ -110,6 +113,7 @@ class FavoritesFragment : Fragment() {
 
     // AlertDialog setup and display learned from Android documentation
     // https://developer.android.com/guide/topics/ui/dialogs
+    // https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-mutable-list/
     private fun showAddCollectionDialog() {
         val dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_add_collection, null)
 
@@ -138,6 +142,7 @@ class FavoritesFragment : Fragment() {
 
     // Firestore document update function based on Firebase documentation
     // https://firebase.google.com/docs/firestore/manage-data/add-data
+    // https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/to-mutable-list.html
     private fun addNewCollection(newCollectionName: String) {
         val userRef = firestore.collection("User").document(currentUserId)
 

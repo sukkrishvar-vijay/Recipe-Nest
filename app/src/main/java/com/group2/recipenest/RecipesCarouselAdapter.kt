@@ -24,6 +24,7 @@ class RecipesCarouselAdapter(
 
     // ViewHolder creation and view inflation based on Android developer documentation
     // https://developer.android.com/reference/androidx/recyclerview/widget/RecyclerView.ViewHolder
+    // https://developer.android.com/reference/kotlin/android/view/LayoutInflater
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CarouselViewHolder {
         val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.carousel_item, parent, false)
@@ -50,6 +51,7 @@ class RecipesCarouselAdapter(
 
         // Data binding in RecyclerView ViewHolder adapted from Android developer documentation
         // https://developer.android.com/guide/topics/ui/layout/recyclerview#bind-data
+        // https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.text/
         fun bind(item: RecipesCarouselModel, onClick: (RecipesCarouselModel) -> Unit) {
             imageView.setImageResource(item.imageResId)
             titleTextView.text = item.recipeTitle

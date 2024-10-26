@@ -18,11 +18,13 @@ import androidx.recyclerview.widget.RecyclerView
 
 // RecyclerView adapter implementation based on Android developer documentation
 // https://developer.android.com/guide/topics/ui/layout/recyclerview
+
 class FavoritesTileAdapter(private var tileList: List<FavoriteCollectionsTileModel>, private val onClick: (FavoriteCollectionsTileModel) -> Unit) :
     RecyclerView.Adapter<FavoritesTileAdapter.TileViewHolder>() {
 
     // Data update handling in RecyclerView adapted from Android documentation
     // https://developer.android.com/guide/topics/ui/layout/recyclerview
+   //  https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/
     fun updateTiles(newTileList: List<FavoriteCollectionsTileModel>) {
         tileList = newTileList
         notifyDataSetChanged()
@@ -30,6 +32,7 @@ class FavoritesTileAdapter(private var tileList: List<FavoriteCollectionsTileMod
 
     // ViewHolder pattern and View inflation in RecyclerView learned from Android developer guide
     // https://developer.android.com/reference/androidx/recyclerview/widget/RecyclerView.ViewHolder
+    // https://developer.android.com/reference/android/view/LayoutInflater
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TileViewHolder {
         val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.favorite_tile_item, parent, false)
@@ -38,6 +41,7 @@ class FavoritesTileAdapter(private var tileList: List<FavoriteCollectionsTileMod
 
     // ViewHolder data binding in RecyclerView adapted from Android developer documentation
     // https://developer.android.com/guide/topics/ui/layout/recyclerview#java
+    // https://developer.mescius.com/componentone/docs/services/online-datacollection/C1.Android.DataCollection~C1.Android.DataCollection.C1RecyclerViewAdapter%601~OnBindViewHolder.html
     override fun onBindViewHolder(holder: TileViewHolder, position: Int) {
         val tile = tileList[position]
         holder.bind(tile, onClick)
@@ -54,6 +58,7 @@ class FavoritesTileAdapter(private var tileList: List<FavoriteCollectionsTileMod
 
             // Customizing UI elements in RecyclerView ViewHolder based on Android developer documentation
             // https://developer.android.com/reference/android/widget/TextView
+            // https://learn.microsoft.com/en-us/dotnet/api/android.widget.imageview.setimageresource?view=net-android-34.0
             tileTitle.text = "${tile.title} (${tile.count})"
             trailingIcon.setImageResource(R.drawable.ic_right)
 

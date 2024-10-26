@@ -65,6 +65,7 @@ class ReviewAdapter(
 
         // Date formatting using SimpleDateFormat in Kotlin based on Java documentation
         // https://docs.oracle.com/javase/7/docs/api/java/text/SimpleDateFormat.html
+        // https://kotlinlang.org/docs/exceptions.html
         private fun formatDate(date: Date): String {
             return try {
                 val outputFormat = SimpleDateFormat("dd MMMM, yyyy", Locale.getDefault())

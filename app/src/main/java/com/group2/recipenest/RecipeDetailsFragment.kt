@@ -57,6 +57,7 @@ class RecipeDetailsFragment : Fragment() {
 
         // FloatingActionButton click handling and fragment navigation based on Android developer documentation
         // https://developer.android.com/reference/com/google/android/material/floatingactionbutton/FloatingActionButton
+        //https://discuss.kotlinlang.org/t/trying-to-understand-onclicklistener/24773
         val fabWriteComment: FloatingActionButton = rootView.findViewById(R.id.fab_write_comment)
         fabWriteComment.setOnClickListener {
             navigateToPostCommentFragment()
@@ -79,6 +80,7 @@ class RecipeDetailsFragment : Fragment() {
 
     // Retrieving fragment arguments and updating UI elements based on Android developer documentation
     // https://developer.android.com/guide/fragments/communicate
+    // https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.reflect/-k-type/arguments.html
     private fun setRecipeDetails() {
         val arguments = arguments ?: return
 
@@ -101,6 +103,7 @@ class RecipeDetailsFragment : Fragment() {
 
     // Firestore document retrieval and setting text views with data based on Firebase documentation
     // https://firebase.google.com/docs/firestore/query-data/get-data
+    // https://developer.android.com/reference/com/google/android/play/core/tasks/OnFailureListener
     private fun fetchAndSetRecipeOwnerDetails(recipeUserId: String) {
         val userRef = firestore.collection("User").document(recipeUserId)
         userRef.get().addOnSuccessListener { document ->
@@ -119,6 +122,7 @@ class RecipeDetailsFragment : Fragment() {
 
     // Firestore document retrieval, querying, and updates based on Firebase documentation
     // https://firebase.google.com/docs/firestore/query-data/get-data
+    // https://docs.airship.com/reference/libraries/android-kotlin/latest/urbanairship-core/com.urbanairship.actions/-action-value/get-double.html
     private fun fetchAndSetCommentsAndAvgRating() {
         val recipeRef = firestore.collection("Recipes").document(currentRecipeId)
         recipeRef.get().addOnSuccessListener { document ->
@@ -141,6 +145,7 @@ class RecipeDetailsFragment : Fragment() {
 
     // Firestore document retrieval and checking conditions within nested collections based on Firebase documentation
     // https://firebase.google.com/docs/firestore/query-data/get-data
+    // https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/for-each.html
     private fun checkIfFavorite(recipeId: String) {
         firestore.collection("User").document(currentUserId).get().addOnSuccessListener { document ->
             if (document.exists()) {
@@ -162,6 +167,7 @@ class RecipeDetailsFragment : Fragment() {
 
     // Toolbar customization and back navigation based on Android developer guide
     // https://developer.android.com/reference/androidx/appcompat/widget/Toolbar
+    // https://williamrai.hashnode.dev/difference-between-requireactivity-and-requirecontext
     private fun setUpToolbarWithBackButton() {
         val toolbar: Toolbar = requireActivity().findViewById(R.id.toolbar)
         toolbar.setNavigationIcon(R.drawable.ic_back_arrow)
@@ -179,6 +185,7 @@ class RecipeDetailsFragment : Fragment() {
 
                 // AlertDialog setup and single-choice handling based on Android developer documentation
                 // https://developer.android.com/reference/androidx/appcompat/app/AlertDialog
+                // https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/to-typed-array.html
                 val builder = AlertDialog.Builder(requireContext())
                 builder.setTitle("Select Favorite Category")
 
@@ -187,12 +194,14 @@ class RecipeDetailsFragment : Fragment() {
 
                 // AlertDialog with single-choice items setup and selection handling based on Android developer documentation
                 // https://developer.android.com/reference/androidx/appcompat/app/AlertDialog.Builder#setSingleChoiceItems(java.lang.CharSequence[],%20int,%20android.content.DialogInterface.OnClickListener)
+                // https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/index-of.html
                 builder.setSingleChoiceItems(options, options.indexOf(currentFavoriteCategory)) { _, which ->
                     selectedOption = options[which]
                 }
 
                 // AlertDialog with button click handling and conditional logic based on Android developer documentation
                 // https://developer.android.com/reference/androidx/appcompat/app/AlertDialog
+
                 builder.setPositiveButton("Save") { _, _ ->
                     if (!selectedOption.isNullOrEmpty()) {
                         if (currentFavoriteCategory != null && currentFavoriteCategory != selectedOption) {

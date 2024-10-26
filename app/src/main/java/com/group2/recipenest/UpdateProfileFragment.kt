@@ -57,6 +57,7 @@ class UpdateProfileFragment : Fragment() {
 
         // Setting up Toolbar with navigation icon and handling click events based on Android developer documentation
         // https://developer.android.com/reference/androidx/appcompat/widget/Toolbar
+        // https://developer.android.com/reference/androidx/activity/OnBackPressedDispatcher
         val toolbar: Toolbar = requireActivity().findViewById(R.id.toolbar)
         toolbar.title = "Settings"
         toolbar.setTitleTextColor(resources.getColor(android.R.color.black, null))
@@ -77,6 +78,7 @@ class UpdateProfileFragment : Fragment() {
 
         // Disabling EditText fields to prevent modification based on Android developer documentation
         // https://developer.android.com/reference/android/widget/EditText
+        // https://kotlinlang.org/api/latest/jvm/stdlib/org.khronos.webgl/-web-g-l-rendering-context-base/is-enabled.html
         emailEditText.isEnabled = false
 
         getUserProfileData(userDocumentId)
@@ -87,11 +89,12 @@ class UpdateProfileFragment : Fragment() {
 
         // Storing user preferences with SharedPreferences based on Android developer documentation
         // https://developer.android.com/training/data-storage/shared-preferences
+        // https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/
         val sharedPreferences = requireActivity().getSharedPreferences("UserSettings", Context.MODE_PRIVATE)
         val biometricEnabled = sharedPreferences.getBoolean("biometricEnabled", false)
         authSwitch.isChecked = biometricEnabled
 
-        authSwitch.setOnCheckedChangeListener { _, isChecked ->
+        authSwitch.setOnCheckedChangeListener {_, isChecked ->
             sharedPreferences.edit().putBoolean("biometricEnabled", isChecked).apply()
             if (isChecked) {
                 // Displaying feedback to the user using Toast messages based on Android developer documentation
@@ -107,6 +110,7 @@ class UpdateProfileFragment : Fragment() {
 
     // Firestore data retrieval and document handling based on Firebase documentation
     // https://firebase.google.com/docs/firestore/query-data/get-data
+
     private fun getUserProfileData(userId: String) {
         val userRef = firestore.collection("User").document(userId)
 
@@ -137,6 +141,7 @@ class UpdateProfileFragment : Fragment() {
 
     // Firestore document update with map data based on Firebase documentation
     // https://firebase.google.com/docs/firestore/manage-data/add-data#update-data
+    // https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/to-string.html
     private fun updateUserProfile() {
         val updatedFirstName = firstNameEditText.text.toString()
         val updatedLastName = lastNameEditText.text.toString()
@@ -156,6 +161,7 @@ class UpdateProfileFragment : Fragment() {
             .addOnSuccessListener {
                 // Displaying feedback to the user using Toast messages based on Android developer documentation
                 // https://developer.android.com/guide/topics/ui/notifiers/toasts
+
                 Toast.makeText(requireContext(), "Profile Updated", Toast.LENGTH_SHORT).show()
                 originalFirstName = updatedFirstName
                 originalLastName = updatedLastName

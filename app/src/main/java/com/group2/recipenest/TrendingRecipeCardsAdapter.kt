@@ -18,6 +18,7 @@ import com.group2.recipenest.R
 
 // Setting up RecyclerView Adapter and ViewHolder based on Android developer documentation
 // https://developer.android.com/guide/topics/ui/layout/recyclerview
+// https://learn.microsoft.com/en-us/dotnet/api/android.widget.imageview.setimageresource?view=net-android-34.0
 class TrendingRecipeCardsAdapter(
     private var recipes: List<TrendingRecipeCardsModel>,
     private val onClick: (TrendingRecipeCardsModel) -> Unit
@@ -31,6 +32,7 @@ class TrendingRecipeCardsAdapter(
 
     // Binding data to ViewHolder based on Android developer documentation
     // https://developer.android.com/guide/topics/ui/layout/recyclerview#bind-data
+
     override fun onBindViewHolder(holder: RecipeViewHolder, position: Int) {
         val recipe = recipes[position]
         holder.recipeImageView.setImageResource(recipe.imageResId)

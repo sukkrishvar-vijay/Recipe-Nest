@@ -36,6 +36,7 @@ class ProfileFragment : Fragment() {
         myRecipesTile.setOnClickListener {
             // Fragment transaction and navigation based on Android developer documentation
             // https://developer.android.com/guide/fragments/fragmentmanager
+           // https://rohitksingh.medium.com/what-is-addtobackstack-in-fragment-661ac01a6507
             parentFragmentManager.beginTransaction()
                 .replace(R.id.fragment_container, MyRecipesFragment())
                 .addToBackStack(null)

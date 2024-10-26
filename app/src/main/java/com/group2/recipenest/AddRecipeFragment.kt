@@ -61,14 +61,17 @@ class AddRecipeFragment : Fragment() {
 
         // Button click listener implementation learned from Android developer tutorial
         // https://developer.android.com/guide/topics/ui/controls/button
+        // https://discuss.kotlinlang.org/t/trying-to-understand-onclicklistener/24773
         uploadImageButton.setOnClickListener {
             // Toast message usage based on Android developer documentation
             // https://developer.android.com/guide/topics/ui/notifiers/toasts
+            // https://www.geeksforgeeks.org/toasts-android-studio/
             Toast.makeText(activity, "Upload image clicked", Toast.LENGTH_SHORT).show()
         }
 
         // Code handling MaterialButtonToggleGroup adapted from Android developer documentation
         // https://developer.android.com/reference/com/google/android/material/button/MaterialButtonToggleGroup
+        // https://github.com/material-components/material-components-android/issues/1365
         difficultyToggleGroup.addOnButtonCheckedListener { group, checkedId, isChecked ->
             if (isChecked) {
                 val selectedButton: MaterialButton = rootView.findViewById(checkedId)
@@ -92,6 +95,7 @@ class AddRecipeFragment : Fragment() {
 
         // Button click listener implementation learned from Android developer tutorial
         // https://developer.android.com/guide/topics/ui/controls/button
+        // https://discuss.kotlinlang.org/t/trying-to-understand-onclicklistener/24773
         saveRecipeButton.setOnClickListener {
             val recipeTitle = titleEditText.text.toString()
             val recipeDescription = descriptionEditText.text.toString()
@@ -158,6 +162,7 @@ class AddRecipeFragment : Fragment() {
 
     // Firestore add data function adapted from Firebase documentation
     // https://firebase.google.com/docs/firestore/manage-data/add-data
+    // https://youtu.be/GEb62UipZi0?si=6hw8rH1IcU-pOMsY
     private fun storeRecipeInFirestore(
         title: String,
         description: String,
@@ -182,6 +187,7 @@ class AddRecipeFragment : Fragment() {
             .addOnSuccessListener {
                 // Toast message usage based on Android developer documentation
                 // https://developer.android.com/guide/topics/ui/notifiers/toasts
+               // https://www.geeksforgeeks.org/how-to-implement-onbackpressed-in-fragments-in-android/
                 Toast.makeText(requireContext(), "Recipe added successfully!", Toast.LENGTH_SHORT).show()
                 requireActivity().onBackPressed()
             }

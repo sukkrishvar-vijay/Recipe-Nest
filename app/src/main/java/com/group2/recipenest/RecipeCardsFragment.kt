@@ -50,6 +50,7 @@ class RecipeCardsFragment : Fragment() {
 
         // RecyclerView setup and LinearLayoutManager usage based on Android developer documentation
         // https://developer.android.com/guide/topics/ui/layout/recyclerview
+        // https://stackoverflow.com/questions/50171647/recyclerview-setlayoutmanager
         recipeRecyclerView = view.findViewById(R.id.recipe_recycler_view)
         recipeRecyclerView.layoutManager = LinearLayoutManager(requireContext())
 
@@ -142,6 +143,7 @@ class RecipeCardsFragment : Fragment() {
 
         // Passing data between fragments using Bundle based on Android developer documentation
         // https://developer.android.com/guide/fragments/communicate
+        // https://stackoverflow.com/questions/16499385/using-bundle-to-pass-data-between-fragment-to-another-fragment-example
         val bundle = Bundle()
         bundle.putString("recipeUserId", recipe.recipeUserId)
         bundle.putString("recipeDescription", recipe.recipeDescription)
@@ -156,6 +158,7 @@ class RecipeCardsFragment : Fragment() {
 
         // Fragment navigation and transaction pattern adapted from Android developer documentation
         // https://developer.android.com/guide/fragments/fragmentmanager
+        // https://medium.com/@zorbeytorunoglu/fragment-navigation-on-android-c45488184399
         parentFragmentManager.beginTransaction()
             .replace(R.id.fragment_container, recipeDetailsFragment)
             .addToBackStack(null)
@@ -164,6 +167,7 @@ class RecipeCardsFragment : Fragment() {
 
     // Using companion object and factory method to pass arguments in a fragment based on Android developer documentation
     // https://developer.android.com/guide/fragments/communicate#fragment-create
+    // https://medium.com/@pablisco/companion-factory-methods-in-kotlin-e2eeb1e87f1b
     companion object {
         fun newInstance(tileTitle: String): RecipeCardsFragment {
             val fragment = RecipeCardsFragment()

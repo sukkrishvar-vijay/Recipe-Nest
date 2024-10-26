@@ -53,6 +53,7 @@ class RecipesFragment : Fragment() {
 
         // Carousel layout setup with HeroCarouselStrategy based on Material Design documentation
         // https://developer.android.com/reference/com/google/android/material/carousel/CarouselLayoutManager
+        // https://youtu.be/dvaanTc24KY?si=5-gk_JOgy7wdi8CF
         carouselRecyclerView = rootView.findViewById(R.id.carouselViewPager)
         carouselAdapter = RecipesCarouselAdapter(listOf()) { recipe ->
             navigateToRecipeDetailsFragment(recipe)
@@ -75,6 +76,7 @@ class RecipesFragment : Fragment() {
 
         // RecyclerView setup with different layout managers based on Android developer documentation
         // https://developer.android.com/guide/topics/ui/layout/recyclerview
+        // https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/list-of.html
         verticalRecyclerView = rootView.findViewById(R.id.verticalRecyclerView)
         verticalRecyclerView.layoutManager = LinearLayoutManager(context)
         verticalAdapter = RecipeCardsAdapter(listOf()) { recipe ->
@@ -89,6 +91,7 @@ class RecipesFragment : Fragment() {
 
     // Firestore data retrieval and querying based on Firebase documentation
     // https://firebase.google.com/docs/firestore/query-data/get-data
+    // https://developer.android.com/reference/com/google/android/play/core/tasks/OnSuccessListener
     private fun fetchRecipesFromFirestore() {
         firestore.collection("Recipes")
             .get()
@@ -96,6 +99,7 @@ class RecipesFragment : Fragment() {
 
                 // Retrieving Firestore documents and creating instances of multiple data models based on Firebase documentation
                 // https://firebase.google.com/docs/firestore/query-data/get-data
+                // https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-mutable-list/
                 val recipeList = mutableListOf<RecipeCardModel>()
                 val trendingRecipeList = mutableListOf<TrendingRecipeCardsModel>()
                 val carouselRecipeListOriginal = mutableListOf<RecipesCarouselModel>()
@@ -164,6 +168,7 @@ class RecipesFragment : Fragment() {
 
     // Auto-scrolling RecyclerView carousel pattern based on Android developer community examples
     // https://developer.android.com/reference/androidx/recyclerview/widget/RecyclerView
+    // https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-mutable-list/
     private fun startContinuousAutoScroll() {
         handler.postDelayed(object : Runnable {
             override fun run() {
@@ -186,12 +191,14 @@ class RecipesFragment : Fragment() {
 
     // Passing data between fragments using Bundle based on Android developer documentation
     // https://developer.android.com/guide/fragments/communicate
+    // https://developer.android.com/reference/kotlin/android/os/Bundle
     private fun navigateToRecipeDetailsFragment(recipe: Any) {
         val recipeDetailsFragment = RecipeDetailsFragment()
         val bundle = Bundle()
 
         // Handling multiple data models with `when` expression and passing data using Bundle based on Android developer documentation
         // https://developer.android.com/guide/fragments/communicate
+        // https://developer.android.com/reference/kotlin/android/os/Bundle
         when (recipe) {
             is RecipeCardModel -> {
                 bundle.putString("recipeUserId", recipe.recipeUserId)
@@ -236,6 +243,7 @@ class RecipesFragment : Fragment() {
 
     // Controlling ActionBar visibility in fragments based on Android developer documentation
     // https://developer.android.com/reference/androidx/appcompat/app/AppCompatActivity#getSupportActionBar()
+    // https://developer.android.com/reference/android/app/ActionBar
     override fun onDestroyView() {
         super.onDestroyView()
         stopAutoScroll()

@@ -45,6 +45,7 @@ class PostCommentFragment : Fragment() {
 
         // Retrieving fragment arguments using Bundle based on Android developer documentation
         // https://developer.android.com/guide/fragments/communicate
+        // https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.text/is-empty.html
         recipeId = arguments?.getString("recipeId") ?: ""
 
         if (recipeId.isEmpty()) {
@@ -81,6 +82,7 @@ class PostCommentFragment : Fragment() {
 
     // Star rating click listener pattern adapted from Android developer tutorial on custom views
     // https://developer.android.com/guide/topics/ui/custom-components
+    // https://discuss.kotlinlang.org/t/trying-to-understand-onclicklistener/24773
     private fun setupStarClickListeners() {
         val stars = listOf(star1, star2, star3, star4, star5)
         stars.forEachIndexed { index, star ->
@@ -133,6 +135,7 @@ class PostCommentFragment : Fragment() {
 
                 // Firestore batch write with array updates learned from Firebase documentation
                 // https://firebase.google.com/docs/firestore/manage-data/add-data#update_elements_in_an_array
+                // https://developer.android.com/guide/fragments/fragmentmanager
                 firestore.runBatch { batch ->
                     batch.update(recipeRef, "comments", FieldValue.arrayUnion(commentData))
                     batch.update(recipeRef, "avgRating", newAvgRating)

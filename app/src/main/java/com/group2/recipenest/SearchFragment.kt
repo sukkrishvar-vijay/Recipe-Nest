@@ -55,6 +55,7 @@ class SearchFragment : Fragment() {
 
         // RecyclerView setup and Adapter configuration based on Android developer documentation
         // https://developer.android.com/guide/topics/ui/layout/recyclerview
+        // https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/to-string.html
         searchResultsRecyclerView = view.findViewById(R.id.searchResultsRecyclerView)
         searchResultsRecyclerView.layoutManager = LinearLayoutManager(context)
         adapter = RecipeCardsAdapter(listOf()) { recipe ->
@@ -76,6 +77,7 @@ class SearchFragment : Fragment() {
 
         // TextWatcher for monitoring text input based on Android developer documentation
         // https://developer.android.com/reference/android/text/TextWatcher
+        // https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/empty-list.html
         searchEditText.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
                 if (s.isNullOrEmpty()) {
@@ -88,6 +90,7 @@ class SearchFragment : Fragment() {
 
         // Chip components for filter selection based on Material Design documentation
         // https://material.io/components/chips
+        // https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-mutable-list/
         difficultyLevelChip = view.findViewById(R.id.difficultyLevelChip)
         cookingTimeChip = view.findViewById(R.id.cookingTimeChip)
         cuisineTypeChip = view.findViewById(R.id.cuisineTypeChip)
@@ -104,6 +107,7 @@ class SearchFragment : Fragment() {
 
     // Firestore data retrieval and filtering based on Firebase documentation
     // https://firebase.google.com/docs/firestore/query-data/get-data
+    // https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-mutable-list/
     private fun fetchRecipes(query: String) {
         val searchQuery = query.lowercase()
         var firestoreQuery: Query = firestore.collection("Recipes")
@@ -165,12 +169,14 @@ class SearchFragment : Fragment() {
 
     // AlertDialog setup for filter selection based on Android developer documentation
     // https://developer.android.com/reference/android/app/AlertDialog
+    // https://m2.material.io/components/chips/android
     private fun showDifficultyLevelDialog(difficultyLevelChip: Chip) {
         val options = arrayOf("Easy", "Medium", "Hard")
         var selectedOption: String? = null
 
         // Single-choice AlertDialog setup based on Android developer documentation
         // https://developer.android.com/reference/android/app/AlertDialog.Builder#setSingleChoiceItems(java.lang.CharSequence[],%20int,%20android.content.DialogInterface.OnClickListener)
+        // https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/index-of.html
         val builder = AlertDialog.Builder(requireContext())
         builder.setTitle("Difficulty Level")
         builder.setSingleChoiceItems(options, options.indexOf(selectedDifficultyLevel)) { _, which ->
@@ -197,6 +203,7 @@ class SearchFragment : Fragment() {
 
     // AlertDialog setup for filter selection based on Android developer documentation
     // https://developer.android.com/reference/android/app/AlertDialog
+    // https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/index-of.html
     private fun showCookingTimeDialog(cookingTimeChip: Chip) {
         val options = arrayOf("15 mins", "30 mins", "45 mins", "60 mins")
         var selectedOption: String? = null
@@ -229,12 +236,14 @@ class SearchFragment : Fragment() {
 
     // AlertDialog setup for filter selection based on Android developer documentation
     // https://developer.android.com/reference/android/app/AlertDialog
+    // https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean-array/
     private fun showCuisineTypeDialog(cuisineTypeChip: Chip) {
         val options = arrayOf("Vegetarian", "Non-Vegetarian", "Chinese", "Thai", "American", "Indian")
         val checkedItems = BooleanArray(options.size) { selectedCuisineTypes.contains(options[it]) }
 
         // Multi-choice AlertDialog implementation based on Android developer documentation
         // https://developer.android.com/reference/android/app/AlertDialog.Builder#setMultiChoiceItems(java.lang.CharSequence[],%20boolean[],%20android.content.DialogInterface.OnMultiChoiceClickListener)
+
         val builder = AlertDialog.Builder(requireContext())
         builder.setTitle("Cuisine Types")
         builder.setMultiChoiceItems(options, checkedItems) { _, which, isChecked ->
@@ -289,6 +298,7 @@ class SearchFragment : Fragment() {
 
     // Passing data between fragments using Bundle based on Android developer documentation
     // https://developer.android.com/guide/fragments/communicate
+    // https://developer.android.com/reference/kotlin/android/os/Bundle
     private fun navigateToRecipeDetailsFragment(recipe: RecipeCardModel) {
         val fragment = RecipeDetailsFragment()
         val bundle = Bundle().apply {
