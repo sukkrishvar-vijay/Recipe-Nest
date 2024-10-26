@@ -114,6 +114,7 @@
 
     </LinearLayout>
 
+    <!--https://github.com/material-components/material-components-android/blob/master/docs/components/TextField.md-->
     <com.google.android.material.textfield.TextInputLayout
         style="?attr/textInputFilledStyle"
         android:id="@+id/usernametextField"
@@ -133,6 +134,7 @@
             />
     </com.google.android.material.textfield.TextInputLayout>
 
+    <!--https://github.com/material-components/material-components-android/blob/master/docs/components/TextField.md-->
     <com.google.android.material.textfield.TextInputLayout
         style="?attr/textInputFilledStyle"
         android:id="@+id/userDescriptiontextField"

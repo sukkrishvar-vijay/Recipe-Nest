@@ -124,6 +124,7 @@
         android:gravity="center"
         android:layout_marginTop="60sp">
 
+        <!--https://github.com/material-components/material-components-android/blob/master/docs/components/TextField.md-->
         <com.google.android.material.textfield.TextInputLayout
             style="?attr/textInputFilledStyle"
             android:id="@+id/firstNametextField"
@@ -142,6 +143,7 @@
                 />
         </com.google.android.material.textfield.TextInputLayout>
 
+        <!--https://github.com/material-components/material-components-android/blob/master/docs/components/TextField.md-->
         <com.google.android.material.textfield.TextInputLayout
             style="?attr/textInputFilledStyle"
             android:id="@+id/lastNametextField"
@@ -162,6 +164,7 @@
 
     </LinearLayout>
 
+    <!--https://github.com/material-components/material-components-android/blob/master/docs/components/TextField.md-->
     <com.google.android.material.textfield.TextInputLayout
         style="?attr/textInputFilledStyle"
         android:id="@+id/emailtextField"
@@ -181,6 +184,7 @@
             />
     </com.google.android.material.textfield.TextInputLayout>
 
+    <!--https://github.com/material-components/material-components-android/blob/master/docs/components/TextField.md-->
     <com.google.android.material.textfield.TextInputLayout
         style="?attr/textInputFilledStyle"
         android:id="@+id/enterPasswordtextField"
@@ -202,6 +206,7 @@
             />
     </com.google.android.material.textfield.TextInputLayout>
 
+    <!--https://github.com/material-components/material-components-android/blob/master/docs/components/TextField.md-->
     <com.google.android.material.textfield.TextInputLayout
         style="?attr/textInputFilledStyle"
         android:id="@+id/confirmPasswordtextField"

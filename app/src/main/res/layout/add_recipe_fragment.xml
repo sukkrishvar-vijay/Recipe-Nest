@@ -36,6 +36,7 @@
         </FrameLayout>
 
         <!-- Title EditText -->
+        <!--https://github.com/material-components/material-components-android/blob/master/docs/components/TextField.md-->
         <com.google.android.material.textfield.TextInputLayout
             style="?attr/textInputFilledStyle"
             android:layout_width="match_parent"
@@ -54,6 +55,7 @@
         </com.google.android.material.textfield.TextInputLayout>
 
         <!-- Description Text Area -->
+        <!--https://github.com/material-components/material-components-android/blob/master/docs/components/TextField.md-->
         <com.google.android.material.textfield.TextInputLayout
             style="?attr/textInputFilledStyle"
             android:layout_width="match_parent"
