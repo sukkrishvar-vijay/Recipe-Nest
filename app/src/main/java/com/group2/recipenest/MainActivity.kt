@@ -42,11 +42,13 @@ class MainActivity : AppCompatActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(false)
         supportActionBar?.setDisplayShowHomeEnabled(false)
 
+        //condition to check whether the
         if (isFirstLaunch()) {
             hideBottomNavigation()
-            // Load the landing pages fragment/activity
+            // Load the landing pages
             loadFragment(LandingPage1())
         } else {
+            // Condition to whether the user logged out or not and navigate to corresponding fragment
             if (!isUserLoggedIn()) {
                 hideBottomNavigation()
                 // Load the sign-in fragment if the user is not logged in
@@ -58,6 +60,8 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    // Function to check for first launch  and show landing pages
+    //https://stackoverflow.com/questions/5950043/how-to-use-getsharedpreferences-in-android
     private fun isFirstLaunch(): Boolean {
         val sharedPreferences = getSharedPreferences("RecipeNestPrefs", MODE_PRIVATE)
         return sharedPreferences.getBoolean("isFirstLaunch", true)
@@ -110,6 +114,8 @@ class MainActivity : AppCompatActivity() {
 
 
     // Helper function to check User Login Status
+    //https://firebase.google.com/docs/auth/android/manage-users
+    //https://stackoverflow.com/questions/45010081/why-firebaseauth-getinstance-getcurrentuser-is-returning-null-value-in-andro
     private fun isUserLoggedIn(): Boolean {
         val currentUser = FirebaseAuth.getInstance().currentUser
         if (currentUser != null) {
@@ -119,6 +125,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     // Method to search database and save user document id in the data class
+    //https://firebase.google.com/docs/firestore/query-data/get-data#kotlin+ktx_8
+    //https://iamvs2002.hashnode.dev/cloud-firestore-in-android-studio
     private fun storeUserDocId() {
         db.collection("User")
             .get()
