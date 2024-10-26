@@ -10,6 +10,8 @@ package com.group2.recipenest
 import RecipeCardModel
 import android.app.AlertDialog
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -24,6 +26,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.chip.Chip
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
+import com.google.firebase.firestore.QuerySnapshot
+import com.google.android.gms.tasks.Tasks
 
 class SearchFragment : Fragment() {
 
@@ -48,9 +53,10 @@ class SearchFragment : Fragment() {
 
         firestore = FirebaseFirestore.getInstance()
 
+        // RecyclerView setup and Adapter configuration based on Android developer documentation
+        // https://developer.android.com/guide/topics/ui/layout/recyclerview
         searchResultsRecyclerView = view.findViewById(R.id.searchResultsRecyclerView)
         searchResultsRecyclerView.layoutManager = LinearLayoutManager(context)
-
         adapter = RecipeCardsAdapter(listOf()) { recipe ->
             navigateToRecipeDetailsFragment(recipe)
         }
@@ -68,6 +74,20 @@ class SearchFragment : Fragment() {
             }
         }
 
+        // TextWatcher for monitoring text input based on Android developer documentation
+        // https://developer.android.com/reference/android/text/TextWatcher
+        searchEditText.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable?) {
+                if (s.isNullOrEmpty()) {
+                    adapter.updateRecipes(emptyList())
+                }
+            }
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+        })
+
+        // Chip components for filter selection based on Material Design documentation
+        // https://material.io/components/chips
         difficultyLevelChip = view.findViewById(R.id.difficultyLevelChip)
         cookingTimeChip = view.findViewById(R.id.cookingTimeChip)
         cuisineTypeChip = view.findViewById(R.id.cuisineTypeChip)
@@ -82,26 +102,41 @@ class SearchFragment : Fragment() {
         return view
     }
 
+    // Firestore data retrieval and filtering based on Firebase documentation
+    // https://firebase.google.com/docs/firestore/query-data/get-data
     private fun fetchRecipes(query: String) {
         val searchQuery = query.lowercase()
+        var firestoreQuery: Query = firestore.collection("Recipes")
 
-        firestore.collection("Recipes")
-            .get()
+        selectedDifficultyLevel?.let {
+            firestoreQuery = firestoreQuery.whereEqualTo("difficultyLevel", it)
+        }
+
+        firestoreQuery.get()
             .addOnSuccessListener { documents ->
                 val recipeList = mutableListOf<RecipeCardModel>()
+
                 for (document in documents) {
                     val recipeTitle = document.getString("recipeTitle") ?: "Untitled"
+                    val cookingTime = document.getLong("cookingTime")?.toInt() ?: 0
+                    val avgRating = document.getDouble("avgRating")?.toString() ?: "N/A"
+                    val difficultyLevel = document.getString("difficultyLevel") ?: ""
+                    val cuisineTypeList = document.get("cuisineType") as? List<*>
+                    val cuisineType = cuisineTypeList?.joinToString(", ") ?: "Unknown"
+                    val recipeDescription = document.getString("recipeDescription") ?: "N/A"
+                    val recipeUserId = document.getString("recipeUserId") ?: ""
+                    val recipeId = document.id
 
-                    if (recipeTitle.lowercase().contains(searchQuery)) {
-                        val cookingTime = document.getLong("cookingTime")?.toInt() ?: 0
-                        val avgRating = document.getDouble("avgRating")?.toString() ?: "N/A"
-                        val difficultyLevel = document.getString("difficultyLevel") ?: ""
-                        val cuisineTypeList = document.get("cuisineType") as? List<*>
-                        val cuisineType = cuisineTypeList?.joinToString(", ") ?: "Unknown"
-                        val recipeDescription = document.getString("recipeDescription") ?: "N/A"
-                        val recipeUserId = document.getString("recipeUserId") ?: ""
-                        val recipeId = document.id
+                    val isCookingTimeMatch = selectedCookingTime?.let { cookingTimeText ->
+                        val cookingTimeInMinutes = cookingTimeText.split(" ")[0].toIntOrNull()
+                        cookingTimeInMinutes?.let { cookingTime == it } ?: true
+                    } ?: true
 
+                    val isTitleMatch = recipeTitle.lowercase().contains(searchQuery)
+
+                    val isCuisineTypeMatch = selectedCuisineTypes.all { it in (cuisineTypeList ?: emptyList<String>()) }
+
+                    if (isCookingTimeMatch && isTitleMatch && isCuisineTypeMatch) {
                         val recipe = RecipeCardModel(
                             recipeUserId = recipeUserId,
                             recipeDescription = recipeDescription,
@@ -116,17 +151,26 @@ class SearchFragment : Fragment() {
                         recipeList.add(recipe)
                     }
                 }
+
                 adapter.updateRecipes(recipeList)
+
+                if (recipeList.isEmpty()) {
+                    Toast.makeText(requireContext(), "No recipes found with your search", Toast.LENGTH_SHORT).show()
+                }
             }
-            .addOnFailureListener { exception ->
-                Toast.makeText(requireContext(), "Failed to fetch recipes: ${exception.message}", Toast.LENGTH_SHORT).show()
+            .addOnFailureListener {
+                Toast.makeText(requireContext(), "Error fetching recipes. Please try again.", Toast.LENGTH_SHORT).show()
             }
     }
 
+    // AlertDialog setup for filter selection based on Android developer documentation
+    // https://developer.android.com/reference/android/app/AlertDialog
     private fun showDifficultyLevelDialog(difficultyLevelChip: Chip) {
         val options = arrayOf("Easy", "Medium", "Hard")
         var selectedOption: String? = null
 
+        // Single-choice AlertDialog setup based on Android developer documentation
+        // https://developer.android.com/reference/android/app/AlertDialog.Builder#setSingleChoiceItems(java.lang.CharSequence[],%20int,%20android.content.DialogInterface.OnClickListener)
         val builder = AlertDialog.Builder(requireContext())
         builder.setTitle("Difficulty Level")
         builder.setSingleChoiceItems(options, options.indexOf(selectedDifficultyLevel)) { _, which ->
@@ -144,16 +188,21 @@ class SearchFragment : Fragment() {
         }
         builder.setNegativeButton("Cancel") { dialog, _ ->
             dialog.cancel()
+            selectedDifficultyLevel = null
             difficultyLevelChip.isChecked = false
             difficultyLevelChip.text = "Difficulty Level"
         }
         builder.show()
     }
 
+    // AlertDialog setup for filter selection based on Android developer documentation
+    // https://developer.android.com/reference/android/app/AlertDialog
     private fun showCookingTimeDialog(cookingTimeChip: Chip) {
         val options = arrayOf("15 mins", "30 mins", "45 mins", "60 mins")
         var selectedOption: String? = null
 
+        // Single-choice AlertDialog setup based on Android developer documentation
+        // https://developer.android.com/reference/android/app/AlertDialog.Builder#setSingleChoiceItems(java.lang.CharSequence[],%20int,%20android.content.DialogInterface.OnClickListener)
         val builder = AlertDialog.Builder(requireContext())
         builder.setTitle("Cooking Time")
         builder.setSingleChoiceItems(options, options.indexOf(selectedCookingTime)) { _, which ->
@@ -171,16 +220,21 @@ class SearchFragment : Fragment() {
         }
         builder.setNegativeButton("Cancel") { dialog, _ ->
             dialog.cancel()
+            selectedCookingTime = null
             cookingTimeChip.isChecked = false
             cookingTimeChip.text = "Cooking Time"
         }
         builder.show()
     }
 
+    // AlertDialog setup for filter selection based on Android developer documentation
+    // https://developer.android.com/reference/android/app/AlertDialog
     private fun showCuisineTypeDialog(cuisineTypeChip: Chip) {
         val options = arrayOf("Vegetarian", "Non-Vegetarian", "Chinese", "Thai", "American", "Indian")
         val checkedItems = BooleanArray(options.size) { selectedCuisineTypes.contains(options[it]) }
 
+        // Multi-choice AlertDialog implementation based on Android developer documentation
+        // https://developer.android.com/reference/android/app/AlertDialog.Builder#setMultiChoiceItems(java.lang.CharSequence[],%20boolean[],%20android.content.DialogInterface.OnMultiChoiceClickListener)
         val builder = AlertDialog.Builder(requireContext())
         builder.setTitle("Cuisine Types")
         builder.setMultiChoiceItems(options, checkedItems) { _, which, isChecked ->
@@ -201,6 +255,7 @@ class SearchFragment : Fragment() {
         }
         builder.setNegativeButton("Cancel") { dialog, _ ->
             dialog.cancel()
+            selectedCuisineTypes.clear()
             cuisineTypeChip.isChecked = false
             cuisineTypeChip.text = "Cuisine Types"
         }
@@ -232,9 +287,10 @@ class SearchFragment : Fragment() {
         (activity as? AppCompatActivity)?.supportActionBar?.show()
     }
 
+    // Passing data between fragments using Bundle based on Android developer documentation
+    // https://developer.android.com/guide/fragments/communicate
     private fun navigateToRecipeDetailsFragment(recipe: RecipeCardModel) {
         val fragment = RecipeDetailsFragment()
-
         val bundle = Bundle().apply {
             putString("recipeTitle", recipe.recipeTitle)
             putString("recipeUserId", recipe.recipeUserId)

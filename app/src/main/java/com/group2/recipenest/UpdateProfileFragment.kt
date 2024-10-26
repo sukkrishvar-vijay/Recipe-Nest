@@ -55,8 +55,9 @@ class UpdateProfileFragment : Fragment() {
 
         firestore = Firebase.firestore
 
+        // Setting up Toolbar with navigation icon and handling click events based on Android developer documentation
+        // https://developer.android.com/reference/androidx/appcompat/widget/Toolbar
         val toolbar: Toolbar = requireActivity().findViewById(R.id.toolbar)
-
         toolbar.title = "Settings"
         toolbar.setTitleTextColor(resources.getColor(android.R.color.black, null))
 
@@ -74,6 +75,8 @@ class UpdateProfileFragment : Fragment() {
         updateButton = view.findViewById(R.id.update_button)
         val authSwitch = view.findViewById<MaterialSwitch>(R.id.auth_switch)
 
+        // Disabling EditText fields to prevent modification based on Android developer documentation
+        // https://developer.android.com/reference/android/widget/EditText
         emailEditText.isEnabled = false
 
         getUserProfileData(userDocumentId)
@@ -82,6 +85,8 @@ class UpdateProfileFragment : Fragment() {
             updateUserProfile()
         }
 
+        // Storing user preferences with SharedPreferences based on Android developer documentation
+        // https://developer.android.com/training/data-storage/shared-preferences
         val sharedPreferences = requireActivity().getSharedPreferences("UserSettings", Context.MODE_PRIVATE)
         val biometricEnabled = sharedPreferences.getBoolean("biometricEnabled", false)
         authSwitch.isChecked = biometricEnabled
@@ -89,13 +94,19 @@ class UpdateProfileFragment : Fragment() {
         authSwitch.setOnCheckedChangeListener { _, isChecked ->
             sharedPreferences.edit().putBoolean("biometricEnabled", isChecked).apply()
             if (isChecked) {
+                // Displaying feedback to the user using Toast messages based on Android developer documentation
+                // https://developer.android.com/guide/topics/ui/notifiers/toasts
                 Toast.makeText(requireContext(), "Biometric Auth Enabled", Toast.LENGTH_SHORT).show()
             } else {
+                // Displaying feedback to the user using Toast messages based on Android developer documentation
+                // https://developer.android.com/guide/topics/ui/notifiers/toasts
                 Toast.makeText(requireContext(), "Biometric Auth Disabled", Toast.LENGTH_SHORT).show()
             }
         }
     }
 
+    // Firestore data retrieval and document handling based on Firebase documentation
+    // https://firebase.google.com/docs/firestore/query-data/get-data
     private fun getUserProfileData(userId: String) {
         val userRef = firestore.collection("User").document(userId)
 
@@ -113,13 +124,19 @@ class UpdateProfileFragment : Fragment() {
                 bioEditText.setText(originalBio)
                 emailEditText.setText(email)
             } else {
+                // Displaying feedback to the user using Toast messages based on Android developer documentation
+                // https://developer.android.com/guide/topics/ui/notifiers/toasts
                 Toast.makeText(requireContext(), "User data not found", Toast.LENGTH_SHORT).show()
             }
         }.addOnFailureListener {
+            // Displaying feedback to the user using Toast messages based on Android developer documentation
+            // https://developer.android.com/guide/topics/ui/notifiers/toasts
             Toast.makeText(requireContext(), "Error fetching user data", Toast.LENGTH_SHORT).show()
         }
     }
 
+    // Firestore document update with map data based on Firebase documentation
+    // https://firebase.google.com/docs/firestore/manage-data/add-data#update-data
     private fun updateUserProfile() {
         val updatedFirstName = firstNameEditText.text.toString()
         val updatedLastName = lastNameEditText.text.toString()
@@ -137,6 +154,8 @@ class UpdateProfileFragment : Fragment() {
 
         userRef.update(updates)
             .addOnSuccessListener {
+                // Displaying feedback to the user using Toast messages based on Android developer documentation
+                // https://developer.android.com/guide/topics/ui/notifiers/toasts
                 Toast.makeText(requireContext(), "Profile Updated", Toast.LENGTH_SHORT).show()
                 originalFirstName = updatedFirstName
                 originalLastName = updatedLastName
@@ -144,6 +163,8 @@ class UpdateProfileFragment : Fragment() {
                 originalBio = updatedBio
             }
             .addOnFailureListener {
+                // Displaying feedback to the user using Toast messages based on Android developer documentation
+                // https://developer.android.com/guide/topics/ui/notifiers/toasts
                 Toast.makeText(requireContext(), "Failed to update profile", Toast.LENGTH_SHORT).show()
             }
     }

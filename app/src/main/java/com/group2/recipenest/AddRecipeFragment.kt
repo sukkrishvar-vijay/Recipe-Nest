@@ -142,11 +142,15 @@ class AddRecipeFragment : Fragment() {
         return rootView
     }
 
+    // Customizing button appearance (background and text color) based on user interaction
+    // https://developer.android.com/reference/com/google/android/material/button/MaterialButton
     private fun setSelectedButtonState(button: MaterialButton) {
         button.setBackgroundColor(Color.parseColor("#D1C300"))
         button.setTextColor(Color.BLACK)
     }
 
+    // Customizing button appearance (background and text color) based on user interaction
+    // https://developer.android.com/reference/com/google/android/material/button/MaterialButton
     private fun resetButtonState(button: MaterialButton) {
         button.setBackgroundColor(Color.parseColor("#FFFCD7"))
         button.setTextColor(Color.BLACK)
