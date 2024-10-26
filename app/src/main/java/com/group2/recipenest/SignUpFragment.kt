@@ -23,7 +23,6 @@ class SignUpFragment:Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        // Inflate the layout for this fragment using ViewBinding
         _binding = CreateAccount1Binding.inflate(inflater, container, false)
         return binding.root
     }
@@ -31,6 +30,7 @@ class SignUpFragment:Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        //filling the fields with user data if its not empty
         if(userData.firstName != ""){
             binding.firstNametextField.editText?.setText(userData.firstName)
             binding.lastNametextField.editText?.setText(userData.lastName)
@@ -41,7 +41,6 @@ class SignUpFragment:Fragment() {
 
         binding.previousPageButton.setOnClickListener{
             loadFragment(SignInFragment())
-            //(activity as MainActivity).signInAccount()
         }
 
         binding.nextPageButton.setOnClickListener {
@@ -58,6 +57,7 @@ class SignUpFragment:Fragment() {
                 Toast.makeText(requireContext(), "Passwords do not match", Toast.LENGTH_SHORT).show()
             }
             else {
+                //storing the user data in data class to use later
                 userData.firstName = firstname
                 userData.lastName = lastname
                 userData.email = email
@@ -68,6 +68,8 @@ class SignUpFragment:Fragment() {
         }
     }
 
+    //https://medium.com/@Max_Sir/mastering-android-fragments-managers-transactions-and-best-practices-in-kotlin-af00cb9b44ac
+    //https://developer.android.com/guide/fragments/fragmentmanager
     private fun loadFragment(fragment: Fragment) {
         parentFragmentManager.beginTransaction()
             .replace(R.id.fragment_container, fragment)
