@@ -181,7 +181,7 @@ class RecipeDetailsFragment : Fragment() {
         userRef.get().addOnSuccessListener { document ->
             if (document.exists()) {
                 val favoriteCollection = document.get("favoriteCollection") as? List<Map<String, List<String>>>
-                val favoriteCategories = favoriteCollection?.map { it.keys.first() } ?: emptyList()
+                val favoriteCategories = favoriteCollection?.mapNotNull { it.keys.firstOrNull() } ?: emptyList()
 
                 // AlertDialog setup and single-choice handling based on Android developer documentation
                 // https://developer.android.com/reference/androidx/appcompat/app/AlertDialog
@@ -201,7 +201,7 @@ class RecipeDetailsFragment : Fragment() {
 
                 // AlertDialog with button click handling and conditional logic based on Android developer documentation
                 // https://developer.android.com/reference/androidx/appcompat/app/AlertDialog
-
+                // https://stackoverflow.com/questions/19286135/android-alert-dialog-and-set-positive-button
                 builder.setPositiveButton("Save") { _, _ ->
                     if (!selectedOption.isNullOrEmpty()) {
                         if (currentFavoriteCategory != null && currentFavoriteCategory != selectedOption) {
