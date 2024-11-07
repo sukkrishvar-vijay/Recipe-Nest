@@ -313,6 +313,7 @@ class SearchFragment : Fragment() {
             putInt("cookingTime", recipe.cookingTime)
             putString("cuisineType", recipe.cuisineType)
             putString("recipeId", recipe.recipeId)
+            putString("recipeImageUrl", recipe.recipeImageUrl)
         }
         fragment.arguments = bundle
 

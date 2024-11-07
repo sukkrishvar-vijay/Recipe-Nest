@@ -157,6 +157,7 @@ class RecipeCardsFragment : Fragment() {
         bundle.putInt("cookingTime", recipe.cookingTime)
         bundle.putString("cuisineType", recipe.cuisineType)
         bundle.putString("recipeId", recipe.recipeId)
+        bundle.putString("recipeImageUrl", recipe.recipeImageUrl)
 
         recipeDetailsFragment.arguments = bundle
 
