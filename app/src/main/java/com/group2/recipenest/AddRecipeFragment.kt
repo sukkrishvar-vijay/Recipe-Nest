@@ -21,11 +21,14 @@ import com.google.android.material.textfield.TextInputEditText
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import com.group2.geolocation.LocationHelper
 import java.util.*
 
 class AddRecipeFragment : Fragment() {
 
     private lateinit var firestore: FirebaseFirestore
+    private lateinit var locationHelper: LocationHelper
+    private var recipeUploadLocation: String? = null
 
     private val currentUserId = userSignInData.UserDocId
 
@@ -58,6 +61,14 @@ class AddRecipeFragment : Fragment() {
         val hardButton: MaterialButton = rootView.findViewById(R.id.hard_button)
         val cookingTimeGroup: RadioGroup = rootView.findViewById(R.id.cooking_time_group)
         val saveRecipeButton: Button = rootView.findViewById(R.id.submit_button)
+
+        locationHelper = LocationHelper(requireContext())
+
+        // Fetch the city name on load
+        locationHelper.getCityName { cityName ->
+            recipeUploadLocation = cityName ?: "Location not found"
+            Toast.makeText(requireContext(), "City: $recipeUploadLocation", Toast.LENGTH_SHORT).show()
+        }
 
         // Button click listener implementation learned from Android developer tutorial
         // https://developer.android.com/guide/topics/ui/controls/button
@@ -173,6 +184,7 @@ class AddRecipeFragment : Fragment() {
         val recipe = hashMapOf(
             "recipeTitle" to title,
             "recipeDescription" to description,
+            "recipeUploadLocation" to recipeUploadLocation,
             "cookingTime" to cookingTime,
             "difficultyLevel" to difficultyLevel,
             "cuisineType" to cuisineType,

@@ -1,3 +1,5 @@
+import java.util.Date
+
 data class RecipeCardModel(
     var recipeId: String,
     val recipeDescription: String,
@@ -6,6 +8,7 @@ data class RecipeCardModel(
     val difficultyLevel: String,
     val cookingTime: Int,
     val cuisineType: String,
-    val avgRating: Comparable<*>,
-    val imageResId: Int
+    val avgRating: Double,
+    val imageResId: Int,
+    val dateRecipeAdded: Date
 )

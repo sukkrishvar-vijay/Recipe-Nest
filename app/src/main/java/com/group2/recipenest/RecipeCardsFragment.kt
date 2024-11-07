@@ -19,6 +19,7 @@ import androidx.appcompat.widget.Toolbar
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import java.util.Date
 
 class RecipeCardsFragment : Fragment() {
 
@@ -107,6 +108,7 @@ class RecipeCardsFragment : Fragment() {
                         val cuisineType = cuisineTypeList?.joinToString(", ") ?: "Unknown"
                         val recipeDescription = document.getString("recipeDescription") ?: ""
                         val recipeUserId = document.getString("recipeUserId") ?: ""
+                        val dateRecipeAdded = document.getDate("dateRecipeAdded") ?: Date()
                         val recipeId = document.id
 
                         val recipe = RecipeCardModel(
@@ -114,11 +116,12 @@ class RecipeCardsFragment : Fragment() {
                             recipeUserId = recipeUserId,
                             recipeTitle = recipeTitle,
                             cookingTime = cookingTime,
-                            avgRating = avgRating,
+                            avgRating = avgRating.toDouble(),
                             imageResId = R.drawable.placeholder_recipe_image,
                             difficultyLevel = difficultyLevel,
                             cuisineType = cuisineType,
-                            recipeId = recipeId
+                            recipeId = recipeId,
+                            dateRecipeAdded = dateRecipeAdded
                         )
 
                         recipe.recipeId = recipeId

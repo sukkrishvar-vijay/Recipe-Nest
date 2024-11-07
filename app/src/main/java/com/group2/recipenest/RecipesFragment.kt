@@ -19,6 +19,8 @@ import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -26,7 +28,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import com.group2.geolocation.LocationHelper
 import com.group2.recipenest.R.*
+import java.util.Date
 
 class RecipesFragment : Fragment() {
 
@@ -37,9 +41,12 @@ class RecipesFragment : Fragment() {
     private lateinit var verticalAdapter: RecipeCardsAdapter
     private lateinit var horizontalAdapter: TrendingRecipeCardsAdapter
     private lateinit var carouselAdapter: RecipesCarouselAdapter
+    private lateinit var trendingTitle: TextView
     private val handler = Handler(Looper.getMainLooper())
     private var scrollPosition = 0
     private var carouselRecipeList: List<RecipesCarouselModel> = listOf()
+    private lateinit var locationHelper: LocationHelper
+    private var currentLocation: String? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -64,6 +71,15 @@ class RecipesFragment : Fragment() {
         carouselRecyclerView.adapter = carouselAdapter
 
         startContinuousAutoScroll()
+
+        trendingTitle = rootView.findViewById(R.id.trendingTitle)
+        locationHelper = LocationHelper(requireContext())
+
+        // Fetch the city name on load
+        locationHelper.getCityName { cityName ->
+            currentLocation = cityName ?: "Location not found"
+            trendingTitle.text = "Recipes Trending in ${cityName}"
+        }
 
         // RecyclerView setup with different layout managers based on Android developer documentation
         // https://developer.android.com/guide/topics/ui/layout/recyclerview
@@ -113,6 +129,8 @@ class RecipesFragment : Fragment() {
                     val cuisineType = cuisineTypeList?.joinToString(", ") ?: "Unknown"
                     val recipeDescription = document.getString("recipeDescription") ?: "N/A"
                     val recipeUserId = document.getString("recipeUserId") ?: ""
+                    val dateRecipeAdded = document.getDate("dateRecipeAdded") ?: Date()
+                    val recipeUploadLocation = document.getString("recipeUploadLocation") ?: ""
                     val recipeId = document.id
 
                     val recipe = RecipeCardModel(
@@ -120,44 +138,60 @@ class RecipesFragment : Fragment() {
                         recipeDescription = recipeDescription,
                         recipeTitle = recipeTitle,
                         cookingTime = cookingTime,
-                        avgRating = avgRating,
+                        avgRating = avgRating.toDouble(),
                         imageResId = drawable.placeholder_recipe_image,
                         difficultyLevel = difficultyLevel,
                         cuisineType = cuisineType,
-                        recipeId = recipeId
+                        recipeId = recipeId,
+                        dateRecipeAdded = dateRecipeAdded
                     )
                     recipeList.add(recipe)
 
-                    val trendingRecipe = TrendingRecipeCardsModel(
-                        recipeUserId = recipeUserId,
-                        recipeDescription = recipeDescription,
-                        recipeTitle = recipeTitle,
-                        cookingTime = cookingTime,
-                        avgRating = avgRating,
-                        imageResId = drawable.placeholder_recipe_image,
-                        difficultyLevel = difficultyLevel,
-                        cuisineType = cuisineType,
-                        recipeId = recipeId
-                    )
-                    trendingRecipeList.add(trendingRecipe)
+                    // Filter for trending recipes based on matching city name
+                    if (recipeUploadLocation.equals(currentLocation, ignoreCase = true)) {
+                        val trendingRecipe = TrendingRecipeCardsModel(
+                            recipeUserId = recipeUserId,
+                            recipeDescription = recipeDescription,
+                            recipeTitle = recipeTitle,
+                            cookingTime = cookingTime,
+                            avgRating = avgRating.toDouble(),
+                            imageResId = drawable.placeholder_recipe_image,
+                            difficultyLevel = difficultyLevel,
+                            cuisineType = cuisineType,
+                            recipeId = recipeId,
+                            dateRecipeAdded = dateRecipeAdded
+                        )
+                        trendingRecipeList.add(trendingRecipe)
+                    }
 
                     val carouselRecipe = RecipesCarouselModel(
                         recipeUserId = recipeUserId,
                         recipeDescription = recipeDescription,
                         recipeTitle = recipeTitle,
                         cookingTime = cookingTime,
-                        avgRating = avgRating,
+                        avgRating = avgRating.toDouble(),
                         imageResId = drawable.placeholder_recipe_image,
                         difficultyLevel = difficultyLevel,
                         cuisineType = cuisineType,
-                        recipeId = recipeId
+                        recipeId = recipeId,
+                        dateRecipeAdded = dateRecipeAdded
                     )
                     carouselRecipeListOriginal.add(carouselRecipe)
                 }
 
-                carouselRecipeList = carouselRecipeListOriginal + carouselRecipeListOriginal
+                // Sort carousel recipes by avgRating and dateRecipeAdded in descending order and take top 5
+                val topCarouselRecipes = carouselRecipeListOriginal
+                    .sortedWith(compareByDescending<RecipesCarouselModel> { it.avgRating.toDouble() }
+                        .thenByDescending { it.dateRecipeAdded })
+                    .take(5)
 
-                verticalAdapter.updateRecipes(recipeList)
+                // Duplicate list for carousel looping effect
+                carouselRecipeList = topCarouselRecipes + topCarouselRecipes
+
+                // Sort vertical list recipes by dateRecipeAdded in descending order
+                val sortedRecipeList = recipeList.sortedByDescending { it.dateRecipeAdded }
+
+                verticalAdapter.updateRecipes(sortedRecipeList)
                 horizontalAdapter.updateTrendingRecipes(trendingRecipeList)
                 carouselAdapter.updateCarouselItems(carouselRecipeList)
             }

@@ -20,6 +20,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import java.util.Date
 
 class MyRecipesFragment : Fragment() {
 
@@ -96,6 +97,7 @@ class MyRecipesFragment : Fragment() {
                     val cuisineType = cuisineTypeList?.joinToString(", ") ?: "Unknown"
                     val recipeDescription = document.getString("recipeDescription") ?: "N/A"
                     val recipeUserId = document.getString("recipeUserId") ?: ""
+                    val dateRecipeAdded = document.getDate("dateRecipeAdded") ?: Date()
                     val recipeId = document.id
 
                     val recipe = RecipeCardModel(
@@ -103,11 +105,12 @@ class MyRecipesFragment : Fragment() {
                         recipeDescription = recipeDescription,
                         recipeTitle = recipeTitle,
                         cookingTime = cookingTime,
-                        avgRating = avgRating,
+                        avgRating = avgRating.toDouble(),
                         imageResId = R.drawable.placeholder_recipe_image,
                         difficultyLevel = difficultyLevel,
                         cuisineType = cuisineType,
-                        recipeId = recipeId
+                        recipeId = recipeId,
+                        dateRecipeAdded = dateRecipeAdded
                     )
                     recipeList.add(recipe)
                 }

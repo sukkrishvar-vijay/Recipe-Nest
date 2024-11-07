@@ -29,6 +29,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.QuerySnapshot
 import com.google.android.gms.tasks.Tasks
+import java.util.Date
 
 class SearchFragment : Fragment() {
 
@@ -129,6 +130,7 @@ class SearchFragment : Fragment() {
                     val cuisineType = cuisineTypeList?.joinToString(", ") ?: "Unknown"
                     val recipeDescription = document.getString("recipeDescription") ?: "N/A"
                     val recipeUserId = document.getString("recipeUserId") ?: ""
+                    val dateRecipeAdded = document.getDate("dateRecipeAdded") ?: Date()
                     val recipeId = document.id
 
                     val isCookingTimeMatch = selectedCookingTime?.let { cookingTimeText ->
@@ -146,11 +148,12 @@ class SearchFragment : Fragment() {
                             recipeDescription = recipeDescription,
                             recipeTitle = recipeTitle,
                             cookingTime = cookingTime,
-                            avgRating = avgRating,
+                            avgRating = avgRating.toDouble(),
                             imageResId = R.drawable.placeholder_recipe_image,
                             difficultyLevel = difficultyLevel,
                             cuisineType = cuisineType,
-                            recipeId = recipeId
+                            recipeId = recipeId,
+                            dateRecipeAdded = dateRecipeAdded
                         )
                         recipeList.add(recipe)
                     }
