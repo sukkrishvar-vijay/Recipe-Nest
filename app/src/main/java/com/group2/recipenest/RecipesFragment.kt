@@ -20,7 +20,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -42,6 +41,7 @@ class RecipesFragment : Fragment() {
     private lateinit var horizontalAdapter: TrendingRecipeCardsAdapter
     private lateinit var carouselAdapter: RecipesCarouselAdapter
     private lateinit var trendingTitle: TextView
+    private lateinit var moreRecipesTitle: TextView
     private val handler = Handler(Looper.getMainLooper())
     private var scrollPosition = 0
     private var carouselRecipeList: List<RecipesCarouselModel> = listOf()
@@ -101,6 +101,9 @@ class RecipesFragment : Fragment() {
         verticalRecyclerView.adapter = verticalAdapter
 
         fetchRecipesFromFirestore()
+
+        moreRecipesTitle = rootView.findViewById(R.id.moreRecipesTitle)
+        moreRecipesTitle.text = "More Recipes"
 
         return rootView
     }
