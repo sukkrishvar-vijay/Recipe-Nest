@@ -13,9 +13,21 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.app.AppCompatActivity
+import android.Manifest
+import android.content.Context
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
+import android.provider.Settings
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.util.Log
+import android.widget.Toast
+import androidx.core.app.ActivityCompat
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
+import android.location.Location
+import android.location.LocationListener
+import android.location.LocationManager
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
@@ -34,15 +46,25 @@ class RecipeDetailsFragment : Fragment() {
     private var isFavorite = false
     private var currentFavoriteCategory: String? = null
 
+    private lateinit var locationManager: LocationManager
+    private lateinit var fusedLocationClient: FusedLocationProviderClient
+
+    private var latitude: Double = 0.0
+    private var longitude: Double = 0.0
+    private var currentLocation: Location? = null
+
     private val currentUserId = userSignInData.UserDocId
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+
         val rootView = inflater.inflate(R.layout.recipe_detail, container, false)
 
         firestore = Firebase.firestore
+
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireContext())
 
         recipeOwnerTextView = rootView.findViewById(R.id.ownerNameAndUsername)
         avgRatingTextView = rootView.findViewById(R.id.ratingText)
@@ -74,6 +96,9 @@ class RecipeDetailsFragment : Fragment() {
         ratingsCommentsButton.setOnClickListener {
             openReviewFragment()
         }
+
+        // Trigger the location fetching process
+        getLocation()
 
         return rootView
     }
@@ -338,5 +363,93 @@ class RecipeDetailsFragment : Fragment() {
             .replace(R.id.fragment_container, postCommentFragment)
             .addToBackStack(null)
             .commit()
+    }
+
+    private fun getLocation() {
+        locationManager = requireContext().getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        val hasGps = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
+        val hasNetwork = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
+        var locationByGps: Location? = null
+        var locationByNetwork: Location? = null
+
+        val gpsLocationListener: LocationListener = object : LocationListener {
+            override fun onLocationChanged(location: Location) {
+                locationByGps = location
+                updateLocation(location)
+            }
+
+            override fun onStatusChanged(provider: String, status: Int, extras: Bundle) {}
+            override fun onProviderEnabled(provider: String) {}
+            override fun onProviderDisabled(provider: String) {}
+        }
+
+        val networkLocationListener: LocationListener = object : LocationListener {
+            override fun onLocationChanged(location: Location) {
+                locationByNetwork = location
+                updateLocation(location)
+            }
+
+            override fun onStatusChanged(provider: String, status: Int, extras: Bundle) {}
+            override fun onProviderEnabled(provider: String) {}
+            override fun onProviderDisabled(provider: String) {}
+        }
+
+        if (hasGps || hasNetwork) {
+            if (ActivityCompat.checkSelfPermission(
+                    requireContext(),
+                    Manifest.permission.ACCESS_FINE_LOCATION
+                ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                    requireContext(),
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+                ) != PackageManager.PERMISSION_GRANTED
+            ) {
+                // Request permissions if not granted
+                requestPermissions(
+                    arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION),
+                    1010
+                )
+                return
+            }
+
+            if (hasGps) {
+                locationManager.requestLocationUpdates(
+                    LocationManager.GPS_PROVIDER,
+                    5000,
+                    0F,
+                    gpsLocationListener
+                )
+            }
+            if (hasNetwork) {
+                locationManager.requestLocationUpdates(
+                    LocationManager.NETWORK_PROVIDER,
+                    5000,
+                    0F,
+                    networkLocationListener
+                )
+            }
+
+            // Use the most accurate location
+            if (locationByGps != null && locationByNetwork != null) {
+                currentLocation = if (locationByGps!!.accuracy > locationByNetwork!!.accuracy) locationByGps else locationByNetwork
+            } else {
+                currentLocation = locationByGps ?: locationByNetwork
+            }
+
+            currentLocation?.let {
+                latitude = it.latitude
+                longitude = it.longitude
+                Log.d("Location", "Current Location: Lat $latitude, Long $longitude")
+            }
+
+        } else {
+            // Prompt user to enable location
+            startActivity(Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS))
+        }
+    }
+
+    private fun updateLocation(location: Location) {
+        latitude = location.latitude
+        longitude = location.longitude
+        Log.d("Location", "Updated Location: Lat $latitude, Long $longitude")
     }
 }
