@@ -98,6 +98,7 @@ class MyRecipesFragment : Fragment() {
                     val recipeDescription = document.getString("recipeDescription") ?: "N/A"
                     val recipeUserId = document.getString("recipeUserId") ?: ""
                     val dateRecipeAdded = document.getDate("dateRecipeAdded") ?: Date()
+                    val recipeImageUrl = document.getString("recipeImageUrl") ?: ""
                     val recipeId = document.id
 
                     val recipe = RecipeCardModel(
@@ -106,7 +107,7 @@ class MyRecipesFragment : Fragment() {
                         recipeTitle = recipeTitle,
                         cookingTime = cookingTime,
                         avgRating = avgRating.toDouble(),
-                        imageResId = R.drawable.placeholder_recipe_image,
+                        recipeImageUrl = recipeImageUrl,
                         difficultyLevel = difficultyLevel,
                         cuisineType = cuisineType,
                         recipeId = recipeId,
@@ -142,6 +143,7 @@ class MyRecipesFragment : Fragment() {
         bundle.putInt("cookingTime", recipe.cookingTime)
         bundle.putString("cuisineType", recipe.cuisineType)
         bundle.putString("recipeId", recipe.recipeId)
+        bundle.putString("recipeImageUrl", recipe.recipeImageUrl)
 
         recipeDetailsFragment.arguments = bundle
 

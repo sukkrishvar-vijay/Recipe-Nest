@@ -13,7 +13,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.constraintlayout.widget.ConstraintLayout
+import com.bumptech.glide.Glide
 import androidx.recyclerview.widget.RecyclerView
 
 // RecyclerView Adapter and ViewHolder implementation based on Android developer documentation
@@ -54,7 +54,12 @@ class RecipeCardsAdapter(
             recipeTitle.text = recipe.recipeTitle
             recipeRating.text = "${recipe.avgRating}★"
             recipeDescription.text = "${recipe.difficultyLevel} • ${recipe.cookingTime} mins\n${recipe.cuisineType}"
-            recipeImage.setImageResource(recipe.imageResId)
+
+            // Load the image from the URL using Glide if available, or use a placeholder image
+            Glide.with(itemView.context)
+                .load(recipe.recipeImageUrl)
+                .placeholder(R.drawable.placeholder_recipe_image)
+                .into(recipeImage)
 
             // Click listener handling in RecyclerView items based on Android developer guide
             // https://developer.android.com/guide/topics/ui/controls/button

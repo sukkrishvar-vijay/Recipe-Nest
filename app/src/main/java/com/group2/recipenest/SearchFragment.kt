@@ -131,6 +131,7 @@ class SearchFragment : Fragment() {
                     val recipeDescription = document.getString("recipeDescription") ?: "N/A"
                     val recipeUserId = document.getString("recipeUserId") ?: ""
                     val dateRecipeAdded = document.getDate("dateRecipeAdded") ?: Date()
+                    val recipeImageUrl = document.getString("recipeImageUrl") ?: ""
                     val recipeId = document.id
 
                     val isCookingTimeMatch = selectedCookingTime?.let { cookingTimeText ->
@@ -149,7 +150,7 @@ class SearchFragment : Fragment() {
                             recipeTitle = recipeTitle,
                             cookingTime = cookingTime,
                             avgRating = avgRating.toDouble(),
-                            imageResId = R.drawable.placeholder_recipe_image,
+                            recipeImageUrl = recipeImageUrl,
                             difficultyLevel = difficultyLevel,
                             cuisineType = cuisineType,
                             recipeId = recipeId,

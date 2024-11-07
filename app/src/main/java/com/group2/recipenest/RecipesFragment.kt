@@ -16,6 +16,7 @@ import com.google.android.material.carousel.HeroCarouselStrategy
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -134,6 +135,8 @@ class RecipesFragment : Fragment() {
                     val recipeUserId = document.getString("recipeUserId") ?: ""
                     val dateRecipeAdded = document.getDate("dateRecipeAdded") ?: Date()
                     val recipeUploadLocation = document.getString("recipeUploadLocation") ?: ""
+                    val recipeImageUrl = document.getString("recipeImageUrl") ?: ""
+                    Log.d("ImageUrl", recipeImageUrl)
                     val recipeId = document.id
 
                     val recipe = RecipeCardModel(
@@ -142,7 +145,7 @@ class RecipesFragment : Fragment() {
                         recipeTitle = recipeTitle,
                         cookingTime = cookingTime,
                         avgRating = avgRating.toDouble(),
-                        imageResId = drawable.placeholder_recipe_image,
+                        recipeImageUrl = recipeImageUrl,
                         difficultyLevel = difficultyLevel,
                         cuisineType = cuisineType,
                         recipeId = recipeId,
@@ -158,7 +161,7 @@ class RecipesFragment : Fragment() {
                             recipeTitle = recipeTitle,
                             cookingTime = cookingTime,
                             avgRating = avgRating.toDouble(),
-                            imageResId = drawable.placeholder_recipe_image,
+                            recipeImageUrl = recipeImageUrl,
                             difficultyLevel = difficultyLevel,
                             cuisineType = cuisineType,
                             recipeId = recipeId,
@@ -173,7 +176,7 @@ class RecipesFragment : Fragment() {
                         recipeTitle = recipeTitle,
                         cookingTime = cookingTime,
                         avgRating = avgRating.toDouble(),
-                        imageResId = drawable.placeholder_recipe_image,
+                        recipeImageUrl = recipeImageUrl,
                         difficultyLevel = difficultyLevel,
                         cuisineType = cuisineType,
                         recipeId = recipeId,
@@ -246,6 +249,7 @@ class RecipesFragment : Fragment() {
                 bundle.putInt("cookingTime", recipe.cookingTime)
                 bundle.putString("cuisineType", recipe.cuisineType)
                 bundle.putString("recipeId", recipe.recipeId)
+                bundle.putString("recipeImageUrl", recipe.recipeImageUrl)
             }
             is TrendingRecipeCardsModel -> {
                 bundle.putString("recipeUserId", recipe.recipeUserId)
@@ -256,6 +260,7 @@ class RecipesFragment : Fragment() {
                 bundle.putInt("cookingTime", recipe.cookingTime)
                 bundle.putString("cuisineType", recipe.cuisineType)
                 bundle.putString("recipeId", recipe.recipeId)
+                bundle.putString("recipeImageUrl", recipe.recipeImageUrl)
             }
             is RecipesCarouselModel -> {
                 bundle.putString("recipeUserId", recipe.recipeUserId)
@@ -266,6 +271,7 @@ class RecipesFragment : Fragment() {
                 bundle.putInt("cookingTime", recipe.cookingTime)
                 bundle.putString("cuisineType", recipe.cuisineType)
                 bundle.putString("recipeId", recipe.recipeId)
+                bundle.putString("recipeImageUrl", recipe.recipeImageUrl)
             }
             else -> return
         }

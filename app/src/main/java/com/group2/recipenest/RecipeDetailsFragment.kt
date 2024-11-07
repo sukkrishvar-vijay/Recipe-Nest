@@ -13,21 +13,11 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.appcompat.app.AlertDialog
-import android.Manifest
-import android.content.Context
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
-import android.provider.Settings
-import android.content.Intent
-import android.content.pm.PackageManager
-import android.util.Log
 import android.widget.Toast
-import androidx.core.app.ActivityCompat
-import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationServices
-import android.location.Location
-import android.location.LocationListener
-import android.location.LocationManager
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
@@ -42,16 +32,11 @@ class RecipeDetailsFragment : Fragment() {
     private lateinit var ratingsCommentsButton: Button
     private lateinit var favoriteButton: ImageButton
     private lateinit var currentRecipeId: String
+    private lateinit var recipeImage: ImageView
     private lateinit var firestore: FirebaseFirestore
     private var isFavorite = false
     private var currentFavoriteCategory: String? = null
 
-    private lateinit var locationManager: LocationManager
-    private lateinit var fusedLocationClient: FusedLocationProviderClient
-
-    private var latitude: Double = 0.0
-    private var longitude: Double = 0.0
-    private var currentLocation: Location? = null
 
     private val currentUserId = userSignInData.UserDocId
 
@@ -64,14 +49,13 @@ class RecipeDetailsFragment : Fragment() {
 
         firestore = Firebase.firestore
 
-        fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireContext())
-
         recipeOwnerTextView = rootView.findViewById(R.id.ownerNameAndUsername)
         avgRatingTextView = rootView.findViewById(R.id.ratingText)
         shortDetailTextView = rootView.findViewById(R.id.selectedFilters)
         longDetailTextView = rootView.findViewById(R.id.aboutRecipeDetails)
         ratingsCommentsButton = rootView.findViewById(R.id.ratingsCommentsButton)
         favoriteButton = rootView.findViewById(R.id.favoriteButton)
+        recipeImage = rootView.findViewById(R.id.recipeImage)
 
         setRecipeDetails()
 
@@ -97,9 +81,6 @@ class RecipeDetailsFragment : Fragment() {
             openReviewFragment()
         }
 
-        // Trigger the location fetching process
-        getLocation()
-
         return rootView
     }
 
@@ -115,12 +96,27 @@ class RecipeDetailsFragment : Fragment() {
         val difficultyLevel = arguments.getString("difficultyLevel") ?: "Unknown"
         val cookingTime = arguments.getInt("cookingTime", 0)
         val cuisineType = arguments.getString("cuisineType") ?: "Unknown"
+        val recipeImageUrl = arguments.getString("recipeImageUrl")
         currentRecipeId = arguments.getString("recipeId") ?: "Unknown"
 
         fetchAndSetRecipeOwnerDetails(recipeOwner)
 
         shortDetailTextView.text = "$difficultyLevel • $cookingTime mins • $cuisineType"
         longDetailTextView.text = recipeDescription
+
+        // Load the recipe image using Glide if the URL is available
+        if (!recipeImageUrl.isNullOrEmpty()) {
+            Glide.with(this)
+                .load(recipeImageUrl)
+                .apply(
+                    RequestOptions()
+                        .placeholder(R.drawable.placeholder_recipe_image) // Placeholder while loading
+                        .error(R.drawable.placeholder_recipe_image) // Fallback in case of error
+                )
+                .into(recipeImage)
+        } else {
+            recipeImage.setImageResource(R.drawable.placeholder_recipe_image) // Set placeholder if URL is null
+        }
 
         val toolbar: Toolbar = requireActivity().findViewById(R.id.toolbar)
         toolbar.title = recipeTitle
@@ -365,91 +361,4 @@ class RecipeDetailsFragment : Fragment() {
             .commit()
     }
 
-    private fun getLocation() {
-        locationManager = requireContext().getSystemService(Context.LOCATION_SERVICE) as LocationManager
-        val hasGps = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
-        val hasNetwork = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
-        var locationByGps: Location? = null
-        var locationByNetwork: Location? = null
-
-        val gpsLocationListener: LocationListener = object : LocationListener {
-            override fun onLocationChanged(location: Location) {
-                locationByGps = location
-                updateLocation(location)
-            }
-
-            override fun onStatusChanged(provider: String, status: Int, extras: Bundle) {}
-            override fun onProviderEnabled(provider: String) {}
-            override fun onProviderDisabled(provider: String) {}
-        }
-
-        val networkLocationListener: LocationListener = object : LocationListener {
-            override fun onLocationChanged(location: Location) {
-                locationByNetwork = location
-                updateLocation(location)
-            }
-
-            override fun onStatusChanged(provider: String, status: Int, extras: Bundle) {}
-            override fun onProviderEnabled(provider: String) {}
-            override fun onProviderDisabled(provider: String) {}
-        }
-
-        if (hasGps || hasNetwork) {
-            if (ActivityCompat.checkSelfPermission(
-                    requireContext(),
-                    Manifest.permission.ACCESS_FINE_LOCATION
-                ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
-                    requireContext(),
-                    Manifest.permission.ACCESS_COARSE_LOCATION
-                ) != PackageManager.PERMISSION_GRANTED
-            ) {
-                // Request permissions if not granted
-                requestPermissions(
-                    arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION),
-                    1010
-                )
-                return
-            }
-
-            if (hasGps) {
-                locationManager.requestLocationUpdates(
-                    LocationManager.GPS_PROVIDER,
-                    5000,
-                    0F,
-                    gpsLocationListener
-                )
-            }
-            if (hasNetwork) {
-                locationManager.requestLocationUpdates(
-                    LocationManager.NETWORK_PROVIDER,
-                    5000,
-                    0F,
-                    networkLocationListener
-                )
-            }
-
-            // Use the most accurate location
-            if (locationByGps != null && locationByNetwork != null) {
-                currentLocation = if (locationByGps!!.accuracy > locationByNetwork!!.accuracy) locationByGps else locationByNetwork
-            } else {
-                currentLocation = locationByGps ?: locationByNetwork
-            }
-
-            currentLocation?.let {
-                latitude = it.latitude
-                longitude = it.longitude
-                Log.d("Location", "Current Location: Lat $latitude, Long $longitude")
-            }
-
-        } else {
-            // Prompt user to enable location
-            startActivity(Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS))
-        }
-    }
-
-    private fun updateLocation(location: Location) {
-        latitude = location.latitude
-        longitude = location.longitude
-        Log.d("Location", "Updated Location: Lat $latitude, Long $longitude")
-    }
 }

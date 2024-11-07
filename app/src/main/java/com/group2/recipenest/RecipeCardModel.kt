@@ -9,6 +9,6 @@ data class RecipeCardModel(
     val cookingTime: Int,
     val cuisineType: String,
     val avgRating: Double,
-    val imageResId: Int,
+    val recipeImageUrl: String? = null,
     val dateRecipeAdded: Date
 )

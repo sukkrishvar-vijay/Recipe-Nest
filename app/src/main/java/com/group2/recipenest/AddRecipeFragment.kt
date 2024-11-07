@@ -1,18 +1,14 @@
-/*
- * Some of the code blocks in this file have been developed with assistance from AI tools, which were used to help in various stages of the project,
- * including code generation, identifying bugs, and fixing errors related to app crashes. The AI provided guidance in modifying
- * and improving the structure of the code while adhering to Android development best practices. All generated solutions were reviewed
- * and tested for functionality before implementation.
- */
-
 package com.group2.recipenest
 
 import android.graphics.Color
+import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import com.google.android.material.button.MaterialButton
@@ -21,6 +17,8 @@ import com.google.android.material.textfield.TextInputEditText
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.StorageReference
 import com.group2.geolocation.LocationHelper
 import java.util.*
 
@@ -29,6 +27,8 @@ class AddRecipeFragment : Fragment() {
     private lateinit var firestore: FirebaseFirestore
     private lateinit var locationHelper: LocationHelper
     private var recipeUploadLocation: String? = null
+    private lateinit var storageRef: StorageReference
+    private var imageUri: Uri? = null
 
     private val currentUserId = userSignInData.UserDocId
 
@@ -38,15 +38,15 @@ class AddRecipeFragment : Fragment() {
     ): View? {
         val rootView = inflater.inflate(R.layout.add_recipe_fragment, container, false)
 
-        // Firebase Firestore initialization and usage adapted from Firebase documentation
-        // https://firebase.google.com/docs/firestore
         firestore = Firebase.firestore
+        storageRef = FirebaseStorage.getInstance().reference.child("Recipes")
 
         val toolbar: Toolbar = requireActivity().findViewById(R.id.toolbar)
         toolbar.title = "Add New Recipe"
         toolbar.setTitleTextColor(Color.BLACK)
 
         val uploadImageButton: Button = rootView.findViewById(R.id.upload_image_button)
+        val uploadedImageView: ImageView = rootView.findViewById(R.id.uploaded_image)
         val titleEditText: TextInputEditText = rootView.findViewById(R.id.recipe_title)
         val descriptionEditText: TextInputEditText = rootView.findViewById(R.id.recipe_description)
         val cuisineVegetarian: CheckBox = rootView.findViewById(R.id.cuisine_vegetarian)
@@ -63,21 +63,20 @@ class AddRecipeFragment : Fragment() {
         val saveRecipeButton: Button = rootView.findViewById(R.id.submit_button)
 
         locationHelper = LocationHelper(requireContext())
-
-        // Fetch the city name on load
         locationHelper.getCityName { cityName ->
             recipeUploadLocation = cityName ?: "Location not found"
             Toast.makeText(requireContext(), "City: $recipeUploadLocation", Toast.LENGTH_SHORT).show()
         }
 
-        // Button click listener implementation learned from Android developer tutorial
-        // https://developer.android.com/guide/topics/ui/controls/button
-        // https://discuss.kotlinlang.org/t/trying-to-understand-onclicklistener/24773
+        val pickImage = registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
+            uri?.let {
+                imageUri = it
+                uploadedImageView.setImageURI(it)
+            }
+        }
+
         uploadImageButton.setOnClickListener {
-            // Toast message usage based on Android developer documentation
-            // https://developer.android.com/guide/topics/ui/notifiers/toasts
-            // https://www.geeksforgeeks.org/toasts-android-studio/
-            Toast.makeText(activity, "Upload image clicked", Toast.LENGTH_SHORT).show()
+            pickImage.launch("image/*")
         }
 
         // Code handling MaterialButtonToggleGroup adapted from Android developer documentation
@@ -104,9 +103,6 @@ class AddRecipeFragment : Fragment() {
             }
         }
 
-        // Button click listener implementation learned from Android developer tutorial
-        // https://developer.android.com/guide/topics/ui/controls/button
-        // https://discuss.kotlinlang.org/t/trying-to-understand-onclicklistener/24773
         saveRecipeButton.setOnClickListener {
             val recipeTitle = titleEditText.text.toString()
             val recipeDescription = descriptionEditText.text.toString()
@@ -116,7 +112,6 @@ class AddRecipeFragment : Fragment() {
                 hardButton.isChecked -> "Hard"
                 else -> "Unknown"
             }
-
             val selectedCookingTime = when (cookingTimeGroup.checkedRadioButtonId) {
                 R.id.time_15 -> 15
                 R.id.time_30 -> 30
@@ -124,37 +119,87 @@ class AddRecipeFragment : Fragment() {
                 R.id.time_60 -> 60
                 else -> 0
             }
-
-            val cuisineType = mutableListOf<String>()
-            if (cuisineVegetarian.isChecked) {
-                cuisineType.add("Vegetarian")
-            }
-            if (cuisineNonVegetarian.isChecked) {
-                cuisineType.add("Non-Vegetarian")
-            }
-            if (cuisineChinese.isChecked) {
-                cuisineType.add("Chinese")
-            }
-            if (cuisineThai.isChecked) {
-                cuisineType.add("Thai")
-            }
-            if (cuisineIndian.isChecked) {
-                cuisineType.add("Indian")
-            }
-            if (cuisineAmerican.isChecked) {
-                cuisineType.add("American")
+            val cuisineType = mutableListOf<String>().apply {
+                if (cuisineVegetarian.isChecked) add("Vegetarian")
+                if (cuisineNonVegetarian.isChecked) add("Non-Vegetarian")
+                if (cuisineChinese.isChecked) add("Chinese")
+                if (cuisineThai.isChecked) add("Thai")
+                if (cuisineIndian.isChecked) add("Indian")
+                if (cuisineAmerican.isChecked) add("American")
             }
 
             if (recipeTitle.isBlank()) {
                 Toast.makeText(requireContext(), "Please enter a recipe title", Toast.LENGTH_SHORT).show()
             } else if (selectedCookingTime == 0) {
                 Toast.makeText(requireContext(), "Please select a valid cooking time", Toast.LENGTH_SHORT).show()
+            } else if (imageUri == null) {
+                Toast.makeText(requireContext(), "Please upload an image", Toast.LENGTH_SHORT).show()
             } else {
-                storeRecipeInFirestore(recipeTitle, recipeDescription, selectedCookingTime, selectedDifficulty, cuisineType)
+                uploadImageToFirebase(recipeTitle, recipeDescription, selectedCookingTime, selectedDifficulty, cuisineType)
             }
         }
 
         return rootView
+    }
+
+    private fun uploadImageToFirebase(
+        title: String,
+        description: String,
+        cookingTime: Int,
+        difficultyLevel: String,
+        cuisineType: List<String>
+    ) {
+        imageUri?.let { uri ->
+            val fileRef = storageRef.child("images/${UUID.randomUUID()}.jpg")
+            Log.d("FileRef", fileRef.toString())
+            Log.d("uri", uri.toString())
+
+
+            fileRef.putFile(uri)
+                .addOnSuccessListener {
+                    fileRef.downloadUrl.addOnSuccessListener { downloadUrl ->
+                        storeRecipeInFirestore(title, description, cookingTime, difficultyLevel, cuisineType, downloadUrl.toString())
+                    }.addOnFailureListener { exception ->
+                        Toast.makeText(requireContext(), "Failed to get image URL: ${exception.message}", Toast.LENGTH_SHORT).show()
+                    }
+                }
+                .addOnFailureListener { exception ->
+                    Toast.makeText(requireContext(), "Image upload failed: ${exception.message}", Toast.LENGTH_SHORT).show()
+                }
+        } ?: Toast.makeText(requireContext(), "No image selected", Toast.LENGTH_SHORT).show()
+    }
+
+    private fun storeRecipeInFirestore(
+        title: String,
+        description: String,
+        cookingTime: Int,
+        difficultyLevel: String,
+        cuisineType: List<String>,
+        recipeImageUrl: String
+    ) {
+        val recipe = hashMapOf(
+            "recipeTitle" to title,
+            "recipeDescription" to description,
+            "recipeUploadLocation" to recipeUploadLocation,
+            "cookingTime" to cookingTime,
+            "difficultyLevel" to difficultyLevel,
+            "cuisineType" to cuisineType,
+            "recipeUserId" to currentUserId,
+            "dateRecipeAdded" to Date(),
+            "avgRating" to 0.0,
+            "recipeImageUrl" to recipeImageUrl,
+            "comments" to emptyList<Any>()
+        )
+
+        firestore.collection("Recipes")
+            .add(recipe)
+            .addOnSuccessListener {
+                Toast.makeText(requireContext(), "Recipe added successfully!", Toast.LENGTH_SHORT).show()
+                requireActivity().onBackPressed()
+            }
+            .addOnFailureListener { exception ->
+                Toast.makeText(requireContext(), "Failed to add recipe: ${exception.message}", Toast.LENGTH_SHORT).show()
+            }
     }
 
     // Customizing button appearance (background and text color) based on user interaction
@@ -169,44 +214,5 @@ class AddRecipeFragment : Fragment() {
     private fun resetButtonState(button: MaterialButton) {
         button.setBackgroundColor(Color.parseColor("#FFFCD7"))
         button.setTextColor(Color.BLACK)
-    }
-
-    // Firestore add data function adapted from Firebase documentation
-    // https://firebase.google.com/docs/firestore/manage-data/add-data
-    // https://youtu.be/GEb62UipZi0?si=6hw8rH1IcU-pOMsY
-    private fun storeRecipeInFirestore(
-        title: String,
-        description: String,
-        cookingTime: Int,
-        difficultyLevel: String,
-        cuisineType: List<String>
-    ) {
-        val recipe = hashMapOf(
-            "recipeTitle" to title,
-            "recipeDescription" to description,
-            "recipeUploadLocation" to recipeUploadLocation,
-            "cookingTime" to cookingTime,
-            "difficultyLevel" to difficultyLevel,
-            "cuisineType" to cuisineType,
-            "recipeUserId" to currentUserId,
-            "dateRecipeAdded" to Date(),
-            "avgRating" to 0.0,
-            "comments" to emptyList<Any>()
-        )
-
-        firestore.collection("Recipes")
-            .add(recipe)
-            .addOnSuccessListener {
-                // Toast message usage based on Android developer documentation
-                // https://developer.android.com/guide/topics/ui/notifiers/toasts
-               // https://www.geeksforgeeks.org/how-to-implement-onbackpressed-in-fragments-in-android/
-                Toast.makeText(requireContext(), "Recipe added successfully!", Toast.LENGTH_SHORT).show()
-                requireActivity().onBackPressed()
-            }
-            .addOnFailureListener { exception ->
-                // Toast message usage based on Android developer documentation
-                // https://developer.android.com/guide/topics/ui/notifiers/toasts
-                Toast.makeText(requireContext(), "Failed to add recipe: ${exception.message}", Toast.LENGTH_SHORT).show()
-            }
     }
 }

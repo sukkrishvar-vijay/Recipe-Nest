@@ -13,6 +13,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import com.bumptech.glide.Glide
 import androidx.recyclerview.widget.RecyclerView
 
 // RecyclerView Adapter implementation based on Android developer documentation
@@ -53,7 +54,11 @@ class RecipesCarouselAdapter(
         // https://developer.android.com/guide/topics/ui/layout/recyclerview#bind-data
         // https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.text/
         fun bind(item: RecipesCarouselModel, onClick: (RecipesCarouselModel) -> Unit) {
-            imageView.setImageResource(item.imageResId)
+            // Use Glide to load the image URL if provided, or use a placeholder image
+            Glide.with(itemView.context)
+                .load(item.recipeImageUrl)  // Use item.imageUrl if it’s a URL, or item.imageResId for local resources
+                .placeholder(R.drawable.placeholder_recipe_image) // Placeholder while loading
+                .into(imageView)
             titleTextView.text = item.recipeTitle
 
             // Handling item click events in RecyclerView ViewHolder based on Android developer guide

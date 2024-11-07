@@ -14,6 +14,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.group2.recipenest.R
 
 // Setting up RecyclerView Adapter and ViewHolder based on Android developer documentation
@@ -35,7 +36,11 @@ class TrendingRecipeCardsAdapter(
 
     override fun onBindViewHolder(holder: RecipeViewHolder, position: Int) {
         val recipe = recipes[position]
-        holder.recipeImageView.setImageResource(recipe.imageResId)
+        // Load the image from the URL using Glide if available, or use a placeholder image
+        Glide.with(holder.itemView.context)
+            .load(recipe.recipeImageUrl)
+            .placeholder(R.drawable.placeholder_recipe_image)
+            .into(holder.recipeImageView)
         holder.recipeTitleTextView.text = recipe.recipeTitle
         holder.recipeDetailsTextView.text = "${recipe.difficultyLevel} • ${recipe.cookingTime} mins • ${recipe.cuisineType}"
         holder.recipeRatingTextView.text = "${recipe.avgRating}★"
