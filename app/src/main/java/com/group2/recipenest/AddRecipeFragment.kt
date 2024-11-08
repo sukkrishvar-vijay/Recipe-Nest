@@ -19,6 +19,7 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
+import com.google.firebase.storage.ktx.storage
 import com.group2.geolocation.LocationHelper
 import java.util.*
 
@@ -39,7 +40,7 @@ class AddRecipeFragment : Fragment() {
         val rootView = inflater.inflate(R.layout.add_recipe_fragment, container, false)
 
         firestore = Firebase.firestore
-        storageRef = FirebaseStorage.getInstance().reference.child("Recipes")
+        storageRef = Firebase.storage.reference
 
         val toolbar: Toolbar = requireActivity().findViewById(R.id.toolbar)
         toolbar.title = "Add New Recipe"
@@ -150,24 +151,30 @@ class AddRecipeFragment : Fragment() {
         cuisineType: List<String>
     ) {
         imageUri?.let { uri ->
-            val fileRef = storageRef.child("images/${UUID.randomUUID()}.jpg")
+            val fileRef = storageRef.child("Recipes/${UUID.randomUUID()}.jpg")
             Log.d("FileRef", fileRef.toString())
             Log.d("uri", uri.toString())
 
-
             fileRef.putFile(uri)
                 .addOnSuccessListener {
+                    // Only after upload success, attempt to get the download URL
                     fileRef.downloadUrl.addOnSuccessListener { downloadUrl ->
+                        // Call storeRecipeInFirestore after both upload and URL retrieval succeed
                         storeRecipeInFirestore(title, description, cookingTime, difficultyLevel, cuisineType, downloadUrl.toString())
                     }.addOnFailureListener { exception ->
+                        // Handle download URL retrieval failure
+                        Log.d("Exception", "Failed to get image URL: ${exception}")
                         Toast.makeText(requireContext(), "Failed to get image URL: ${exception.message}", Toast.LENGTH_SHORT).show()
                     }
                 }
                 .addOnFailureListener { exception ->
+                    // Handle file upload failure
+                    Log.d("Exception", "Image upload failed: ${exception}")
                     Toast.makeText(requireContext(), "Image upload failed: ${exception.message}", Toast.LENGTH_SHORT).show()
                 }
         } ?: Toast.makeText(requireContext(), "No image selected", Toast.LENGTH_SHORT).show()
     }
+
 
     private fun storeRecipeInFirestore(
         title: String,
