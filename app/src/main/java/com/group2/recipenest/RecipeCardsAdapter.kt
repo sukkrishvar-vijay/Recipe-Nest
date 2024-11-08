@@ -41,6 +41,17 @@ class RecipeCardsAdapter(
         return recipeList.size
     }
 
+    fun getRecipeAtPosition(position: Int): RecipeCardModel? {
+        return if (position in recipeList.indices) recipeList[position] else null
+    }
+
+    fun removeRecipeAtPosition(position: Int) {
+        val mutableList = recipeList.toMutableList()
+        mutableList.removeAt(position)
+        recipeList = mutableList
+        notifyItemRemoved(position)
+    }
+
     class RecipeViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val recipeTitle: TextView = itemView.findViewById(R.id.recipe_title)
         private val recipeDescription: TextView = itemView.findViewById(R.id.recipe_description)

@@ -9,8 +9,12 @@ package com.group2.recipenest
 
 import FavoriteCollectionsTileModel
 import android.app.AlertDialog
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.util.Log
+import androidx.recyclerview.widget.ItemTouchHelper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -54,6 +58,49 @@ class FavoritesFragment : Fragment() {
                 .commit()
         }
         recyclerView.adapter = adapter
+
+        // Attach ItemTouchHelper for swipe-to-delete functionality
+        val itemTouchHelper = ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
+            override fun onMove(
+                recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder, target: RecyclerView.ViewHolder
+            ): Boolean = false
+
+            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                val position = viewHolder.adapterPosition
+                val tile = adapter.getTileAtPosition(position)
+
+                tile?.let {
+                    showDeleteConfirmationDialog(it, position)
+                } ?: run {
+                    adapter.notifyItemChanged(position)
+                }
+            }
+
+            override fun onChildDraw(
+                c: Canvas,
+                recyclerView: RecyclerView,
+                viewHolder: RecyclerView.ViewHolder,
+                dX: Float,
+                dY: Float,
+                actionState: Int,
+                isCurrentlyActive: Boolean
+            ) {
+                if (actionState == ItemTouchHelper.ACTION_STATE_SWIPE) {
+                    // Draw red background for swipe action
+                    val itemView = viewHolder.itemView
+                    val background = ColorDrawable(Color.RED)
+                    background.setBounds(
+                        itemView.right + dX.toInt(),
+                        itemView.top,
+                        itemView.right,
+                        itemView.bottom
+                    )
+                    background.draw(c)
+                }
+                super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
+            }
+        })
+        itemTouchHelper.attachToRecyclerView(recyclerView)
 
         fetchFavoriteCollections()
 
@@ -163,6 +210,41 @@ class FavoritesFragment : Fragment() {
             }
         }.addOnFailureListener { exception ->
             exception.printStackTrace()
+        }
+    }
+
+    private fun showDeleteConfirmationDialog(tile: FavoriteCollectionsTileModel, position: Int) {
+        AlertDialog.Builder(requireContext())
+            .setTitle("Delete Collection")
+            .setMessage("Are you sure you want to delete the ${tile.title} collection?")
+            .setPositiveButton("Delete") { _, _ ->
+                deleteCollection(tile, position)
+            }
+            .setNegativeButton("Cancel") { dialog, _ ->
+                dialog.dismiss()
+                adapter.notifyItemChanged(position)
+            }
+            .show()
+    }
+
+    private fun deleteCollection(tile: FavoriteCollectionsTileModel, position: Int) {
+        val userRef = firestore.collection("User").document(currentUserId)
+
+        userRef.get().addOnSuccessListener { document ->
+            if (document.exists()) {
+                val favoriteCollection = document.get("favoriteCollection") as? MutableList<Map<String, List<String>>>
+                val updatedCollection = favoriteCollection?.filterNot { it.containsKey(tile.title.lowercase()) }
+
+                userRef.update("favoriteCollection", updatedCollection).addOnSuccessListener {
+                    val updatedTileList = adapter.getTileList().toMutableList()
+                    updatedTileList.removeAt(position)
+                    adapter.updateTiles(updatedTileList)
+                }.addOnFailureListener { exception ->
+                    Log.e("FavoritesFragment", "Error deleting collection", exception)
+                }
+            }
+        }.addOnFailureListener { exception ->
+            Log.e("FavoritesFragment", "Error fetching user data", exception)
         }
     }
 }

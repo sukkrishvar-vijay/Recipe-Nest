@@ -30,6 +30,14 @@ class FavoritesTileAdapter(private var tileList: List<FavoriteCollectionsTileMod
         notifyDataSetChanged()
     }
 
+    // Function to retrieve the entire tile list
+    fun getTileList(): List<FavoriteCollectionsTileModel> = tileList
+
+    // Function to retrieve a tile at a specific position
+    fun getTileAtPosition(position: Int): FavoriteCollectionsTileModel? {
+        return if (position in tileList.indices) tileList[position] else null
+    }
+
     // ViewHolder pattern and View inflation in RecyclerView learned from Android developer guide
     // https://developer.android.com/reference/androidx/recyclerview/widget/RecyclerView.ViewHolder
     // https://developer.android.com/reference/android/view/LayoutInflater

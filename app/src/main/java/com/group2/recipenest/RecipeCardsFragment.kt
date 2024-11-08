@@ -8,7 +8,12 @@
 package com.group2.recipenest
 
 import RecipeCardModel
+import android.app.AlertDialog
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,6 +21,7 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.appcompat.widget.Toolbar
+import androidx.recyclerview.widget.ItemTouchHelper
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -26,6 +32,7 @@ class RecipeCardsFragment : Fragment() {
     private lateinit var recipeRecyclerView: RecyclerView
     private lateinit var recipeAdapter: RecipeCardsAdapter
     private lateinit var firestore: FirebaseFirestore
+    private lateinit var tileTitle: String
 
     private var currentUserId = userSignInData.UserDocId
 
@@ -35,7 +42,7 @@ class RecipeCardsFragment : Fragment() {
     ): View? {
         val view = inflater.inflate(R.layout.recipes_collections, container, false)
 
-        val tileTitle = arguments?.getString("tileTitle") ?: "Recipes"
+        tileTitle = arguments?.getString("tileTitle") ?: "Recipes"
 
         val toolbar: Toolbar = requireActivity().findViewById(R.id.toolbar)
 
@@ -55,9 +62,99 @@ class RecipeCardsFragment : Fragment() {
         recipeRecyclerView = view.findViewById(R.id.recipe_recycler_view)
         recipeRecyclerView.layoutManager = LinearLayoutManager(requireContext())
 
+        // Attach ItemTouchHelper for swipe-to-delete functionality
+        val itemTouchHelper = ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
+            override fun onMove(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder, target: RecyclerView.ViewHolder): Boolean = false
+
+            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                val position = viewHolder.adapterPosition
+                val recipe = recipeAdapter.getRecipeAtPosition(position)
+                recipe?.let {
+                    showDeleteConfirmationDialog(it, position)
+                } ?: run {
+                    recipeAdapter.notifyItemChanged(position) // Reset swipe state if recipe is null
+                }
+            }
+
+            override fun onChildDraw(
+                c: Canvas,
+                recyclerView: RecyclerView,
+                viewHolder: RecyclerView.ViewHolder,
+                dX: Float,
+                dY: Float,
+                actionState: Int,
+                isCurrentlyActive: Boolean
+            ) {
+                if (actionState == ItemTouchHelper.ACTION_STATE_SWIPE) {
+                    // Draw red background for swipe action
+                    val itemView = viewHolder.itemView
+                    val background = ColorDrawable(Color.RED)
+                    background.setBounds(
+                        itemView.right + dX.toInt(),
+                        itemView.top,
+                        itemView.right,
+                        itemView.bottom
+                    )
+                    background.draw(c)
+                }
+                super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
+            }
+        })
+        itemTouchHelper.attachToRecyclerView(recipeRecyclerView)
+
         fetchRecipeIdsFromFavorites(tileTitle)
 
         return view
+    }
+
+    private fun showDeleteConfirmationDialog(recipe: RecipeCardModel, position: Int) {
+        AlertDialog.Builder(requireContext())
+            .setTitle("Delete Recipe")
+            .setMessage("Are you sure you want to delete this recipe?")
+            .setPositiveButton("Delete") { _, _ ->
+                deleteRecipe(recipe, position)
+            }
+            .setNegativeButton("Cancel") { dialog, _ ->
+                dialog.dismiss()
+                recipeAdapter.notifyItemChanged(position) // Reset swipe if deletion is canceled
+            }
+            .show()
+    }
+
+    private fun deleteRecipe(recipe: RecipeCardModel, position: Int) {
+        val userRef = firestore.collection("User").document(currentUserId)
+
+        userRef.get().addOnSuccessListener { document ->
+            if (document.exists()) {
+                val favoriteCollection = document.get("favoriteCollection") as? MutableList<Map<String, MutableList<String>>>
+                var recipeRemoved = false
+
+                // Locate and remove the recipe ID from the selected collection
+                favoriteCollection?.forEach { collection ->
+                    collection[tileTitle.lowercase()]?.let { recipeList ->
+                        if (recipeList.contains(recipe.recipeId)) {
+                            recipeList.remove(recipe.recipeId)
+                            recipeRemoved = true
+                        }
+                    }
+                }
+
+                if (recipeRemoved) {
+                    // Update Firestore and UI if recipe ID was removed
+                    userRef.update("favoriteCollection", favoriteCollection).addOnSuccessListener {
+                        recipeAdapter.removeRecipeAtPosition(position)
+                        Log.d("RecipeCardsFragment", "Recipe successfully deleted from Firestore.")
+                    }.addOnFailureListener { exception ->
+                        Log.e("RecipeCardsFragment", "Failed to update Firestore: ${exception.message}")
+                    }
+                } else {
+                    recipeAdapter.notifyItemChanged(position) // Reset swipe if not found
+                    Log.e("RecipeCardsFragment", "Recipe ID not found in favoriteCollection.")
+                }
+            }
+        }.addOnFailureListener { exception ->
+            Log.e("RecipeCardsFragment", "Failed to retrieve user document: ${exception.message}")
+        }
     }
 
     // Firestore document retrieval and querying based on Firebase documentation
