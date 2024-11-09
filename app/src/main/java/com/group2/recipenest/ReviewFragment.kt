@@ -60,20 +60,37 @@ class ReviewFragment : BottomSheetDialogFragment() {
                         val comments = document.get("comments") as? List<Map<String, Any>> ?: emptyList()
                         reviewList.clear()
 
+                        // Count down latch to wait for all details to be loaded
+                        var pendingComments = comments.size
+
                         for (comment in comments) {
                             val commenterId = comment["commenter"] as? String ?: continue
                             val commentText = comment["comment"] as? String ?: ""
                             val rating = (comment["rating"] as? Double)?.toInt() ?: 0
                             val dateCommented = (comment["dateCommented"] as? com.google.firebase.Timestamp)?.toDate() ?: Date()
+                            val audioCommentUrl = comment["audioCommentUrl"] as? String ?: ""
+                            Log.d("AudioUrl", audioCommentUrl)
 
+                            // Fetch commenter details and handle the callback after fetching
                             fetchCommenterDetails(commenterId) { firstName, lastName, username ->
                                 val fullName = "$firstName $lastName"
-                                val review = ReviewModel(fullName, username, commentText, dateCommented, rating)
+                                val review = ReviewModel(fullName, username, commentText, dateCommented, rating, audioCommentUrl)
                                 reviewList.add(review)
-                                reviewAdapter.notifyItemInserted(reviewList.size - 1)
+
+                                // Decrement pending count and check if all are fetched
+                                pendingComments--
+                                if (pendingComments == 0) {
+                                    // Once all data is loaded, update the adapter
+                                    reviewList.sortBy { it.dateCommented }
+                                    reviewAdapter.notifyDataSetChanged()
+                                }
                             }
                         }
-                        reviewAdapter.notifyDataSetChanged()
+
+                        // Handle empty comments case immediately
+                        if (pendingComments == 0) {
+                            reviewAdapter.notifyDataSetChanged()
+                        }
                     }
                 }
                 .addOnFailureListener { exception ->
@@ -81,6 +98,7 @@ class ReviewFragment : BottomSheetDialogFragment() {
                 }
         }
     }
+
 
     private fun fetchCommenterDetails(commenterId: String, callback: (String, String, String) -> Unit) {
         db.collection("User").document(commenterId)

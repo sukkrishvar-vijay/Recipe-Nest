@@ -5,5 +5,6 @@ data class ReviewModel(
     val username: String,
     val comment: String,
     val dateCommented: Date,
-    val rating: Int
+    val rating: Int,
+    val audioCommentUrl: String,
 )

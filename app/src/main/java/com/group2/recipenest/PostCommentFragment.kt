@@ -7,25 +7,43 @@
 
 package com.group2.recipenest
 
+import android.Manifest
+import android.annotation.SuppressLint
+import android.content.pm.PackageManager
+import android.media.MediaPlayer
+import android.media.MediaRecorder
+import android.net.Uri
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ImageButton
 import android.widget.ImageView
+import android.widget.SeekBar
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.ktx.storage
+import java.io.File
+import java.io.IOException
 import java.util.Date
+import java.util.UUID
 
 class PostCommentFragment : Fragment() {
 
     private val currentUserId = userSignInData.UserDocId
     private lateinit var recipeId: String
     private lateinit var firestore: FirebaseFirestore
+    private val firebaseStorageRef = Firebase.storage.reference
 
     private lateinit var star1: ImageView
     private lateinit var star2: ImageView
@@ -33,8 +51,23 @@ class PostCommentFragment : Fragment() {
     private lateinit var star4: ImageView
     private lateinit var star5: ImageView
 
+    private lateinit var audioRecord: Button
+    private lateinit var playpause: ImageButton
+    private lateinit var audioBar: SeekBar
+
+    private lateinit var runnable: Runnable
+    private lateinit var handler: Handler
+
+    private var mediaRecorder: MediaRecorder? = null
+    private var mediaPlayer: MediaPlayer? = null
+    private var audioFilePath: String = ""
+    private var isRecording = false
+    private var isAudioAvailable = false
+    private var audioUrl: String = ""
+
     private var currentRating = 0
 
+    @SuppressLint("ClickableViewAccessibility")
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -42,6 +75,8 @@ class PostCommentFragment : Fragment() {
         val rootView = inflater.inflate(R.layout.fragment_post_comment, container, false)
 
         firestore = FirebaseFirestore.getInstance()
+
+        requestPermissions()
 
         // Retrieving fragment arguments using Bundle based on Android developer documentation
         // https://developer.android.com/guide/fragments/communicate
@@ -64,20 +99,185 @@ class PostCommentFragment : Fragment() {
         val commentEditText: EditText = rootView.findViewById(R.id.commentText)
         val postButton: Button = rootView.findViewById(R.id.postButton)
 
+        audioFilePath = "${requireContext().externalCacheDir?.absolutePath}/${UUID.randomUUID()}.aac"
+
+        audioRecord = rootView.findViewById(R.id.recordButton)
+        playpause = rootView.findViewById(R.id.playPauseButton)
+        audioBar = rootView.findViewById(R.id.audioSeekBar)
+
+        playpause.isEnabled = false
+        audioBar.isEnabled = false
+
+        handler = Handler(Looper.getMainLooper())
+        runnable = Runnable{
+            //audioBar.progress = mediaPlayer?.currentPosition!!
+            mediaPlayer?.let {
+                audioBar.progress = it.currentPosition
+            } ?: Log.e("PostCommentFragment", "mediaPlayer is null when accessing currentPosition")
+            handler.postDelayed(runnable,0)
+        }
+
+        audioRecord.setOnTouchListener { _, motionEvent ->
+            when (motionEvent.action) {
+                android.view.MotionEvent.ACTION_DOWN -> startRecording()
+                android.view.MotionEvent.ACTION_UP -> stopRecording()
+            }
+            true
+        }
+
+        playpause.setOnClickListener {
+            if (File(audioFilePath).exists()) {
+                audioBar.max = mediaPlayer!!.duration
+                playPauseRecording()
+            } else {
+                Toast.makeText(requireContext(), "No audio file found", Toast.LENGTH_SHORT).show()
+            }
+        }
+
+        audioBar.setOnSeekBarChangeListener(object  : SeekBar.OnSeekBarChangeListener{
+            override fun onProgressChanged(p0: SeekBar?, p1: Int, p2: Boolean) {
+                if(p2)
+                    mediaPlayer!!.seekTo(p1)
+            }
+
+            override fun onStartTrackingTouch(p0: SeekBar?) { }
+
+            override fun onStopTrackingTouch(p0: SeekBar?) { }
+
+        })
+
         postButton.setOnClickListener {
+            if (mediaPlayer != null && mediaPlayer!!.isPlaying){
+                mediaPlayer!!.pause()
+            }
+
             val comment = commentEditText.text.toString()
             val rating = getDynamicRating()
 
             if (comment.isNotEmpty()) {
-                postComment(comment, recipeId, rating)
+                if(isAudioAvailable){
+                    //uploadAudioToFirebase()
+                    uploadAudioToFirebase { audioDownloadUrl ->
+                        audioUrl = audioDownloadUrl
+                        postComment(comment, recipeId, rating)
+                    }
+                }
+                else{
+                    postComment(comment, recipeId, rating)
+                }
             } else {
                 // Toast messages implementation based on Android developer guide
                 // https://developer.android.com/guide/topics/ui/notifiers/toasts
                 Toast.makeText(requireContext(), "Comment cannot be empty", Toast.LENGTH_SHORT).show()
             }
         }
-
         return rootView
+    }
+
+    @Suppress("DEPRECATION")
+    private fun startRecording() {
+        if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED) {
+            mediaRecorder = MediaRecorder().apply {
+                setAudioSource(MediaRecorder.AudioSource.MIC)
+                setOutputFormat(MediaRecorder.OutputFormat.MPEG_4)
+                setAudioEncoder(MediaRecorder.AudioEncoder.AAC)
+                setOutputFile(audioFilePath)
+                try {
+                    prepare()
+                    start()
+                    isRecording = true
+                } catch (e: IOException) {
+                    e.printStackTrace()
+                    Toast.makeText(requireContext(), "Recording failed: ${e.message}", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+    }
+
+    private fun stopRecording() {
+        mediaRecorder?.apply {
+            stop()
+            release()
+        }
+        mediaRecorder = null
+        isRecording = false
+
+        //Loading the media player with current audio
+        isAudioAvailable = true
+        mediaPlayer = MediaPlayer().apply {
+            setDataSource(audioFilePath)
+            prepare()
+            setOnCompletionListener {
+                playpause.setImageResource(R.drawable.ic_play)
+                handler.removeCallbacks(runnable)
+                mediaPlayer?.seekTo(0)
+                audioBar.progress = 0
+            }
+        }
+        audioRecord.text = "Record Again"
+        playpause.isEnabled = true
+        audioBar.isEnabled = true
+    }
+
+    // Updates play/pause recording functionality
+    private fun playPauseRecording() {
+        if (mediaPlayer == null) {
+            mediaPlayer = MediaPlayer().apply {
+                setDataSource(audioFilePath)
+                prepare()
+                setOnCompletionListener {
+                    playpause.setImageResource(R.drawable.ic_play)
+                    handler.removeCallbacks(runnable)
+                    mediaPlayer?.seekTo(0)
+                    audioBar.progress = 0
+                }
+            }
+        }
+
+        // Toggle play/pause
+        if (mediaPlayer!!.isPlaying) {
+            mediaPlayer!!.pause()
+            playpause.setImageResource(R.drawable.ic_play)
+            handler.removeCallbacks(runnable)
+        } else {
+            mediaPlayer!!.start()
+            playpause.setImageResource(R.drawable.ic_pause)
+            handler.postDelayed(runnable, 0)
+        }
+    }
+
+    // Uploads audio to Firebase Storage
+    private fun uploadAudioToFirebase(onUploadSuccess: (String) -> Unit) {
+        val audioFile = File(audioFilePath)
+        val audioUri = Uri.fromFile(audioFile)
+        val audioRef = firebaseStorageRef.child("Audio/${audioFile.name}")
+
+        audioRef.putFile(audioUri)
+            .addOnSuccessListener {
+                audioRef.downloadUrl.addOnSuccessListener { downloadUrl ->
+                    onUploadSuccess(downloadUrl.toString())
+                    Log.d("FIREBASE", "Upload Success. Audio URL: $downloadUrl")
+                }.addOnFailureListener {
+                    Log.d("FIREBASE", "Failed to retrieve download URL")
+                }
+            }
+            .addOnFailureListener {
+                Log.d("FIREBASE", "Upload Failed")
+            }
+    }
+
+    // Handle permission request
+    private fun requestPermissions() {
+        val requestPermissionLauncher = registerForActivityResult(
+            ActivityResultContracts.RequestPermission()
+        ) { isGranted: Boolean ->
+            if (!isGranted) {
+                // Handle permission denial
+            }
+        }
+        requestPermissionLauncher.launch(Manifest.permission.RECORD_AUDIO)
+        requestPermissionLauncher.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+        requestPermissionLauncher.launch(Manifest.permission.READ_EXTERNAL_STORAGE)
     }
 
     // Star rating click listener pattern adapted from Android developer tutorial on custom views
@@ -130,7 +330,8 @@ class PostCommentFragment : Fragment() {
                     "commenter" to currentUserId,
                     "comment" to comment,
                     "dateCommented" to Date(),
-                    "rating" to rating
+                    "rating" to rating,
+                    "audioCommentUrl" to audioUrl
                 )
 
                 // Firestore batch write with array updates learned from Firebase documentation
@@ -152,4 +353,12 @@ class PostCommentFragment : Fragment() {
             Toast.makeText(requireContext(), "Failed to retrieve recipe: ${exception.message}", Toast.LENGTH_LONG).show()
         }
     }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        handler.removeCallbacks(runnable)
+        mediaPlayer?.release()
+        mediaPlayer = null
+    }
+
 }

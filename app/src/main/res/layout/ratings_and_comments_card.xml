@@ -51,26 +51,36 @@
 
         <!-- Audio Playback Button -->
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:id="@+id/audioSection"
             android:orientation="horizontal"
             android:gravity="center_vertical"
             android:layout_marginTop="8dp">
 
-            <ImageView
-                android:id="@+id/audio_play_button"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:src="@android:drawable/ic_media_play"
-                android:layout_marginEnd="8dp" />
+            <!-- Play/Pause Button -->
+            <ImageButton
+                android:id="@+id/playPauseButton"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:minWidth="48dp"
+                android:minHeight="48dp"
+                android:padding="8dp"
+                android:src="@drawable/ic_play"
+                android:contentDescription="Play/Pause"
+                android:background="?attr/selectableItemBackgroundBorderless" />
 
-            <TextView
-                android:id="@+id/audio_play_text"
-                android:layout_width="wrap_content"
+            <!-- SeekBar for Audio Playback -->
+            <SeekBar
+                android:id="@+id/audioSeekBar"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="Tap to play audio"
-                android:textColor="#000000"
-                android:textSize="14sp" />
+                android:layout_weight="1"
+                android:layout_gravity="center"
+                android:thumbTint="@color/theme"
+                android:progressTint="@color/theme"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"/>
 
         </LinearLayout>
 
