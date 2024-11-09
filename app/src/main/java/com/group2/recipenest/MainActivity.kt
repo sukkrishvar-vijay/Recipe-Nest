@@ -7,6 +7,7 @@
 
 package com.group2.recipenest
 
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -55,6 +56,7 @@ class MainActivity : AppCompatActivity() {
                 signInAccount()
             } else {
                 // If logged in, load the default fragment (home page)
+                userSignInData.ShowAuthFirstTime = false
                 loadHomePage()
             }
         }
@@ -133,9 +135,15 @@ class MainActivity : AppCompatActivity() {
             .addOnSuccessListener { result ->
                 for (document in result) {
                     val documentUserUID = document.getString("userUID")
+                    val documentBiometricEnabled = document.getBoolean("biometricEnabled")
                     if (userSignInData.UserUID == documentUserUID) {
                         userSignInData.UserDocId = document.id
                         Log.d("USERDOCID", document.id)
+                        val sharedPreferences = getSharedPreferences("UserSettings", Context.MODE_PRIVATE)
+                        if (documentBiometricEnabled != null) {
+                            sharedPreferences.edit().putBoolean("biometricEnabled", documentBiometricEnabled).apply()
+                            Log.d("USERDOCID", documentBiometricEnabled.toString())
+                        }
                     }
                 }
             }

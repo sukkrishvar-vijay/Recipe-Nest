@@ -90,6 +90,7 @@ class SignUpFragment3: Fragment() {
                 mapOf("snack" to emptyList<String>()),
                 mapOf("dinner" to emptyList<String>()),
             ),
+            "biometricEnabled" to false
             )
 
         //https://firebase.google.com/docs/firestore/manage-data/add-data

@@ -35,6 +35,7 @@ class UpdateProfileFragment : Fragment() {
     private var originalLastName: String? = null
     private var originalUsername: String? = null
     private var originalBio: String? = null
+    private var originalAuth: Boolean? = null
 
     private lateinit var firstNameEditText: TextInputEditText
     private lateinit var lastNameEditText: TextInputEditText
@@ -42,6 +43,7 @@ class UpdateProfileFragment : Fragment() {
     private lateinit var bioEditText: TextInputEditText
     private lateinit var emailEditText: TextInputEditText
     private lateinit var updateButton: Button
+    private lateinit var authSwitch: MaterialSwitch
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -74,7 +76,7 @@ class UpdateProfileFragment : Fragment() {
         bioEditText = view.findViewById(R.id.user_bio)
         emailEditText = view.findViewById(R.id.email)
         updateButton = view.findViewById(R.id.update_button)
-        val authSwitch = view.findViewById<MaterialSwitch>(R.id.auth_switch)
+        authSwitch = view.findViewById<MaterialSwitch>(R.id.auth_switch)
 
         // Disabling EditText fields to prevent modification based on Android developer documentation
         // https://developer.android.com/reference/android/widget/EditText
@@ -87,25 +89,6 @@ class UpdateProfileFragment : Fragment() {
             updateUserProfile()
         }
 
-        // Storing user preferences with SharedPreferences based on Android developer documentation
-        // https://developer.android.com/training/data-storage/shared-preferences
-        // https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/
-        val sharedPreferences = requireActivity().getSharedPreferences("UserSettings", Context.MODE_PRIVATE)
-        val biometricEnabled = sharedPreferences.getBoolean("biometricEnabled", false)
-        authSwitch.isChecked = biometricEnabled
-
-        authSwitch.setOnCheckedChangeListener {_, isChecked ->
-            sharedPreferences.edit().putBoolean("biometricEnabled", isChecked).apply()
-            if (isChecked) {
-                // Displaying feedback to the user using Toast messages based on Android developer documentation
-                // https://developer.android.com/guide/topics/ui/notifiers/toasts
-                Toast.makeText(requireContext(), "Biometric Auth Enabled", Toast.LENGTH_SHORT).show()
-            } else {
-                // Displaying feedback to the user using Toast messages based on Android developer documentation
-                // https://developer.android.com/guide/topics/ui/notifiers/toasts
-                Toast.makeText(requireContext(), "Biometric Auth Disabled", Toast.LENGTH_SHORT).show()
-            }
-        }
     }
 
     // Firestore data retrieval and document handling based on Firebase documentation
@@ -121,11 +104,13 @@ class UpdateProfileFragment : Fragment() {
                 originalUsername = document.getString("username")
                 originalBio = document.getString("bio")
                 val email = document.getString("email")
+                originalAuth = document.getBoolean("biometricEnabled")
 
                 firstNameEditText.setText(originalFirstName)
                 lastNameEditText.setText(originalLastName)
                 usernameEditText.setText(originalUsername)
                 bioEditText.setText(originalBio)
+                authSwitch.isChecked = originalAuth!!
                 emailEditText.setText(email)
             } else {
                 // Displaying feedback to the user using Toast messages based on Android developer documentation
@@ -147,6 +132,7 @@ class UpdateProfileFragment : Fragment() {
         val updatedLastName = lastNameEditText.text.toString()
         val updatedUsername = usernameEditText.text.toString()
         val updatedBio = bioEditText.text.toString()
+        val auth = authSwitch.isChecked
 
         val userRef = firestore.collection("User").document(userDocumentId)
 
@@ -154,8 +140,12 @@ class UpdateProfileFragment : Fragment() {
             "firstName" to updatedFirstName,
             "lastName" to updatedLastName,
             "username" to updatedUsername,
-            "bio" to updatedBio
+            "bio" to updatedBio,
+            "biometricEnabled" to auth
         )
+
+        val sharedPreferences = requireActivity().getSharedPreferences("UserSettings", Context.MODE_PRIVATE)
+        sharedPreferences.edit().putBoolean("biometricEnabled", auth).apply()
 
         userRef.update(updates)
             .addOnSuccessListener {
@@ -167,6 +157,7 @@ class UpdateProfileFragment : Fragment() {
                 originalLastName = updatedLastName
                 originalUsername = updatedUsername
                 originalBio = updatedBio
+                originalAuth = auth
             }
             .addOnFailureListener {
                 // Displaying feedback to the user using Toast messages based on Android developer documentation

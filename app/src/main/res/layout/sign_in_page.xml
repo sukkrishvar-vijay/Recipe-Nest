@@ -92,7 +92,7 @@
 
         <Button
             style="?attr/materialIconButtonStyle"
-            android:id="@+id/iconButton"
+            android:id="@+id/iconFingerprintButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:backgroundTint="@color/theme"
