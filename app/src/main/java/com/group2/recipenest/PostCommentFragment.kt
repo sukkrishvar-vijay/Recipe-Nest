@@ -306,14 +306,14 @@ class PostCommentFragment : Fragment() {
         }
     }
 
-    private fun getDynamicRating(): Double {
-        return currentRating.toDouble()
+    private fun getDynamicRating(): Long {
+        return currentRating.toLong()
     }
 
     // Firestore document retrieval and batch update learned from Firebase documentation
     // https://firebase.google.com/docs/firestore/query-data/get-data
     // https://firebase.google.com/docs/firestore/manage-data/transactions
-    private fun postComment(comment: String, recipeId: String, rating: Double) {
+    private fun postComment(comment: String, recipeId: String, rating: Long) {
         val recipeRef = firestore.collection("Recipes").document(recipeId)
 
         recipeRef.get().addOnSuccessListener { document ->

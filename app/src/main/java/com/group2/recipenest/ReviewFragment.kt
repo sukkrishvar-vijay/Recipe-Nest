@@ -60,36 +60,26 @@ class ReviewFragment : BottomSheetDialogFragment() {
                         val comments = document.get("comments") as? List<Map<String, Any>> ?: emptyList()
                         reviewList.clear()
 
-                        // Count down latch to wait for all details to be loaded
-                        var pendingComments = comments.size
-
+                        // Process each comment and create a ReviewModel instance
                         for (comment in comments) {
                             val commenterId = comment["commenter"] as? String ?: continue
                             val commentText = comment["comment"] as? String ?: ""
-                            val rating = (comment["rating"] as? Double)?.toInt() ?: 0
+                            val rating = (comment["rating"] as? Long)?.toInt() ?: 0
                             val dateCommented = (comment["dateCommented"] as? com.google.firebase.Timestamp)?.toDate() ?: Date()
                             val audioCommentUrl = comment["audioCommentUrl"] as? String ?: ""
-                            Log.d("AudioUrl", audioCommentUrl)
 
-                            // Fetch commenter details and handle the callback after fetching
                             fetchCommenterDetails(commenterId) { firstName, lastName, username ->
                                 val fullName = "$firstName $lastName"
                                 val review = ReviewModel(fullName, username, commentText, dateCommented, rating, audioCommentUrl)
                                 reviewList.add(review)
 
-                                // Decrement pending count and check if all are fetched
-                                pendingComments--
-                                if (pendingComments == 0) {
-                                    // Once all data is loaded, update the adapter
-                                    reviewList.sortBy { it.dateCommented }
+                                // Notify only when all comments have been added
+                                if (reviewList.size == comments.size) {
+                                    // Sort by dateCommented in descending order
+                                    reviewList.sortByDescending { it.dateCommented }
                                     reviewAdapter.notifyDataSetChanged()
                                 }
                             }
-                        }
-
-                        // Handle empty comments case immediately
-                        if (pendingComments == 0) {
-                            reviewAdapter.notifyDataSetChanged()
                         }
                     }
                 }
