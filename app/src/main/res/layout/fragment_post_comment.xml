@@ -1,159 +1,177 @@
-<ScrollView
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
-
-    <LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="16dp"
-    android:gravity="center_horizontal"
-    android:background="#FFFFFF">
-
-    <!-- Add Review Title -->
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginTop="24dp"
-        android:layout_marginBottom="24dp"
-        android:text="Add a Review"
-        android:textColor="#000000"
-        android:textStyle="bold"
-        android:textSize="24sp" />
-
-    <!-- Comment Text Field with Rounded Edges -->
-    <EditText
-        android:id="@+id/commentText"
-        android:layout_width="match_parent"
-        android:layout_height="200dp"
-        android:layout_marginBottom="16dp"
-        android:gravity="top|start"
-        android:hint="Comment"
-        android:padding="16dp"
-        android:textColorHint="#C7C7C7"
-        android:background="#F7F4E9"
-        android:elevation="4dp" />
-
-    <!-- Rate Text and Stars -->
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center_vertical"
-        android:layout_marginBottom="24dp">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Rate"
-            android:textColor="#000000"
-            android:textSize="20sp"
-            android:layout_marginEnd="16dp" />
-
-        <!-- Star Rating -->
-        <ImageView
-            android:id="@+id/star1"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:clickable="true"
-            android:focusable="true"
-            android:src="@drawable/ic_star_outline" />
-
-        <ImageView
-            android:id="@+id/star2"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_marginStart="8dp"
-            android:clickable="true"
-            android:focusable="true"
-            android:src="@drawable/ic_star_outline" />
-
-        <ImageView
-            android:id="@+id/star3"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_marginStart="8dp"
-            android:clickable="true"
-            android:focusable="true"
-            android:src="@drawable/ic_star_outline" />
-
-        <ImageView
-            android:id="@+id/star4"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_marginStart="8dp"
-            android:clickable="true"
-            android:focusable="true"
-            android:src="@drawable/ic_star_outline" />
-
-        <ImageView
-            android:id="@+id/star5"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_marginStart="8dp"
-            android:clickable="true"
-            android:focusable="true"
-            android:src="@drawable/ic_star_outline" />
-    </LinearLayout>
-
-
-    <!-- Audio and Record Button Layout -->
-    <Button
-        android:id="@+id/recordButton"
-        android:layout_width="300dp"
-        android:layout_height="wrap_content"
-        android:backgroundTint="#D1C300"
-        android:drawableTop="@drawable/ic_mic"
-        android:gravity="center"
-        android:text="Press and Hold to Record Audio"
-        android:textColor="@color/black"
-        android:textSize="14sp" />
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <LinearLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:padding="8dp">
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:padding="16dp"
+        android:gravity="center_horizontal"
+        android:background="#FFFFFF">
 
-        <!-- Play/Pause Button -->
-        <ImageButton
-            android:id="@+id/playPauseButton"
+        <!-- Add Review Title -->
+        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_play"
-            android:contentDescription="Play/Pause"
-            android:background="?attr/selectableItemBackgroundBorderless" />
-
-        <!-- SeekBar for Audio Playback -->
-        <SeekBar
-            android:id="@+id/audioSeekBar"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:layout_gravity="center"
-            android:thumbTint="@color/theme"
-            android:progressTint="@color/theme"
-            android:paddingStart="16dp"
-            android:paddingEnd="16dp"/>
+            android:layout_marginTop="24dp"
+            android:layout_marginBottom="24dp"
+            android:text="Add a Review"
+            android:textColor="#000000"
+            android:textStyle="bold"
+            android:textSize="24sp" />
+
+        <!-- Comment Text Field with Rounded Edges -->
+        <!--https://github.com/material-components/material-components-android/blob/master/docs/components/TextField.md-->
+        <com.google.android.material.textfield.TextInputLayout
+            style="?attr/textInputFilledStyle"
+            android:id="@+id/commentText"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:layout_marginBottom="16dp"
+            android:hint="Comment"
+            android:elevation="4dp"
+            app:hintTextColor="@color/black"
+            app:boxStrokeColor="@color/theme">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:minLines="5"
+                android:gravity="top|start"
+                android:backgroundTint="#2ED1C300"
+                />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- Rate Text and Stars -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="24dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Rate"
+                android:textColor="#000000"
+                android:textSize="20sp"
+                android:layout_marginEnd="16dp" />
+
+            <!-- Star Rating -->
+            <ImageView
+                android:id="@+id/star1"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:src="@drawable/ic_star_outline" />
+
+            <ImageView
+                android:id="@+id/star2"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginStart="8dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:src="@drawable/ic_star_outline" />
+
+            <ImageView
+                android:id="@+id/star3"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginStart="8dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:src="@drawable/ic_star_outline" />
+
+            <ImageView
+                android:id="@+id/star4"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginStart="8dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:src="@drawable/ic_star_outline" />
+
+            <ImageView
+                android:id="@+id/star5"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginStart="8dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:src="@drawable/ic_star_outline" />
+        </LinearLayout>
+
+        <!-- Audio and Record Button Layout -->
+        <Button
+            android:id="@+id/recordButton"
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:backgroundTint="#D1C300"
+            android:drawableTop="@drawable/ic_mic"
+            android:gravity="center"
+            android:text="Tap to Record Audio"
+            android:textColor="@color/black"
+            android:textSize="14sp" />
+
+        <LinearLayout
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="8dp">
+
+            <!-- Play/Pause Button -->
+            <ImageButton
+                android:id="@+id/playPauseButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_play"
+                android:contentDescription="Play/Pause"
+                android:background="?attr/selectableItemBackgroundBorderless" />
+
+            <!-- SeekBar for Audio Playback -->
+            <SeekBar
+                android:id="@+id/audioSeekBar"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_gravity="center"
+                android:thumbTint="@color/theme"
+                android:progressTint="@color/theme"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:id="@+id/timeDuration"
+                android:text="00:00"
+                android:gravity="center"
+                android:textColor="@color/black"
+                />
+
+        </LinearLayout>
+
+
+        <!-- Post Button -->
+        <Button
+            android:id="@+id/postButton"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="60dp"
+            android:backgroundTint="#D1C300"
+            android:elevation="4dp"
+            android:minHeight="48dp"
+            android:padding="16dp"
+            android:text="Post"
+            android:textColor="@color/black" />
+
     </LinearLayout>
-
-
-    <!-- Post Button -->
-    <Button
-        android:id="@+id/postButton"
-        android:layout_width="200dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="60dp"
-        android:backgroundTint="#D1C300"
-        android:elevation="4dp"
-        android:minHeight="48dp"
-        android:padding="16dp"
-        android:text="Post"
-        android:textColor="@color/black" />
-
-</LinearLayout>
 </ScrollView>

@@ -25,10 +25,13 @@ import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.SeekBar
+import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
+import com.google.android.material.textfield.TextInputEditText
+import com.google.android.material.textfield.TextInputLayout
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.ktx.Firebase
@@ -54,6 +57,7 @@ class PostCommentFragment : Fragment() {
     private lateinit var audioRecord: Button
     private lateinit var playpause: ImageButton
     private lateinit var audioBar: SeekBar
+    private lateinit var setAudioTime: TextView
 
     private lateinit var runnable: Runnable
     private lateinit var handler: Handler
@@ -64,6 +68,7 @@ class PostCommentFragment : Fragment() {
     private var isRecording = false
     private var isAudioAvailable = false
     private var audioUrl: String = ""
+    private var canStartRecord:Boolean = true
 
     private var currentRating = 0
 
@@ -96,8 +101,11 @@ class PostCommentFragment : Fragment() {
 
         setupStarClickListeners()
 
-        val commentEditText: EditText = rootView.findViewById(R.id.commentText)
+        //val commentEditText: TextInputEditText = rootView.findViewById(R.id.commentText)
+        val commentTextLayout: TextInputLayout = rootView.findViewById(R.id.commentText)
+        val commentEditText: EditText? = commentTextLayout.editText
         val postButton: Button = rootView.findViewById(R.id.postButton)
+        setAudioTime = rootView.findViewById(R.id.timeDuration)
 
         audioFilePath = "${requireContext().externalCacheDir?.absolutePath}/${UUID.randomUUID()}.aac"
 
@@ -117,12 +125,15 @@ class PostCommentFragment : Fragment() {
             handler.postDelayed(runnable,0)
         }
 
-        audioRecord.setOnTouchListener { _, motionEvent ->
-            when (motionEvent.action) {
-                android.view.MotionEvent.ACTION_DOWN -> startRecording()
-                android.view.MotionEvent.ACTION_UP -> stopRecording()
+        audioRecord.setOnClickListener {
+            if(canStartRecord){
+                canStartRecord = false
+                startRecording()
             }
-            true
+            else{
+                canStartRecord = true
+                stopRecording()
+            }
         }
 
         playpause.setOnClickListener {
@@ -151,7 +162,7 @@ class PostCommentFragment : Fragment() {
                 mediaPlayer!!.pause()
             }
 
-            val comment = commentEditText.text.toString()
+            val comment = commentEditText?.text.toString()
             val rating = getDynamicRating()
 
             if (comment.isNotEmpty()) {
@@ -176,6 +187,8 @@ class PostCommentFragment : Fragment() {
 
     @Suppress("DEPRECATION")
     private fun startRecording() {
+        audioRecord.text = "Recording, Tap to Stop"
+        setAudioTime.text = "00:00"
         if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED) {
             mediaRecorder = MediaRecorder().apply {
                 setAudioSource(MediaRecorder.AudioSource.MIC)
@@ -194,6 +207,7 @@ class PostCommentFragment : Fragment() {
         }
     }
 
+    @SuppressLint("DefaultLocale")
     private fun stopRecording() {
         mediaRecorder?.apply {
             stop()
@@ -214,6 +228,12 @@ class PostCommentFragment : Fragment() {
                 audioBar.progress = 0
             }
         }
+        val durationInMillis = mediaPlayer!!.duration
+        val minutes = (durationInMillis / 1000) / 60
+        val seconds = (durationInMillis / 1000) % 60
+        val formattedTime = String.format("%02d:%02d", minutes, seconds)
+
+        setAudioTime.text = formattedTime
         audioRecord.text = "Record Again"
         playpause.isEnabled = true
         audioBar.isEnabled = true
@@ -221,19 +241,6 @@ class PostCommentFragment : Fragment() {
 
     // Updates play/pause recording functionality
     private fun playPauseRecording() {
-        if (mediaPlayer == null) {
-            mediaPlayer = MediaPlayer().apply {
-                setDataSource(audioFilePath)
-                prepare()
-                setOnCompletionListener {
-                    playpause.setImageResource(R.drawable.ic_play)
-                    handler.removeCallbacks(runnable)
-                    mediaPlayer?.seekTo(0)
-                    audioBar.progress = 0
-                }
-            }
-        }
-
         // Toggle play/pause
         if (mediaPlayer!!.isPlaying) {
             mediaPlayer!!.pause()

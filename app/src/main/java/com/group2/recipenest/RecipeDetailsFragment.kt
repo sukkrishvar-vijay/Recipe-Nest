@@ -7,6 +7,7 @@
 
 package com.group2.recipenest
 
+import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -236,7 +237,13 @@ class RecipeDetailsFragment : Fragment() {
                 }
 
                 builder.setNegativeButton("Cancel", null)
-                builder.create().show()
+                val dialog = builder.create()
+
+                dialog.setOnShowListener {
+                    dialog.getButton(android.app.AlertDialog.BUTTON_POSITIVE).setTextColor(Color.BLACK)
+                    dialog.getButton(android.app.AlertDialog.BUTTON_NEGATIVE).setTextColor(Color.BLACK)
+                }
+                dialog.show()
             }
         }.addOnFailureListener {
             Toast.makeText(requireContext(), "Failed to load favorite categories", Toast.LENGTH_SHORT).show()

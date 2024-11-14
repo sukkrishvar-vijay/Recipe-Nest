@@ -85,15 +85,16 @@ class RecipeCardsFragment : Fragment() {
                 actionState: Int,
                 isCurrentlyActive: Boolean
             ) {
-                if (actionState == ItemTouchHelper.ACTION_STATE_SWIPE) {
-                    // Draw red background for swipe action
+                if (actionState == ItemTouchHelper.ACTION_STATE_SWIPE && dX < 0) {
                     val itemView = viewHolder.itemView
                     val background = ColorDrawable(Color.RED)
+
+                    // Set the background bounds to match the full width of the item
                     background.setBounds(
-                        itemView.right + dX.toInt(),
-                        itemView.top,
-                        itemView.right,
-                        itemView.bottom
+                        itemView.left,        // Left edge of the item
+                        itemView.top,         // Top edge
+                        itemView.right,       // Right edge of the item (fixed, regardless of swipe distance)
+                        itemView.bottom       // Bottom edge
                     )
                     background.draw(c)
                 }
@@ -117,6 +118,12 @@ class RecipeCardsFragment : Fragment() {
             .setNegativeButton("Cancel") { dialog, _ ->
                 dialog.dismiss()
                 recipeAdapter.notifyItemChanged(position) // Reset swipe if deletion is canceled
+            }.create()
+            .apply {
+                setOnShowListener {
+                    getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(Color.BLACK)
+                    getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(Color.BLACK)
+                }
             }
             .show()
     }

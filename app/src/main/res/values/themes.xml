@@ -1,11 +1,13 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
-    <style name="Base.Theme.RecipeNest" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+  <style name="Base.Theme.RecipeNest" parent="Theme.Material3.DayNight.NoActionBar">
         <item name="android:windowBackground">@android:color/white</item>
         <item name="android:colorBackground">@android:color/white</item>
         <item name="colorControlActivated">#D1C300</item>
+    </style>
+
+    <style name="CustomRadioButton" parent="Theme.AppCompat.Light.Dialog.Alert">
+        <item name="android:colorControlNormal">@android:color/black</item>
+        <item name="android:colorControlActivated">#D1C300</item>
     </style>
 
     <style name="App.Custom.Indicator" parent="Widget.Material3.BottomNavigationView.ActiveIndicator">

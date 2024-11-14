@@ -1,17 +1,13 @@
-/*
- * Some of the code blocks in this file have been developed with assistance from AI tools, which were used to help in various stages of the project,
- * including code generation, identifying bugs, and fixing errors related to app crashes. The AI provided guidance in modifying
- * and improving the structure of the code while adhering to Android development best practices. All generated solutions were reviewed
- * and tested for functionality before implementation.
- */
-
 package com.group2.recipenest
 
 import RecipeCardModel
+import android.app.AlertDialog
+import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -20,13 +16,16 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.ktx.storage
 import java.util.Date
 
 class MyRecipesFragment : Fragment() {
 
     private lateinit var recipeRecyclerView: RecyclerView
-    private lateinit var recipeAdapter: RecipeCardsAdapter
+    private lateinit var recipeAdapter: RecipeCardsWithLongClickAdapter
     private lateinit var firestore: FirebaseFirestore
+    private lateinit var storage: FirebaseStorage
 
     private var currentUserId = userSignInData.UserDocId
 
@@ -37,12 +36,9 @@ class MyRecipesFragment : Fragment() {
         val view = inflater.inflate(R.layout.my_recipes_collection, container, false)
 
         firestore = Firebase.firestore
+        storage = Firebase.storage  // Initialize Firebase Storage here
 
         val toolbar: Toolbar = requireActivity().findViewById(R.id.toolbar)
-
-        // Toolbar setup and customization based on Android developer documentation
-        // https://developer.android.com/reference/androidx/appcompat/widget/Toolbar
-        // https://developer.android.com/reference/android/content/res/Resources
         toolbar.title = "My Recipes"
         toolbar.setTitleTextColor(resources.getColor(android.R.color.black, null))
 
@@ -51,21 +47,15 @@ class MyRecipesFragment : Fragment() {
             requireActivity().onBackPressedDispatcher.onBackPressed()
         }
 
-        // FloatingActionButton usage and fragment transaction learned from Android developer guide
-        // https://developer.android.com/reference/com/google/android/material/floatingactionbutton/FloatingActionButton
-       //  https://discuss.kotlinlang.org/t/findviewbyid-with-variable/26344
         val fab: FloatingActionButton = view.findViewById(R.id.fab_add_new_recipe)
         fab.setOnClickListener {
             val addRecipeFragment = AddRecipeFragment()
-
             parentFragmentManager.beginTransaction()
                 .replace(R.id.fragment_container, addRecipeFragment)
                 .addToBackStack(null)
                 .commit()
         }
 
-        // RecyclerView setup and LinearLayoutManager usage adapted from Android developer documentation
-        // https://developer.android.com/guide/topics/ui/layout/recyclerview
         recipeRecyclerView = view.findViewById(R.id.my_recipe_recycler_view)
         recipeRecyclerView.layoutManager = LinearLayoutManager(requireContext())
 
@@ -76,10 +66,6 @@ class MyRecipesFragment : Fragment() {
         super.onResume()
         fetchUserRecipes()
     }
-
-    // Firestore query and document retrieval adapted from Firebase documentation
-    // https://firebase.google.com/docs/firestore/query-data/get-data
-    // https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/to-string.html
 
     private fun fetchUserRecipes() {
         firestore.collection("Recipes")
@@ -116,11 +102,11 @@ class MyRecipesFragment : Fragment() {
                     recipeList.add(recipe)
                 }
 
-                // RecyclerView adapter binding based on Android developer guide
-                // https://developer.android.com/guide/topics/ui/layout/recyclerview
-                recipeAdapter = RecipeCardsAdapter(recipeList) { recipe ->
-                    navigateToRecipeDetailsFragment(recipe)
-                }
+                recipeAdapter = RecipeCardsWithLongClickAdapter(
+                    recipeList,
+                    onClick = { recipe -> navigateToRecipeDetailsFragment(recipe) },
+                    onLongClick = { recipe -> showEditDeleteDialog(recipe) }
+                )
                 recipeRecyclerView.adapter = recipeAdapter
             }
             .addOnFailureListener { exception ->
@@ -128,28 +114,100 @@ class MyRecipesFragment : Fragment() {
             }
     }
 
+    private fun showEditDeleteDialog(recipe: RecipeCardModel) {
+        val options = arrayOf("Edit", "Delete")
+        val builder = AlertDialog.Builder(requireContext())
+        builder.setTitle("Choose an option")
+        builder.setItems(options) { _, which ->
+            when (which) {
+                0 -> editRecipe(recipe)
+                1 -> deleteRecipe(recipe)
+            }
+        }
+        builder.show()
+    }
+
+    private fun editRecipe(recipe: RecipeCardModel) {
+        val addRecipeFragment = AddRecipeFragment()
+        val bundle = Bundle().apply {
+            putString("recipeUserId", recipe.recipeUserId)
+            putString("recipeId", recipe.recipeId)
+            putString("recipeTitle", recipe.recipeTitle)
+            putString("recipeDescription", recipe.recipeDescription)
+            putString("difficultyLevel", recipe.difficultyLevel)
+            putInt("cookingTime", recipe.cookingTime)
+            putString("cuisineType", recipe.cuisineType)
+            putString("recipeImageUrl", recipe.recipeImageUrl)
+            putDouble("avgRating", recipe.avgRating)
+        }
+        addRecipeFragment.arguments = bundle
+
+        parentFragmentManager.beginTransaction()
+            .replace(R.id.fragment_container, addRecipeFragment)
+            .addToBackStack(null)
+            .commit()
+    }
+
+    private fun deleteRecipe(recipe: RecipeCardModel) {
+        // Show confirmation dialog
+        val dialog = AlertDialog.Builder(requireContext())
+            .setTitle("Delete Recipe")
+            .setMessage("Are you sure you want to delete this recipe?")
+            .setPositiveButton("Yes") { dialog, _ ->
+                // Proceed with deletion if user confirms
+                firestore.collection("Recipes").document(recipe.recipeId)
+                    .delete()
+                    .addOnSuccessListener {
+                        recipe.recipeImageUrl.takeIf { it!!.isNotEmpty() }?.let { imageUrl ->
+                            val storageRef = storage.getReferenceFromUrl(imageUrl)
+                            storageRef.delete()
+                                .addOnSuccessListener {
+                                    Toast.makeText(requireContext(), "Recipe deleted successfully!", Toast.LENGTH_SHORT).show()
+                                    fetchUserRecipes() // Refreshes the list after deletion
+                                }
+                                .addOnFailureListener {
+                                    Toast.makeText(requireContext(), "Failed to delete image.", Toast.LENGTH_SHORT).show()
+                                }
+                        } ?: run {
+                            Toast.makeText(requireContext(), "Recipe deleted successfully!", Toast.LENGTH_SHORT).show()
+                            fetchUserRecipes()
+                        }
+                    }
+                    .addOnFailureListener {
+                        Toast.makeText(requireContext(), "Failed to delete recipe.", Toast.LENGTH_SHORT).show()
+                    }
+                dialog.dismiss() // Close the dialog
+            }
+            .setNegativeButton("No") { dialog, _ ->
+                dialog.dismiss() // Close the dialog without deleting
+            }
+            .create()
+
+        dialog.setOnShowListener {
+            dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(Color.BLACK)
+            dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(Color.BLACK)
+        }
+
+        dialog.show()
+    }
+
+
+
     private fun navigateToRecipeDetailsFragment(recipe: RecipeCardModel) {
         val recipeDetailsFragment = RecipeDetailsFragment()
-
-        // Passing data between fragments using Bundle adapted from Android developer documentation
-        // https://developer.android.com/guide/fragments/communicate
-        // https://developer.android.com/reference/kotlin/android/os/Bundle
-        val bundle = Bundle()
-        bundle.putString("recipeUserId", recipe.recipeUserId)
-        bundle.putString("recipeDescription", recipe.recipeDescription)
-        bundle.putString("recipeTitle", recipe.recipeTitle)
-        bundle.putString("avgRating", recipe.avgRating.toString())
-        bundle.putString("difficultyLevel", recipe.difficultyLevel)
-        bundle.putInt("cookingTime", recipe.cookingTime)
-        bundle.putString("cuisineType", recipe.cuisineType)
-        bundle.putString("recipeId", recipe.recipeId)
-        bundle.putString("recipeImageUrl", recipe.recipeImageUrl)
+        val bundle = Bundle().apply {
+            putString("recipeUserId", recipe.recipeUserId)
+            putString("recipeDescription", recipe.recipeDescription)
+            putString("recipeTitle", recipe.recipeTitle)
+            putString("avgRating", recipe.avgRating.toString())
+            putString("difficultyLevel", recipe.difficultyLevel)
+            putInt("cookingTime", recipe.cookingTime)
+            putString("cuisineType", recipe.cuisineType)
+            putString("recipeId", recipe.recipeId)
+            putString("recipeImageUrl", recipe.recipeImageUrl)
+        }
 
         recipeDetailsFragment.arguments = bundle
-
-        // Fragment navigation and transactions adapted from Android developer documentation
-        // https://developer.android.com/guide/fragments/fragmentmanager
-        //https://rohitksingh.medium.com/what-is-addtobackstack-in-fragment-661ac01a6507
         parentFragmentManager.beginTransaction()
             .replace(R.id.fragment_container, recipeDetailsFragment)
             .addToBackStack(null)

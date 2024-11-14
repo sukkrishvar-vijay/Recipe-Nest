@@ -1,14 +1,17 @@
 package com.group2.recipenest
 
 import ReviewModel
+import android.annotation.SuppressLint
 import android.media.MediaPlayer
 import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.LinearLayout
+import android.widget.SeekBar
 import android.widget.TextView
 import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
@@ -20,8 +23,11 @@ class ReviewAdapter(
     private var reviewList: List<ReviewModel>
 ) : RecyclerView.Adapter<ReviewAdapter.ReviewViewHolder>() {
 
-    private lateinit var runnable: Runnable
-    private lateinit var handler: Handler
+    companion object {
+        private var activeMediaPlayer: MediaPlayer? = null
+        @SuppressLint("StaticFieldLeak")
+        private var activeViewHolder: ReviewViewHolder? = null
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ReviewViewHolder {
         val view = LayoutInflater.from(parent.context)
@@ -49,8 +55,12 @@ class ReviewAdapter(
         private val ratingText: TextView = itemView.findViewById(R.id.rating)
         private val audioSection: LinearLayout = itemView.findViewById(R.id.audioSection)
         private val playAudioButton: ImageButton = itemView.findViewById(R.id.playPauseButton)
+        private val audioBar: SeekBar = itemView.findViewById(R.id.audioSeekBar)
         private var mediaPlayer: MediaPlayer? = null
         private var isPlaying: Boolean = false
+
+        private lateinit var runnable: Runnable
+        private lateinit var handler: Handler
 
         fun bind(review: ReviewModel) {
             val formattedDate = formatDate(review.dateCommented)
@@ -65,6 +75,28 @@ class ReviewAdapter(
             } else {
                 audioSection.visibility = View.GONE
             }
+
+            handler = Handler(Looper.getMainLooper())
+            runnable = Runnable{
+                //audioBar.progress = mediaPlayer?.currentPosition!!
+                mediaPlayer?.let {
+                    audioBar.progress = it.currentPosition
+                } ?: Log.e("PostCommentFragment", "mediaPlayer is null when accessing currentPosition")
+                handler.postDelayed(runnable,0)
+            }
+
+            audioBar.setOnSeekBarChangeListener(object  : SeekBar.OnSeekBarChangeListener{
+                override fun onProgressChanged(p0: SeekBar?, p1: Int, p2: Boolean) {
+                    if(p2)
+                        mediaPlayer!!.seekTo(p1)
+                }
+
+                override fun onStartTrackingTouch(p0: SeekBar?) { }
+
+                override fun onStopTrackingTouch(p0: SeekBar?) { }
+
+            })
+
         }
 
         private fun setupAudioPlayback(audioUrl: String) {
@@ -78,20 +110,33 @@ class ReviewAdapter(
         }
 
         private fun initializeMediaPlayer(audioUrl: String) {
+            activeMediaPlayer?.let {
+                activeViewHolder?.stopAudioPlayback()
+                activeMediaPlayer?.release()
+                activeMediaPlayer = null
+                activeViewHolder = null
+            }
             FirebaseStorage.getInstance().getReferenceFromUrl(audioUrl).downloadUrl
                 .addOnSuccessListener { uri ->
                     mediaPlayer = MediaPlayer().apply {
                         setDataSource(uri.toString())
                         setOnPreparedListener {
                             playAudioButton.isEnabled = true
+                            audioBar.max = mediaPlayer!!.duration
                             togglePlayback()
                         }
                         setOnCompletionListener {
                             playAudioButton.setImageResource(R.drawable.ic_play) // Set icon back to "play"
                             this@ReviewViewHolder.isPlaying = false
+                            handler.removeCallbacks(runnable)
+                            mediaPlayer?.seekTo(0)
+                            audioBar.progress = 0
+                            releasePlayer()
                         }
                         prepareAsync()
                     }
+                    activeMediaPlayer = mediaPlayer
+                    activeViewHolder = this@ReviewViewHolder
                 }
                 .addOnFailureListener {
                     Toast.makeText(itemView.context, "Failed to load audio", Toast.LENGTH_SHORT).show()
@@ -103,15 +148,30 @@ class ReviewAdapter(
                 if (isPlaying) {
                     player.pause()
                     playAudioButton.setImageResource(R.drawable.ic_play) // Set icon to "play"
+                    handler.removeCallbacks(runnable)
                 } else {
                     player.start()
                     playAudioButton.setImageResource(R.drawable.ic_pause) // Set icon to "pause"
+                    handler.postDelayed(runnable, 0)
                 }
                 isPlaying = !isPlaying
             }
         }
 
+        fun stopAudioPlayback() {
+            mediaPlayer?.pause()
+            mediaPlayer?.seekTo(0)
+            playAudioButton.setImageResource(R.drawable.ic_play)
+            audioBar.progress = 0
+            handler.removeCallbacks(runnable)
+            isPlaying = false
+            mediaPlayer = null
+        }
+
         fun releasePlayer() {
+            playAudioButton.setImageResource(R.drawable.ic_play)
+            audioBar.progress = 0
+            handler.removeCallbacks(runnable)
             mediaPlayer?.release()
             mediaPlayer = null
             isPlaying = false
@@ -125,6 +185,13 @@ class ReviewAdapter(
                 e.toString()
             }
         }
+    }
+
+    fun releaseAllPlayers() {
+        activeViewHolder?.stopAudioPlayback()
+        activeMediaPlayer?.release()
+        activeMediaPlayer = null
+        activeViewHolder = null
     }
 
     override fun onViewRecycled(holder: ReviewViewHolder) {

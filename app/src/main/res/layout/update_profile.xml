@@ -188,7 +188,6 @@
                 android:layout_height="match_parent"
                 android:id="@+id/auth_switch"
                 android:layout_marginRight="20sp"
-                android:checked="true"
                 app:trackTint="@color/switch_track"
                 />
         </LinearLayout>

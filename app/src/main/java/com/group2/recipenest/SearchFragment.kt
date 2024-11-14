@@ -9,6 +9,7 @@ package com.group2.recipenest
 
 import RecipeCardModel
 import android.app.AlertDialog
+import android.graphics.Color
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -181,7 +182,7 @@ class SearchFragment : Fragment() {
         // Single-choice AlertDialog setup based on Android developer documentation
         // https://developer.android.com/reference/android/app/AlertDialog.Builder#setSingleChoiceItems(java.lang.CharSequence[],%20int,%20android.content.DialogInterface.OnClickListener)
         // https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/index-of.html
-        val builder = AlertDialog.Builder(requireContext())
+        val builder = AlertDialog.Builder(requireContext(), R.style.CustomRadioButton)
         builder.setTitle("Difficulty Level")
         builder.setSingleChoiceItems(options, options.indexOf(selectedDifficultyLevel)) { _, which ->
             selectedOption = options[which]
@@ -202,7 +203,13 @@ class SearchFragment : Fragment() {
             difficultyLevelChip.isChecked = false
             difficultyLevelChip.text = "Difficulty Level"
         }
-        builder.show()
+        val dialog = builder.create()
+
+        dialog.setOnShowListener {
+            dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(Color.BLACK)
+            dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(Color.BLACK)
+        }
+        dialog.show()
     }
 
     // AlertDialog setup for filter selection based on Android developer documentation
@@ -214,7 +221,7 @@ class SearchFragment : Fragment() {
 
         // Single-choice AlertDialog setup based on Android developer documentation
         // https://developer.android.com/reference/android/app/AlertDialog.Builder#setSingleChoiceItems(java.lang.CharSequence[],%20int,%20android.content.DialogInterface.OnClickListener)
-        val builder = AlertDialog.Builder(requireContext())
+        val builder = AlertDialog.Builder(requireContext(), R.style.CustomRadioButton)
         builder.setTitle("Cooking Time")
         builder.setSingleChoiceItems(options, options.indexOf(selectedCookingTime)) { _, which ->
             selectedOption = options[which]
@@ -235,7 +242,13 @@ class SearchFragment : Fragment() {
             cookingTimeChip.isChecked = false
             cookingTimeChip.text = "Cooking Time"
         }
-        builder.show()
+        val dialog = builder.create()
+
+        dialog.setOnShowListener {
+            dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(Color.BLACK)
+            dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(Color.BLACK)
+        }
+        dialog.show()
     }
 
     // AlertDialog setup for filter selection based on Android developer documentation
@@ -248,7 +261,7 @@ class SearchFragment : Fragment() {
         // Multi-choice AlertDialog implementation based on Android developer documentation
         // https://developer.android.com/reference/android/app/AlertDialog.Builder#setMultiChoiceItems(java.lang.CharSequence[],%20boolean[],%20android.content.DialogInterface.OnMultiChoiceClickListener)
 
-        val builder = AlertDialog.Builder(requireContext())
+        val builder = AlertDialog.Builder(requireContext(), R.style.CustomRadioButton)
         builder.setTitle("Cuisine Types")
         builder.setMultiChoiceItems(options, checkedItems) { _, which, isChecked ->
             if (isChecked) {
@@ -272,7 +285,13 @@ class SearchFragment : Fragment() {
             cuisineTypeChip.isChecked = false
             cuisineTypeChip.text = "Cuisine Types"
         }
-        builder.show()
+        val dialog = builder.create()
+
+        dialog.setOnShowListener {
+            dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(Color.BLACK)
+            dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(Color.BLACK)
+        }
+        dialog.show()
     }
 
     private fun clearAllFilters() {

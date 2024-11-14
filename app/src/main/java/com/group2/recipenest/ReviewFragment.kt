@@ -124,4 +124,10 @@ class ReviewFragment : BottomSheetDialogFragment() {
             behavior.isHideable = true
         }
     }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        reviewAdapter.releaseAllPlayers() // Stop and release audio players
+    }
+
 }
