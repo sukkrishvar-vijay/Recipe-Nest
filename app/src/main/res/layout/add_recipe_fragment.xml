@@ -100,7 +100,7 @@
             android:layout_height="wrap_content"
             android:text="Vegetarian"
             android:layout_marginLeft="10dp"
-            app:buttonTint="@color/d1c300"
+            app:buttonTint="@color/button_track"
             app:buttonIconTint="@color/white"
             />
 
@@ -110,7 +110,7 @@
             android:layout_height="wrap_content"
             android:text="Non-Vegetarian"
             android:layout_marginLeft="10dp"
-            app:buttonTint="@color/d1c300"
+            app:buttonTint="@color/button_track"
             app:buttonIconTint="@color/white"
             />
 
@@ -120,7 +120,7 @@
             android:layout_height="wrap_content"
             android:text="Chinese"
             android:layout_marginLeft="10dp"
-            app:buttonTint="@color/d1c300"
+            app:buttonTint="@color/button_track"
             app:buttonIconTint="@color/white"
             />
 
@@ -130,7 +130,7 @@
             android:layout_height="wrap_content"
             android:text="Thai"
             android:layout_marginLeft="10dp"
-            app:buttonTint="@color/d1c300"
+            app:buttonTint="@color/button_track"
             app:buttonIconTint="@color/white"
             />
 
@@ -140,7 +140,7 @@
             android:layout_height="wrap_content"
             android:text="American"
             android:layout_marginLeft="10dp"
-            app:buttonTint="@color/d1c300"
+            app:buttonTint="@color/button_track"
             app:buttonIconTint="@color/white"
             />
 
@@ -150,7 +150,7 @@
             android:layout_height="wrap_content"
             android:text="Indian"
             android:layout_marginLeft="10dp"
-            app:buttonTint="@color/d1c300"
+            app:buttonTint="@color/button_track"
             app:buttonIconTint="@color/white"
             />
 
@@ -182,7 +182,7 @@
                 android:layout_height="wrap_content"
                 android:text="15mins"
                 android:layout_marginLeft="10dp"
-                app:buttonTint="@color/d1c300"/>
+                app:buttonTint="@color/button_track"/>
 
             <RadioButton
                 android:id="@+id/time_30"
@@ -190,7 +190,7 @@
                 android:layout_height="wrap_content"
                 android:text="30mins"
                 android:layout_marginLeft="10dp"
-                app:buttonTint="@color/d1c300"/>
+                app:buttonTint="@color/button_track"/>
 
             <RadioButton
                 android:id="@+id/time_45"
@@ -198,7 +198,7 @@
                 android:layout_height="wrap_content"
                 android:text="45mins"
                 android:layout_marginLeft="10dp"
-                app:buttonTint="@color/d1c300"/>
+                app:buttonTint="@color/button_track"/>
 
             <RadioButton
                 android:id="@+id/time_60"
@@ -206,7 +206,7 @@
                 android:layout_height="wrap_content"
                 android:text="60mins"
                 android:layout_marginLeft="10dp"
-                app:buttonTint="@color/d1c300"/>
+                app:buttonTint="@color/button_track"/>
         </RadioGroup>
 
         <!-- Divider -->
