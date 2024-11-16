@@ -30,7 +30,6 @@ class SignUpFragment:Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        //filling the fields with user data if its not empty
         if(userData.firstName != ""){
             binding.firstNametextField.editText?.setText(userData.firstName)
             binding.lastNametextField.editText?.setText(userData.lastName)
@@ -57,7 +56,6 @@ class SignUpFragment:Fragment() {
                 Toast.makeText(requireContext(), "Passwords do not match", Toast.LENGTH_SHORT).show()
             }
             else {
-                //storing the user data in data class to use later
                 userData.firstName = firstname
                 userData.lastName = lastname
                 userData.email = email

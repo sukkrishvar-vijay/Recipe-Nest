@@ -30,32 +30,24 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // Change the status bar color
         window.statusBarColor = getColor(R.color.theme)
 
-        // Find the Toolbar and set it as the ActionBar
         val toolbar: Toolbar = findViewById(R.id.toolbar)
         setSupportActionBar(toolbar)
         supportActionBar?.title = ""
         supportActionBar?.hide()
 
-        // Disable the back button in the toolbar (enable where required)
         supportActionBar?.setDisplayHomeAsUpEnabled(false)
         supportActionBar?.setDisplayShowHomeEnabled(false)
 
-        //condition to check whether the
         if (isFirstLaunch()) {
             hideBottomNavigation()
-            // Load the landing pages
             loadFragment(LandingPage1())
         } else {
-            // Condition to whether the user logged out or not and navigate to corresponding fragment
             if (!isUserLoggedIn()) {
                 hideBottomNavigation()
-                // Load the sign-in fragment if the user is not logged in
                 signInAccount()
             } else {
-                // If logged in, load the default fragment (home page)
                 userSignInData.ShowAuthFirstTime = false
                 loadHomePage()
             }
@@ -69,39 +61,31 @@ class MainActivity : AppCompatActivity() {
         return sharedPreferences.getBoolean("isFirstLaunch", true)
     }
 
-    // Method to show bottom navigation
     fun showBottomNavigation() {
         binding.bottomNavigation.visibility = View.VISIBLE
     }
 
-    // Method to hide Toolbar
     fun hideToolbar() {
         binding.toolbar.visibility = View.GONE
     }
 
-    // Method to hide bottom navigation
     fun hideBottomNavigation() {
         binding.bottomNavigation.visibility = View.GONE
     }
 
-    // Method to navigate to Sign in fragment
     private fun signInAccount() {
         loadFragment(SignInFragment())
     }
 
-    // Method to load homepage
     fun loadHomePage() {
         storeUserDocId()
         showBottomNavigation()
 
-        // Load the default fragment
         showBottomNavigation()
         loadFragment(RecipesFragment())
 
-        // Set the BottomNavigationView to show Recipes as selected by default
         binding.bottomNavigation.selectedItemId = R.id.nav_recipes
 
-        // Set up bottom navigation
         binding.bottomNavigation.setOnItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.nav_recipes -> loadFragment(RecipesFragment())
@@ -113,7 +97,6 @@ class MainActivity : AppCompatActivity() {
         }
 
     }
-
 
     // Helper function to check User Login Status
     //https://firebase.google.com/docs/auth/android/manage-users
@@ -152,7 +135,6 @@ class MainActivity : AppCompatActivity() {
             }
     }
 
-    // Helper function to load fragments
     private fun loadFragment(fragment: Fragment) {
         supportFragmentManager.beginTransaction()
             .replace(R.id.fragment_container, fragment)

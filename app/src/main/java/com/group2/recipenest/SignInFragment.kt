@@ -1,3 +1,10 @@
+/*
+ * Some of the code blocks in this file have been developed with assistance from AI tools, which were used to help in various stages of the project,
+ * including code generation, identifying bugs, and fixing errors related to app crashes. The AI provided guidance in modifying
+ * and improving the structure of the code while adhering to Android development best practices. All generated solutions were reviewed
+ * and tested for functionality before implementation.
+ */
+
 package com.group2.recipenest
 
 import android.Manifest
@@ -40,12 +47,10 @@ class SignInFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Initialize Firebase Auth
         auth = FirebaseAuth.getInstance()
         (activity as MainActivity).hideBottomNavigation()
         (activity as AppCompatActivity).supportActionBar?.hide()
 
-        // Initialize Executor and BiometricPrompt
         executor = ContextCompat.getMainExecutor(requireContext())
         biometricPrompt = BiometricPrompt(this, executor, object : BiometricPrompt.AuthenticationCallback() {
             override fun onAuthenticationError(errorCode: Int, errString: CharSequence) {
@@ -65,14 +70,12 @@ class SignInFragment : Fragment() {
             }
         })
 
-        // Setup PromptInfo for BiometricPrompt
         promptInfo = BiometricPrompt.PromptInfo.Builder()
             .setTitle("Fingerprint Sign In")
             .setSubtitle("Sign in using your fingerprint scan")
             .setNegativeButtonText("Cancel")
             .build()
 
-        // Handle sign-in button click
         binding.signInButton.setOnClickListener {
             val email = binding.emailtextField.editText?.text.toString().trim()
             val password = binding.passwordtextField.editText?.text.toString().trim()
@@ -94,12 +97,10 @@ class SignInFragment : Fragment() {
         }
 
         binding.createAccountButton.setOnClickListener {
-            // Navigate to the create account screen
             loadFragment(SignUpFragment())
         }
 
         binding.forgotPasswordButton.setOnClickListener {
-            // Navigate to the forgot password screen
             loadFragment(ForgotPasswordFragment())
         }
 
@@ -115,12 +116,10 @@ class SignInFragment : Fragment() {
     }
 
 
-    // Function to check biometric availability and start authentication
     private fun checkBiometricAvailabilityAndAuthenticate() {
         val biometricManager = BiometricManager.from(requireContext())
         when (biometricManager.canAuthenticate(BiometricManager.Authenticators.BIOMETRIC_STRONG)) {
             BiometricManager.BIOMETRIC_SUCCESS -> {
-                // Device supports biometric authentication
                 biometricPrompt.authenticate(promptInfo)
             }
             BiometricManager.BIOMETRIC_ERROR_NO_HARDWARE -> {
@@ -135,12 +134,10 @@ class SignInFragment : Fragment() {
         }
     }
 
-    // Sign in user with Firebase Authentication
     private fun signInUser(email: String, password: String) {
         auth.signInWithEmailAndPassword(email, password)
             .addOnCompleteListener(requireActivity()) { task ->
                 if (task.isSuccessful) {
-                    // Sign in success, request location permission
                     Toast.makeText(requireContext(), "Sign in successful", Toast.LENGTH_SHORT).show()
                     saveCredentials(email, password)
                     val currentUser = auth.currentUser
@@ -149,10 +146,8 @@ class SignInFragment : Fragment() {
                     }
                     (activity as MainActivity).hideToolbar()
 
-                    // Check and request location permission
                     checkLocationPermission()
                 } else {
-                    // Sign in failed, show error
                     Toast.makeText(requireContext(), "Authentication failed", Toast.LENGTH_SHORT).show()
                 }
             }
@@ -200,15 +195,12 @@ class SignInFragment : Fragment() {
         }
     }
 
-    // Check if location permission is granted
     private fun checkLocationPermission() {
         if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION)
             == PackageManager.PERMISSION_GRANTED
         ) {
-            // Permission is already granted, load home page
             loadHomePage()
         } else {
-            // Request location permission
             requestPermissions(
                 arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
                 LOCATION_PERMISSION_REQUEST_CODE
@@ -216,17 +208,14 @@ class SignInFragment : Fragment() {
         }
     }
 
-    // Handle permission result
     override fun onRequestPermissionsResult(
         requestCode: Int, permissions: Array<out String>, grantResults: IntArray
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == LOCATION_PERMISSION_REQUEST_CODE) {
             if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                // Permission granted, load home page
                 loadHomePage()
             } else {
-                // Permission denied, show toast and load home page without location functionality
                 Toast.makeText(requireContext(), "Location permission denied", Toast.LENGTH_SHORT).show()
                 loadHomePage()
             }
@@ -234,11 +223,9 @@ class SignInFragment : Fragment() {
     }
 
     private fun loadHomePage() {
-        // Navigate to home page fragment
         (activity as MainActivity).loadHomePage()
     }
 
-    // Load another fragment
     private fun loadFragment(fragment: Fragment) {
         parentFragmentManager.beginTransaction()
             .replace(R.id.fragment_container, fragment)

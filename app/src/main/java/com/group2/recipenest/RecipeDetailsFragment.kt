@@ -105,18 +105,17 @@ class RecipeDetailsFragment : Fragment() {
         shortDetailTextView.text = "$difficultyLevel • $cookingTime mins • $cuisineType"
         longDetailTextView.text = recipeDescription
 
-        // Load the recipe image using Glide if the URL is available
         if (!recipeImageUrl.isNullOrEmpty()) {
             Glide.with(this)
                 .load(recipeImageUrl)
                 .apply(
                     RequestOptions()
-                        .placeholder(R.drawable.placeholder_recipe_image) // Placeholder while loading
-                        .error(R.drawable.placeholder_recipe_image) // Fallback in case of error
+                        .placeholder(R.drawable.placeholder_recipe_image)
+                        .error(R.drawable.placeholder_recipe_image)
                 )
                 .into(recipeImage)
         } else {
-            recipeImage.setImageResource(R.drawable.placeholder_recipe_image) // Set placeholder if URL is null
+            recipeImage.setImageResource(R.drawable.placeholder_recipe_image)
         }
 
         val toolbar: Toolbar = requireActivity().findViewById(R.id.toolbar)

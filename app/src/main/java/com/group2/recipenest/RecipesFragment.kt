@@ -76,7 +76,6 @@ class RecipesFragment : Fragment() {
         trendingTitle = rootView.findViewById(R.id.trendingTitle)
         locationHelper = LocationHelper(requireContext())
 
-        // Fetch the city name on load
         locationHelper.getCityName { cityName ->
             currentLocation = cityName ?: "Location not found"
             trendingTitle.text = "Recipes Trending in ${cityName}"
@@ -153,7 +152,6 @@ class RecipesFragment : Fragment() {
                     )
                     recipeList.add(recipe)
 
-                    // Filter for trending recipes based on matching city name
                     if (recipeUploadLocation.equals(currentLocation, ignoreCase = true)) {
                         val trendingRecipe = TrendingRecipeCardsModel(
                             recipeUserId = recipeUserId,
@@ -185,16 +183,13 @@ class RecipesFragment : Fragment() {
                     carouselRecipeListOriginal.add(carouselRecipe)
                 }
 
-                // Sort carousel recipes by avgRating and dateRecipeAdded in descending order and take top 5
                 val topCarouselRecipes = carouselRecipeListOriginal
                     .sortedWith(compareByDescending<RecipesCarouselModel> { it.avgRating.toDouble() }
                         .thenByDescending { it.dateRecipeAdded })
                     .take(5)
 
-                // Duplicate list for carousel looping effect
                 carouselRecipeList = topCarouselRecipes + topCarouselRecipes
 
-                // Sort vertical list recipes by dateRecipeAdded in descending order
                 val sortedRecipeList = recipeList.sortedByDescending { it.dateRecipeAdded }
 
                 verticalAdapter.updateRecipes(sortedRecipeList)

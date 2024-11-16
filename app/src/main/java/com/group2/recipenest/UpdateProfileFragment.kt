@@ -1,3 +1,10 @@
+/*
+ * Some of the code blocks in this file have been developed with assistance from AI tools, which were used to help in various stages of the project,
+ * including code generation, identifying bugs, and fixing errors related to app crashes. The AI provided guidance in modifying
+ * and improving the structure of the code while adhering to Android development best practices. All generated solutions were reviewed
+ * and tested for functionality before implementation.
+ */
+
 package com.group2.recipenest
 
 import android.app.Activity
@@ -47,19 +54,17 @@ class UpdateProfileFragment : Fragment() {
     private lateinit var updateButton: Button
     private lateinit var authSwitch: MaterialSwitch
     private lateinit var profileImage: ImageView
-    private var imageUri: Uri? = null // Store selected image URI
+    private var imageUri: Uri? = null
 
-    // Adjust permission based on Android version
     private val storagePermission = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
         android.Manifest.permission.READ_MEDIA_IMAGES
     } else {
         android.Manifest.permission.READ_EXTERNAL_STORAGE
     }
 
-    // Request permission launcher
     private val requestPermissionLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
         if (isGranted) {
-            openGallery() // Open gallery if permission is granted
+            openGallery()
         } else {
             Toast.makeText(requireContext(), "Permission denied. Cannot access gallery.", Toast.LENGTH_SHORT).show()
         }
@@ -133,7 +138,7 @@ class UpdateProfileFragment : Fragment() {
                     .load(it)
                     .placeholder(R.drawable.placeholder_avatar_image)
                     .circleCrop()
-                    .into(profileImage) // Preview selected image
+                    .into(profileImage)
             }
         }
     }

@@ -36,10 +36,8 @@ class LandingPage1: Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Initialize the GestureDetector
         gestureDetector = GestureDetector(requireContext(), SwipeGestureListener())
 
-        // OnTouchListener to detect swipe gestures
         binding.root.setOnTouchListener { _, event ->
             gestureDetector.onTouchEvent(event)
             true
@@ -77,7 +75,6 @@ class LandingPage1: Fragment() {
         }
     }
 
-    // Action for left swipe
     private fun onSwipeLeft() {
         loadFragment(LandingPage2())
     }

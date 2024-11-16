@@ -1,3 +1,10 @@
+/*
+ * Some of the code blocks in this file have been developed with assistance from AI tools, which were used to help in various stages of the project,
+ * including code generation, identifying bugs, and fixing errors related to app crashes. The AI provided guidance in modifying
+ * and improving the structure of the code while adhering to Android development best practices. All generated solutions were reviewed
+ * and tested for functionality before implementation.
+ */
+
 package com.group2.recipenest
 
 import android.Manifest
@@ -79,7 +86,6 @@ class AddRecipeFragment : Fragment() {
         val cookingTimeGroup: RadioGroup = rootView.findViewById(R.id.cooking_time_group)
         val saveRecipeButton: Button = rootView.findViewById(R.id.submit_button)
 
-        // Check permissions on load
         checkAndRequestPermissions()
 
         difficultyToggleGroup.addOnButtonCheckedListener { group, checkedId, isChecked ->
@@ -103,7 +109,6 @@ class AddRecipeFragment : Fragment() {
             }
         }
 
-        // Handle edit mode if arguments are provided
         arguments?.let { bundle ->
             isEditMode = true
             toolbar.title = "Edit Recipe"
@@ -152,14 +157,13 @@ class AddRecipeFragment : Fragment() {
             }
         }
 
-        // Register result launcher to handle camera and gallery results
         val imageResultLauncher =
             registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
                 if (result.resultCode == Activity.RESULT_OK) {
                     val data: Intent? = result.data
-                    if (data != null && data.data != null) { // From gallery
+                    if (data != null && data.data != null) {
                         imageUri = data.data
-                    } else if (data?.extras?.get("data") != null) { // From camera
+                    } else if (data?.extras?.get("data") != null) {
                         val bitmap = data.extras!!.get("data") as Bitmap
                         imageUri = Uri.parse(
                             MediaStore.Images.Media.insertImage(
@@ -170,7 +174,7 @@ class AddRecipeFragment : Fragment() {
                             )
                         )
                     }
-                    uploadedImageView.setImageURI(imageUri) // Display image in the UI
+                    uploadedImageView.setImageURI(imageUri)
                 }
             }
 
@@ -302,10 +306,7 @@ class AddRecipeFragment : Fragment() {
             .get()
             .addOnSuccessListener { document ->
                 if (document.exists()) {
-                    // Get existing comments, if any
                     existingComments = document.get("comments") as? List<Map<String, Any>> ?: emptyList()
-
-                    // Get the existing location and store it in recipeUploadLocation
                     recipeUploadLocation = document.getString("recipeUploadLocation") ?: "Location not found"
                 }
             }
@@ -319,7 +320,6 @@ class AddRecipeFragment : Fragment() {
             .get()
             .addOnSuccessListener { document ->
                 if (document.exists()) {
-                    // Get the existing location and store it in recipeUploadLocation
                     recipeUploadLocation = document.getString("recipeUploadLocation") ?: "Location not found"
                 }
             }

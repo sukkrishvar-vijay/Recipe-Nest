@@ -260,7 +260,6 @@ class SearchFragment : Fragment() {
 
         // Multi-choice AlertDialog implementation based on Android developer documentation
         // https://developer.android.com/reference/android/app/AlertDialog.Builder#setMultiChoiceItems(java.lang.CharSequence[],%20boolean[],%20android.content.DialogInterface.OnMultiChoiceClickListener)
-
         val builder = AlertDialog.Builder(requireContext(), R.style.CustomRadioButton)
         builder.setTitle("Cuisine Types")
         builder.setMultiChoiceItems(options, checkedItems) { _, which, isChecked ->

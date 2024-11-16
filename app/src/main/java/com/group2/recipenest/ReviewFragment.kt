@@ -60,7 +60,6 @@ class ReviewFragment : BottomSheetDialogFragment() {
                         val comments = document.get("comments") as? List<Map<String, Any>> ?: emptyList()
                         reviewList.clear()
 
-                        // Process each comment and create a ReviewModel instance
                         for (comment in comments) {
                             val commenterId = comment["commenter"] as? String ?: continue
                             val commentText = comment["comment"] as? String ?: ""
@@ -73,9 +72,7 @@ class ReviewFragment : BottomSheetDialogFragment() {
                                 val review = ReviewModel(fullName, username, commentText, dateCommented, rating, audioCommentUrl)
                                 reviewList.add(review)
 
-                                // Notify only when all comments have been added
                                 if (reviewList.size == comments.size) {
-                                    // Sort by dateCommented in descending order
                                     reviewList.sortByDescending { it.dateCommented }
                                     reviewAdapter.notifyDataSetChanged()
                                 }
@@ -127,7 +124,7 @@ class ReviewFragment : BottomSheetDialogFragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        reviewAdapter.releaseAllPlayers() // Stop and release audio players
+        reviewAdapter.releaseAllPlayers()
     }
 
 }

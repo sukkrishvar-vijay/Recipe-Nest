@@ -38,7 +38,6 @@ class LandingPage2: Fragment() {
 
         gestureDetector = GestureDetector(requireContext(), SwipeGestureListener())
 
-        // OnTouchListener to detect swipe gestures
         binding.root.setOnTouchListener { _, event ->
             gestureDetector.onTouchEvent(event)
             true
@@ -79,12 +78,10 @@ class LandingPage2: Fragment() {
         }
     }
 
-    // Action for left swipe
     private fun onSwipeLeft() {
         loadFragment(LandingPage3())
     }
 
-    // Action for right swipe
     private fun onSwipeRight() {
         loadFragment(LandingPage1())
     }

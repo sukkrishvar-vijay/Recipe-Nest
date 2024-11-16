@@ -101,7 +101,6 @@ class PostCommentFragment : Fragment() {
 
         setupStarClickListeners()
 
-        //val commentEditText: TextInputEditText = rootView.findViewById(R.id.commentText)
         val commentTextLayout: TextInputLayout = rootView.findViewById(R.id.commentText)
         val commentEditText: EditText? = commentTextLayout.editText
         val postButton: Button = rootView.findViewById(R.id.postButton)
@@ -118,7 +117,6 @@ class PostCommentFragment : Fragment() {
 
         handler = Handler(Looper.getMainLooper())
         runnable = Runnable{
-            //audioBar.progress = mediaPlayer?.currentPosition!!
             mediaPlayer?.let {
                 audioBar.progress = it.currentPosition
             } ?: Log.e("PostCommentFragment", "mediaPlayer is null when accessing currentPosition")
@@ -216,7 +214,6 @@ class PostCommentFragment : Fragment() {
         mediaRecorder = null
         isRecording = false
 
-        //Loading the media player with current audio
         isAudioAvailable = true
         mediaPlayer = MediaPlayer().apply {
             setDataSource(audioFilePath)
@@ -239,7 +236,6 @@ class PostCommentFragment : Fragment() {
         audioBar.isEnabled = true
     }
 
-    // Updates play/pause recording functionality
     private fun playPauseRecording() {
         // Toggle play/pause
         if (mediaPlayer!!.isPlaying) {
@@ -253,7 +249,6 @@ class PostCommentFragment : Fragment() {
         }
     }
 
-    // Uploads audio to Firebase Storage
     private fun uploadAudioToFirebase(onUploadSuccess: (String) -> Unit) {
         val audioFile = File(audioFilePath)
         val audioUri = Uri.fromFile(audioFile)
@@ -273,13 +268,12 @@ class PostCommentFragment : Fragment() {
             }
     }
 
-    // Handle permission request
     private fun requestPermissions() {
         val requestPermissionLauncher = registerForActivityResult(
             ActivityResultContracts.RequestPermission()
         ) { isGranted: Boolean ->
             if (!isGranted) {
-                // Handle permission denial
+                Toast.makeText(requireContext(), "Enable microphone permission to record audio comment", Toast.LENGTH_LONG).show()
             }
         }
         requestPermissionLauncher.launch(Manifest.permission.RECORD_AUDIO)

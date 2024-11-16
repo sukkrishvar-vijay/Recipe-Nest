@@ -59,7 +59,6 @@ class FavoritesFragment : Fragment() {
         }
         recyclerView.adapter = adapter
 
-        // Attach ItemTouchHelper for swipe-to-delete functionality
         val itemTouchHelper = ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
             override fun onMove(
                 recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder, target: RecyclerView.ViewHolder
@@ -89,12 +88,11 @@ class FavoritesFragment : Fragment() {
                     val itemView = viewHolder.itemView
                     val background = ColorDrawable(Color.RED)
 
-                    // Set the background bounds to match the full width of the item
                     background.setBounds(
-                        itemView.left,        // Left edge of the item
-                        itemView.top,         // Top edge
-                        itemView.right,       // Right edge of the item (fixed, regardless of swipe distance)
-                        itemView.bottom       // Bottom edge
+                        itemView.left,
+                        itemView.top,
+                        itemView.right,
+                        itemView.bottom
                     )
 
                     background.draw(c)

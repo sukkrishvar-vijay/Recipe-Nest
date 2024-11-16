@@ -54,7 +54,6 @@ class SignUpFragment2: Fragment() {
                 Toast.makeText(requireContext(), "Please fill the username text field", Toast.LENGTH_SHORT).show()
             }
             else{
-                //storing the user data in data class to use later
                 userData.username = username
                 userData.description = userdescription
 

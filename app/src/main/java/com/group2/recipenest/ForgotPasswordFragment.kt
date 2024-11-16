@@ -33,7 +33,6 @@ class ForgotPasswordFragment: Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Adding callback feature in case if the users doesn't wants to change his password
         val callback = requireActivity().onBackPressedDispatcher.addCallback(this){
             loadFragment(SignInFragment())
         }

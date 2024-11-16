@@ -40,7 +40,6 @@ class LandingPage3: Fragment() {
 
         gestureDetector = GestureDetector(requireContext(), SwipeGestureListener())
 
-        // OnTouchListener to detect swipe gestures
         binding.root.setOnTouchListener { _, event ->
             gestureDetector.onTouchEvent(event)
             true
@@ -83,14 +82,12 @@ class LandingPage3: Fragment() {
         }
     }
 
-    // Action for left swipe
     private fun onSwipeLeft() {
         loadFragment(LandingPage2())
     }
 
     // Function to update the shared preferences so that landing pages won't show up the next time
     //https://stackoverflow.com/questions/7217578/check-if-application-is-on-its-first-run
-
     private fun setFirstLaunchCompleted() {
         val sharedPreferences = requireContext().getSharedPreferences("RecipeNestPrefs", MODE_PRIVATE)
         sharedPreferences.edit().putBoolean("isFirstLaunch", false).apply()

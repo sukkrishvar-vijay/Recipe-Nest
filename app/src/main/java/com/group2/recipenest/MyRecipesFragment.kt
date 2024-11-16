@@ -1,3 +1,10 @@
+/*
+ * Some of the code blocks in this file have been developed with assistance from AI tools, which were used to help in various stages of the project,
+ * including code generation, identifying bugs, and fixing errors related to app crashes. The AI provided guidance in modifying
+ * and improving the structure of the code while adhering to Android development best practices. All generated solutions were reviewed
+ * and tested for functionality before implementation.
+ */
+
 package com.group2.recipenest
 
 import RecipeCardModel
@@ -36,7 +43,7 @@ class MyRecipesFragment : Fragment() {
         val view = inflater.inflate(R.layout.my_recipes_collection, container, false)
 
         firestore = Firebase.firestore
-        storage = Firebase.storage  // Initialize Firebase Storage here
+        storage = Firebase.storage
 
         val toolbar: Toolbar = requireActivity().findViewById(R.id.toolbar)
         toolbar.title = "My Recipes"
@@ -149,12 +156,10 @@ class MyRecipesFragment : Fragment() {
     }
 
     private fun deleteRecipe(recipe: RecipeCardModel) {
-        // Show confirmation dialog
         val dialog = AlertDialog.Builder(requireContext())
             .setTitle("Delete Recipe")
             .setMessage("Are you sure you want to delete this recipe?")
             .setPositiveButton("Yes") { dialog, _ ->
-                // Proceed with deletion if user confirms
                 firestore.collection("Recipes").document(recipe.recipeId)
                     .delete()
                     .addOnSuccessListener {
@@ -163,7 +168,7 @@ class MyRecipesFragment : Fragment() {
                             storageRef.delete()
                                 .addOnSuccessListener {
                                     Toast.makeText(requireContext(), "Recipe deleted successfully!", Toast.LENGTH_SHORT).show()
-                                    fetchUserRecipes() // Refreshes the list after deletion
+                                    fetchUserRecipes()
                                 }
                                 .addOnFailureListener {
                                     Toast.makeText(requireContext(), "Failed to delete image.", Toast.LENGTH_SHORT).show()
@@ -176,10 +181,10 @@ class MyRecipesFragment : Fragment() {
                     .addOnFailureListener {
                         Toast.makeText(requireContext(), "Failed to delete recipe.", Toast.LENGTH_SHORT).show()
                     }
-                dialog.dismiss() // Close the dialog
+                dialog.dismiss()
             }
             .setNegativeButton("No") { dialog, _ ->
-                dialog.dismiss() // Close the dialog without deleting
+                dialog.dismiss()
             }
             .create()
 
