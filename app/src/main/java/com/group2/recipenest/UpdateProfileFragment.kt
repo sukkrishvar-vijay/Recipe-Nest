@@ -96,7 +96,7 @@ class UpdateProfileFragment : Fragment() {
         updateButton = view.findViewById(R.id.update_button)
         authSwitch = view.findViewById(R.id.auth_switch)
         val changeProfileText = view.findViewById<TextView>(R.id.change_profile_text)
-        
+
         emailEditText.isFocusable = false
         emailEditText.isFocusableInTouchMode = false
 
