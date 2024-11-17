@@ -56,6 +56,8 @@ class UpdateProfileFragment : Fragment() {
     private lateinit var profileImage: ImageView
     private var imageUri: Uri? = null
 
+    //https://developer.android.com/reference/android/Manifest.permission#READ_EXTERNAL_STORAGE
+    //https://developer.android.com/reference/android/Manifest.permission#READ_MEDIA_IMAGES
     private val storagePermission = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
         android.Manifest.permission.READ_MEDIA_IMAGES
     } else {
@@ -124,11 +126,15 @@ class UpdateProfileFragment : Fragment() {
         }
     }
 
+    //https://developer.android.com/reference/android/content/Intent#ACTION_PICK
+    //https://developer.android.com/reference/android/provider/MediaStore.Images.Media
     private fun openGallery() {
         val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
         startActivityForResult(intent, PICK_IMAGE_REQUEST)
     }
 
+    //https://developer.android.com/reference/android/content/Intent#getData()
+    //https://github.com/bumptech/glide
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == PICK_IMAGE_REQUEST && resultCode == Activity.RESULT_OK && data != null && data.data != null) {
@@ -143,6 +149,9 @@ class UpdateProfileFragment : Fragment() {
         }
     }
 
+    //function to get user profile details from firebase firestore
+    //https://firebase.google.com/docs/firestore/query-data/get-data
+    //https://github.com/bumptech/glide
     private fun getUserProfileData(userId: String) {
         val userRef = firestore.collection("User").document(userId)
         userRef.get().addOnSuccessListener { document ->
@@ -177,6 +186,7 @@ class UpdateProfileFragment : Fragment() {
         }
     }
 
+    //https://firebase.google.com/docs/storage/android/upload-files
     private fun uploadProfileImageAndData() {
         val filePath = storageReference.child("User_Profiles/$userDocumentId.jpg")
 
@@ -193,6 +203,8 @@ class UpdateProfileFragment : Fragment() {
         }
     }
 
+    //function to update firebase with updated details
+    //https://firebase.google.com/docs/firestore/manage-data/add-data
     private fun updateUserProfileDataOnly(profileImageUrl: String = "") {
         val updatedFirstName = firstNameEditText.text.toString()
         val updatedLastName = lastNameEditText.text.toString()
@@ -214,6 +226,8 @@ class UpdateProfileFragment : Fragment() {
             updates["profileImageUrl"] = profileImageUrl
         }
 
+        //https://developer.android.com/reference/android/content/SharedPreferences
+        //https://developer.android.com/reference/android/content/SharedPreferences.Editor#putBoolean(java.lang.String,%20boolean)
         val sharedPreferences = requireActivity().getSharedPreferences("UserSettings", Context.MODE_PRIVATE)
         sharedPreferences.edit().putBoolean("biometricEnabled", auth).apply()
 

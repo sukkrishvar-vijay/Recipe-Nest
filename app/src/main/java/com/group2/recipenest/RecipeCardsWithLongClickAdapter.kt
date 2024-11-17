@@ -33,7 +33,7 @@ class RecipeCardsWithLongClickAdapter(
         val recipe = recipeList[position]
         holder.bind(recipe, onClick, onLongClick)
     }
-
+    // Returns the total number of items in the list.
     override fun getItemCount(): Int = recipeList.size
 
     class RecipeViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -50,12 +50,12 @@ class RecipeCardsWithLongClickAdapter(
             recipeTitle.text = recipe.recipeTitle
             recipeRating.text = "${recipe.avgRating}★"
             recipeDescription.text = "${recipe.difficultyLevel} • ${recipe.cookingTime} mins\n${recipe.cuisineType}"
-
+            // https://www.geeksforgeeks.org/image-loading-caching-library-android-set-2/
             Glide.with(itemView.context)
                 .load(recipe.recipeImageUrl)
                 .placeholder(R.drawable.placeholder_recipe_image)
                 .into(recipeImage)
-
+            //https://stackoverflow.com/questions/44301301/android-how-to-achieve-setonclicklistener-in-kotlin
             itemView.setOnClickListener { onClick(recipe) }
             itemView.setOnLongClickListener {
                 itemView.isSelected = true
@@ -64,7 +64,7 @@ class RecipeCardsWithLongClickAdapter(
             }
         }
     }
-
+    // Updates the list of recipes and refreshes the RecyclerView.
     fun updateRecipes(newRecipes: List<RecipeCardModel>) {
         recipeList = newRecipes
         notifyDataSetChanged()

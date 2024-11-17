@@ -43,11 +43,14 @@ class SignUpFragment3 : Fragment() {
     } else {
         android.Manifest.permission.READ_EXTERNAL_STORAGE
     }
-
+    // Launcher to handle the result of selecting an image from the gallery
+    // https://developer.android.com/training/basics/intents/result
     private val pickImageLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         if (result.resultCode == Activity.RESULT_OK && result.data != null) {
             selectedImageUri = result.data?.data
             selectedImageUri?.let { uri ->
+                // Loads the selected image into an ImageView with a circular crop using Glide
+                // https://www.geeksforgeeks.org/image-loading-caching-library-android-set-2/
                 Glide.with(this)
                     .load(uri)
                     .circleCrop()
@@ -58,7 +61,8 @@ class SignUpFragment3 : Fragment() {
             Toast.makeText(requireContext(), "Image selection failed.", Toast.LENGTH_SHORT).show()
         }
     }
-
+    // Launcher to request permission for accessing storage or media images
+    // https://developer.android.com/reference/androidx/activity/result/contract/ActivityResultContract
     private val requestPermissionLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
         if (isGranted) {
             selectImageFromGallery()
@@ -87,15 +91,16 @@ class SignUpFragment3 : Fragment() {
                 requestPermissionLauncher.launch(storagePermission)
             }
         }
-
+        // Navigates to the previous fragment (SignUpFragment2)
         binding.previousButton.setOnClickListener {
             loadFragment(SignUpFragment2())
         }
-
+        // Handles the submission of user data to Firebase
         binding.submitButton.setOnClickListener {
             val email = userData.email
             val password = userData.password
-
+            //https://firebase.google.com/docs/auth/android/password-auth
+            //https://stackoverflow.com/questions/65604918/createuserwithemailandpassword-addoncompletelistener-wont-work
             auth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(requireActivity()) { task ->
                     if (task.isSuccessful) {
@@ -114,12 +119,14 @@ class SignUpFragment3 : Fragment() {
                 }
         }
     }
-
+    // Opens the gallery for the user to select an image
+    // https://stackoverflow.com/questions/30654774/android-is-external-content-uri-enough-for-a-photo-gallery
     private fun selectImageFromGallery() {
         val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
         pickImageLauncher.launch(intent)
     }
-
+    // Uploads the selected image to Firebase Storage and returns the download URL via a callback
+    // https://youtu.be/YgjYVbg1oiA?si=ukpUqln-emeROizQ
     private fun uploadImageToFirebase(onUploadComplete: (String) -> Unit) {
         if (selectedImageUri != null) {
             val storageRef = Firebase.storage.reference.child("User_Profiles/${userData.email}_profile.jpg")
@@ -139,7 +146,8 @@ class SignUpFragment3 : Fragment() {
             onUploadComplete("")
         }
     }
-
+    // Method to write user sign up details to User collection in firebase
+    // https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-hash-map/
     private fun writeUserToFirebase(userId: String?) {
         val user = hashMapOf(
             "firstName" to userData.firstName,
@@ -157,7 +165,7 @@ class SignUpFragment3 : Fragment() {
             ),
             "biometricEnabled" to false
         )
-
+        //https://firebase.google.com/docs/firestore/manage-data/add-data
         db.collection("User")
             .add(user)
             .addOnSuccessListener { documentReference ->
@@ -170,7 +178,7 @@ class SignUpFragment3 : Fragment() {
                 Log.w("USERDOCID", "Error adding Document", exception)
             }
     }
-
+    //clearing the data class
     private fun clearUserData() {
         userData.firstName = ""
         userData.lastName = ""
@@ -180,7 +188,8 @@ class SignUpFragment3 : Fragment() {
         userData.description = ""
         userData.profileimage = ""
     }
-
+    //https://medium.com/@Max_Sir/mastering-android-fragments-managers-transactions-and-best-practices-in-kotlin-af00cb9b44ac
+    //https://developer.android.com/guide/fragments/fragmentmanager
     private fun loadFragment(fragment: Fragment) {
         parentFragmentManager.beginTransaction()
             .replace(R.id.fragment_container, fragment)

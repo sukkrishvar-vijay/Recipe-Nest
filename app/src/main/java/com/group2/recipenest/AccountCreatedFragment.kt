@@ -14,6 +14,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.group2.recipenest.databinding.AccountCreatedBinding
 
+//Fragment to greet user and take them to home page
 class AccountCreatedFragment:Fragment() {
     private var _binding: AccountCreatedBinding? = null
     private val binding get() = _binding!!
@@ -29,6 +30,7 @@ class AccountCreatedFragment:Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        //Takes the user to Home Page after creating the account
         binding.startExploringButton.setOnClickListener {
             (activity as MainActivity).loadHomePage()
         }

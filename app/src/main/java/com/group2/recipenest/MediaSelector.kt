@@ -15,6 +15,9 @@ import androidx.appcompat.app.AlertDialog
 
 class MediaSelector(private val context: Context, private val activityResultLauncher: ActivityResultLauncher<Intent>) {
 
+    // Displays a dialog for the user to choose between the camera or the gallery as the media source.
+    // https://www.digitalocean.com/community/tutorials/android-alert-dialog-using-kotlin
+    // https://developer.android.com/reference/android/app/AlertDialog.Builder
     fun selectMediaSource() {
         val options = arrayOf("Camera", "Gallery")
         val builder = AlertDialog.Builder(context)
@@ -27,13 +30,15 @@ class MediaSelector(private val context: Context, private val activityResultLaun
         }
         builder.show()
     }
-
-     fun openCamera() {
+    // Launches the Camera App for Capturing an image
+    // https://developer.android.com/media/camera/camera-intents
+    fun openCamera() {
         val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
         activityResultLauncher.launch(intent)
     }
-
-     fun openGallery() {
+    // Opens the gallery for the user to select an image from their device
+    // https://developer.android.com/training/data-storage/shared/media
+    fun openGallery() {
         val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
         activityResultLauncher.launch(intent)
     }

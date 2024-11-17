@@ -36,7 +36,7 @@ import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import com.google.firebase.storage.ktx.storage
-import com.group2.geolocation.LocationHelper
+import com.group2.recipenest.LocationHelper
 import com.group2.recipenest.utils.MediaSelector
 import java.util.*
 
@@ -54,6 +54,7 @@ class AddRecipeFragment : Fragment() {
     private var existingComments: List<Map<String, Any>> = emptyList()
     private val currentUserId = userSignInData.UserDocId
 
+    // Request code for Camera permission
     private val CAMERA_PERMISSION_REQUEST = 101
 
     override fun onCreateView(
@@ -69,6 +70,8 @@ class AddRecipeFragment : Fragment() {
         toolbar.title = "Add New Recipe"
         toolbar.setTitleTextColor(Color.BLACK)
 
+
+        // Initializing the UI elements
         val uploadImageButton: Button = rootView.findViewById(R.id.upload_image_button)
         val uploadedImageView: ImageView = rootView.findViewById(R.id.uploaded_image)
         val titleEditText: TextInputEditText = rootView.findViewById(R.id.recipe_title)
@@ -109,6 +112,7 @@ class AddRecipeFragment : Fragment() {
             }
         }
 
+        // Check if this Fragment is in Edit mode by looking for arguments
         arguments?.let { bundle ->
             isEditMode = true
             toolbar.title = "Edit Recipe"
@@ -143,7 +147,8 @@ class AddRecipeFragment : Fragment() {
                 45 -> cookingTimeGroup.check(R.id.time_45)
                 60 -> cookingTimeGroup.check(R.id.time_60)
             }
-
+            // Load Recipe Image if it exists
+            // https://www.geeksforgeeks.org/image-loading-caching-library-android-set-2/
             if (recipeImageUrl.isNotEmpty()) {
                 Glide.with(this).load(recipeImageUrl).into(uploadedImageView)
             }
@@ -156,7 +161,8 @@ class AddRecipeFragment : Fragment() {
                 Toast.makeText(requireContext(), "City: $recipeUploadLocation", Toast.LENGTH_SHORT).show()
             }
         }
-
+        // https://developer.android.com/reference/android/graphics/Bitmap
+        // https://youtu.be/31TEs6nTNSw?si=7EfODrefI8yF6ahE
         val imageResultLauncher =
             registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
                 if (result.resultCode == Activity.RESULT_OK) {
@@ -177,7 +183,8 @@ class AddRecipeFragment : Fragment() {
                     uploadedImageView.setImageURI(imageUri)
                 }
             }
-
+        // https://youtu.be/CQ5qcJetYAI?si=v_Qxwjtd8owtAZMn
+        // Initialize the MediaSelector utility to handle the media selection
         mediaSelector = MediaSelector(requireContext(), imageResultLauncher)
         uploadImageButton.setOnClickListener { mediaSelector.selectMediaSource() }
 
@@ -237,7 +244,9 @@ class AddRecipeFragment : Fragment() {
 
         return rootView
     }
-
+    // Request camera and storage permissions
+    // https://developer.android.com/media/camera/camera-deprecated/camera-api
+    // https://developer.android.com/about/versions/14/changes/partial-photo-video-access
     private fun checkAndRequestPermissions() {
         val cameraPermission = ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.CAMERA)
         val storagePermission = ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.READ_EXTERNAL_STORAGE)
@@ -255,13 +264,14 @@ class AddRecipeFragment : Fragment() {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == CAMERA_PERMISSION_REQUEST) {
             if (grantResults.isNotEmpty() && grantResults.all { it == PackageManager.PERMISSION_GRANTED }) {
-                Log.d("AddRecipeFragment", "Camera and storage permissions granted.")
+
             } else {
                 Toast.makeText(requireContext(), "Camera and storage permissions are required to upload an image.", Toast.LENGTH_SHORT).show()
             }
         }
     }
-
+    // Upload the selected image to Firebase Storage
+    // https://firebase.google.com/docs/storage/android/upload-filess
     private fun uploadImageToFirebase(
         title: String,
         description: String,
@@ -301,6 +311,8 @@ class AddRecipeFragment : Fragment() {
         )
     }
 
+    // Fetch existing Comments and location for editing
+    // https://kotlinlang.org/docs/collections-overview.html
     private fun fetchExistingComments(recipeId: String) {
         firestore.collection("Recipes").document(recipeId)
             .get()
@@ -311,10 +323,11 @@ class AddRecipeFragment : Fragment() {
                 }
             }
             .addOnFailureListener { exception ->
-                Log.e("AddRecipeFragment", "Failed to fetch comments or location: ${exception.message}")
+
             }
     }
-
+    // Fetching Existing Recipe location to keep the location unchanged even after editing the recipe from elsewhere
+    // https://youtu.be/GZnCHLEo6ng?si=r-qkdFcglG4iEcld
     private fun fetchExistingRecipeUploadLocation(recipeId: String){
         firestore.collection("Recipes").document(recipeId)
             .get()
@@ -327,7 +340,8 @@ class AddRecipeFragment : Fragment() {
                 Log.e("AddRecipeFragment", "Failed to fetch location: ${exception.message}")
             }
     }
-
+    // Saving the Recipe data to Firestore
+    // https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-hash-map/
     private fun saveRecipeData(
         title: String,
         description: String,
@@ -367,6 +381,8 @@ class AddRecipeFragment : Fragment() {
             }
     }
 
+    //  UI utility methods for setting button states
+    // https://alvinalexander.com/source-code/android/how-create-color-hexadecimal-color-string-android/
     private fun setSelectedButtonState(button: MaterialButton) {
         button.setBackgroundColor(Color.parseColor("#D1C300"))
         button.setTextColor(Color.BLACK)

@@ -115,6 +115,7 @@ class PostCommentFragment : Fragment() {
         playpause.isEnabled = false
         audioBar.isEnabled = false
 
+        //https://developer.android.com/reference/android/os/Handler
         handler = Handler(Looper.getMainLooper())
         runnable = Runnable{
             mediaPlayer?.let {
@@ -143,6 +144,8 @@ class PostCommentFragment : Fragment() {
             }
         }
 
+        //https://www.youtube.com/watch?v=A3ReceYaoJM&list=PLpZQVidZ65jPz-XIHdWi1iCra8TU9h_kU&index=19
+        //https://developer.android.com/reference/android/widget/SeekBar
         audioBar.setOnSeekBarChangeListener(object  : SeekBar.OnSeekBarChangeListener{
             override fun onProgressChanged(p0: SeekBar?, p1: Int, p2: Boolean) {
                 if(p2)
@@ -165,7 +168,6 @@ class PostCommentFragment : Fragment() {
 
             if (comment.isNotEmpty()) {
                 if(isAudioAvailable){
-                    //uploadAudioToFirebase()
                     uploadAudioToFirebase { audioDownloadUrl ->
                         audioUrl = audioDownloadUrl
                         postComment(comment, recipeId, rating)
@@ -183,6 +185,9 @@ class PostCommentFragment : Fragment() {
         return rootView
     }
 
+    //https://developer.android.com/about/versions/12/deprecations
+    //https://developer.android.com/reference/android/media/MediaRecorder
+    //https://developer.android.com/training/data-storage
     @Suppress("DEPRECATION")
     private fun startRecording() {
         audioRecord.text = "Recording, Tap to Stop"
@@ -205,6 +210,9 @@ class PostCommentFragment : Fragment() {
         }
     }
 
+    //https://developer.android.com/reference/android/annotation/SuppressLint
+    //https://developer.android.com/reference/android/media/MediaRecorder
+    //https://developer.android.com/training/data-storage
     @SuppressLint("DefaultLocale")
     private fun stopRecording() {
         mediaRecorder?.apply {
@@ -236,6 +244,10 @@ class PostCommentFragment : Fragment() {
         audioBar.isEnabled = true
     }
 
+    //function to play and pause recording
+    //https://www.youtube.com/watch?v=A3ReceYaoJM&list=PLpZQVidZ65jPz-XIHdWi1iCra8TU9h_kU&index=19
+    //https://developer.android.com/reference/android/media/MediaPlayer
+    //https://developer.android.com/reference/android/os/Handler
     private fun playPauseRecording() {
         // Toggle play/pause
         if (mediaPlayer!!.isPlaying) {
@@ -249,6 +261,8 @@ class PostCommentFragment : Fragment() {
         }
     }
 
+    //Method to upload recorded audio to firebase
+    //https://firebase.google.com/docs/storage/android/upload-files
     private fun uploadAudioToFirebase(onUploadSuccess: (String) -> Unit) {
         val audioFile = File(audioFilePath)
         val audioUri = Uri.fromFile(audioFile)
@@ -258,7 +272,6 @@ class PostCommentFragment : Fragment() {
             .addOnSuccessListener {
                 audioRef.downloadUrl.addOnSuccessListener { downloadUrl ->
                     onUploadSuccess(downloadUrl.toString())
-                    Log.d("FIREBASE", "Upload Success. Audio URL: $downloadUrl")
                 }.addOnFailureListener {
                     Log.d("FIREBASE", "Failed to retrieve download URL")
                 }
@@ -268,6 +281,8 @@ class PostCommentFragment : Fragment() {
             }
     }
 
+    //function to request user for mic permission
+    //https://developer.android.com/training/permissions/requesting
     private fun requestPermissions() {
         val requestPermissionLauncher = registerForActivityResult(
             ActivityResultContracts.RequestPermission()

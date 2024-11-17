@@ -32,6 +32,8 @@ class LandingPage1: Fragment() {
         return binding.root
     }
 
+    //https://developer.android.com/reference/android/view/GestureDetector
+    //https://developer.android.com/studio/write/lint#accessibility
     @SuppressLint("ClickableViewAccessibility")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

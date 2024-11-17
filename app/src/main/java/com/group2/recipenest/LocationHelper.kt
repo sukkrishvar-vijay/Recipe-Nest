@@ -5,7 +5,7 @@
  * and tested for functionality before implementation.
  */
 
-package com.group2.geolocation
+package com.group2.recipenest
 
 import android.Manifest
 import android.content.Context
@@ -14,7 +14,6 @@ import android.content.pm.PackageManager
 import android.location.Location
 import android.location.LocationManager
 import android.provider.Settings
-import android.util.Log
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -22,6 +21,10 @@ import com.google.android.gms.location.LocationServices
 import java.util.Locale
 import android.location.Geocoder
 
+// LocationHelper class is used in RecipesFragment page to filter out recipes based on the user's current location
+// This class is also used in AddRecipeFragment page to record the current location of the user from where the user is uploading a recipe
+// https://www.youtube.com/watch?v=mC1VVHmgKXI&ab_channel=Dr.ParagShukla
+// https://stackoverflow.com/questions/4013606/google-maps-how-to-get-country-state-province-region-city-given-a-lat-long-va
 class LocationHelper(private val context: Context) {
 
     private var fusedLocationProviderClient: FusedLocationProviderClient? = null
@@ -67,6 +70,9 @@ class LocationHelper(private val context: Context) {
         )
     }
 
+    // Handle location permission
+    // https://developer.android.com/develop/sensors-and-location/location/permissions
+    // https://medium.com/@aman1024/handling-location-permission-in-android-kotlin-a1bc4c1cd9da
     private fun requestPermission() {
         if (context is androidx.fragment.app.FragmentActivity) {
             ActivityCompat.requestPermissions(
@@ -80,6 +86,9 @@ class LocationHelper(private val context: Context) {
         }
     }
 
+    // Handle location permission
+    // https://developer.android.com/develop/sensors-and-location/location/permissions
+    // https://medium.com/@aman1024/handling-location-permission-in-android-kotlin-a1bc4c1cd9da
     private fun checkPermissions(): Boolean {
         return ActivityCompat.checkSelfPermission(
             context,
@@ -90,6 +99,9 @@ class LocationHelper(private val context: Context) {
         ) == PackageManager.PERMISSION_GRANTED
     }
 
+    // Get the city name of the passed coordinates
+    // https://stackoverflow.com/questions/24310594/get-only-the-city-name-from-coordinates-in-android/52024163
+    // https://www.geeksforgeeks.org/how-to-get-city-name-by-using-geolocation/
     private fun fetchCityName(latitude: Double, longitude: Double): String? {
         return try {
             val geocoder = Geocoder(context, Locale.getDefault())
@@ -99,7 +111,6 @@ class LocationHelper(private val context: Context) {
             } else null
         } catch (e: Exception) {
             e.printStackTrace()
-            Log.e("LocationHelper", "Geocoder failed: ${e.message}")
             null
         }
     }

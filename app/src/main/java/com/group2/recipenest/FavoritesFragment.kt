@@ -58,12 +58,14 @@ class FavoritesFragment : Fragment() {
                 .commit()
         }
         recyclerView.adapter = adapter
-
+        // Initializing itemTouchHelper to handle swipe gestures for Recycleview items
+        // https://developer.android.com/reference/androidx/recyclerview/widget/ItemTouchHelper
+        // https://medium.com/@ipaulpro/drag-and-swipe-with-recyclerview-b9456d2b1aaf
         val itemTouchHelper = ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
             override fun onMove(
                 recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder, target: RecyclerView.ViewHolder
             ): Boolean = false
-
+            // Handle the action when the item is swiped
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                 val position = viewHolder.adapterPosition
                 val tile = adapter.getTileAtPosition(position)
@@ -74,7 +76,8 @@ class FavoritesFragment : Fragment() {
                     adapter.notifyItemChanged(position)
                 }
             }
-
+            // Added a background color to the swipe action
+            // https://stackoverflow.com/questions/35773384/call-itemtouchhelper-onchilddraw-manually-to-swipe-item-on-recyclerview
             override fun onChildDraw(
                 c: Canvas,
                 recyclerView: RecyclerView,
@@ -100,6 +103,7 @@ class FavoritesFragment : Fragment() {
                 super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
             }
         })
+        // Attach the ItemTouchHelper to the RecyclerView to enable swipe functionality
         itemTouchHelper.attachToRecyclerView(recyclerView)
 
         fetchFavoriteCollections()
@@ -212,7 +216,8 @@ class FavoritesFragment : Fragment() {
             exception.printStackTrace()
         }
     }
-
+    // Displays a confirmation dialog to the user when they attempt to delete a collection
+    // https://developer.android.com/develop/ui/views/components/dialogs
     private fun showDeleteConfirmationDialog(tile: FavoriteCollectionsTileModel, position: Int) {
         AlertDialog.Builder(requireContext())
             .setTitle("Delete Collection")
@@ -232,7 +237,9 @@ class FavoritesFragment : Fragment() {
             }
             .show()
     }
-
+    // Deletes the user's favorite collection from firebase and updates the UI accordingly
+    // https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/filter-not.html
+    // https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/to-mutable-list.html
     private fun deleteCollection(tile: FavoriteCollectionsTileModel, position: Int) {
         val userRef = firestore.collection("User").document(currentUserId)
 

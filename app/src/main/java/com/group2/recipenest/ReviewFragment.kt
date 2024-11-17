@@ -51,6 +51,8 @@ class ReviewFragment : BottomSheetDialogFragment() {
         return view
     }
 
+    //function to fetch comments from database and load the recycler view with the details
+    //https://firebase.google.com/docs/firestore/query-data/get-data
     private fun fetchComments() {
         recipeId?.let { recipeId ->
             db.collection("Recipes").document(recipeId)
@@ -86,7 +88,7 @@ class ReviewFragment : BottomSheetDialogFragment() {
         }
     }
 
-
+    //https://firebase.google.com/docs/firestore/query-data/get-data
     private fun fetchCommenterDetails(commenterId: String, callback: (String, String, String) -> Unit) {
         db.collection("User").document(commenterId)
             .get()

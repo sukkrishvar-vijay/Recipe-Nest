@@ -61,7 +61,9 @@ class RecipeCardsFragment : Fragment() {
         // https://stackoverflow.com/questions/50171647/recyclerview-setlayoutmanager
         recipeRecyclerView = view.findViewById(R.id.recipe_recycler_view)
         recipeRecyclerView.layoutManager = LinearLayoutManager(requireContext())
-
+        // Initializing itemTouchHelper to handle swipe gestures for Recycleview items
+        // https://developer.android.com/reference/androidx/recyclerview/widget/ItemTouchHelper
+        // https://medium.com/@ipaulpro/drag-and-swipe-with-recyclerview-b9456d2b1aaf
         val itemTouchHelper = ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
             override fun onMove(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder, target: RecyclerView.ViewHolder): Boolean = false
 
@@ -74,7 +76,8 @@ class RecipeCardsFragment : Fragment() {
                     recipeAdapter.notifyItemChanged(position)
                 }
             }
-
+            // Added a background color to the swipe action
+            // https://stackoverflow.com/questions/35773384/call-itemtouchhelper-onchilddraw-manually-to-swipe-item-on-recyclerview
             override fun onChildDraw(
                 c: Canvas,
                 recyclerView: RecyclerView,
@@ -100,13 +103,15 @@ class RecipeCardsFragment : Fragment() {
                 super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
             }
         })
+        // Attach the ItemTouchHelper to the RecyclerView to enable swipe functionality
         itemTouchHelper.attachToRecyclerView(recipeRecyclerView)
 
         fetchRecipeIdsFromFavorites(tileTitle)
 
         return view
     }
-
+    // Displays a confirmation dialog to the user when they attempt to delete a collection
+    // https://developer.android.com/develop/ui/views/components/dialogs
     private fun showDeleteConfirmationDialog(recipe: RecipeCardModel, position: Int) {
         AlertDialog.Builder(requireContext())
             .setTitle("Delete Recipe")
@@ -126,7 +131,8 @@ class RecipeCardsFragment : Fragment() {
             }
             .show()
     }
-
+    // Deletes the user's favorite collection or user's Recipe from firebase and updates the UI accordingly
+    // https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/to-mutable-list.html
     private fun deleteRecipe(recipe: RecipeCardModel, position: Int) {
         val userRef = firestore.collection("User").document(currentUserId)
 
@@ -242,7 +248,7 @@ class RecipeCardsFragment : Fragment() {
 
     private fun showEmptyState() {
     }
-
+    // Navigates to the recipe details fragment with selected recipe data
     private fun navigateToRecipeDetailsFragment(recipe: RecipeCardModel) {
         val recipeDetailsFragment = RecipeDetailsFragment()
 

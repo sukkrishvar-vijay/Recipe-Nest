@@ -38,16 +38,14 @@ class ForgotPasswordFragment: Fragment() {
         }
 
         //https://firebase.google.com/docs/auth/android/manage-users
+        //https://stackoverflow.com/questions/42800349/forgot-password-in-firebase-for-android
         binding.resetPasswordButton.setOnClickListener {
             val email = binding.emailtextField.editText?.text.toString().trim()
             if(email != ""){
                 FirebaseAuth.getInstance().sendPasswordResetEmail(email)
                     .addOnCompleteListener { task ->
                         if (task.isSuccessful) {
-                            Log.d("PasswordReset", "Email sent.")
                             loadFragment(SignInFragment())
-                        } else {
-                            Log.e("PasswordReset", "Error: ${task.exception?.message}")
                         }
                     }
 

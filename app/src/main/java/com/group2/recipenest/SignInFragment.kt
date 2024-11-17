@@ -51,6 +51,7 @@ class SignInFragment : Fragment() {
         (activity as MainActivity).hideBottomNavigation()
         (activity as AppCompatActivity).supportActionBar?.hide()
 
+        //https://developer.android.com/identity/sign-in/biometric-auth
         executor = ContextCompat.getMainExecutor(requireContext())
         biometricPrompt = BiometricPrompt(this, executor, object : BiometricPrompt.AuthenticationCallback() {
             override fun onAuthenticationError(errorCode: Int, errString: CharSequence) {
@@ -70,6 +71,7 @@ class SignInFragment : Fragment() {
             }
         })
 
+        //https://developer.android.com/identity/sign-in/biometric-auth
         promptInfo = BiometricPrompt.PromptInfo.Builder()
             .setTitle("Fingerprint Sign In")
             .setSubtitle("Sign in using your fingerprint scan")
@@ -110,12 +112,14 @@ class SignInFragment : Fragment() {
         }
     }
 
+    //https://developer.android.com/training/data-storage/shared-preferences
+    //https://developer.android.com/reference/android/content/SharedPreferences
     private fun isBiometricEnabled(): Boolean {
         val sharedPreferences = requireActivity().getSharedPreferences("UserSettings", MODE_PRIVATE)
         return sharedPreferences.getBoolean("biometricEnabled", false)
     }
 
-
+    //https://developer.android.com/identity/sign-in/biometric-auth
     private fun checkBiometricAvailabilityAndAuthenticate() {
         val biometricManager = BiometricManager.from(requireContext())
         when (biometricManager.canAuthenticate(BiometricManager.Authenticators.BIOMETRIC_STRONG)) {
@@ -134,6 +138,8 @@ class SignInFragment : Fragment() {
         }
     }
 
+    //function to sign in user via firebase authentication
+    //https://firebase.google.com/docs/auth/android/password-auth
     private fun signInUser(email: String, password: String) {
         auth.signInWithEmailAndPassword(email, password)
             .addOnCompleteListener(requireActivity()) { task ->
@@ -153,6 +159,9 @@ class SignInFragment : Fragment() {
             }
     }
 
+    //function to retrieve user details from EncryptedSharedPreferences and sign in user
+    //https://developer.android.com/about/versions/12/deprecations
+    //https://developer.android.com/reference/androidx/security/crypto/EncryptedSharedPreferences
     @Suppress("DEPRECATION")
     private fun signInUserViaBio(){
         val masterKeyAlias = MasterKeys.getOrCreate(MasterKeys.AES256_GCM_SPEC)
@@ -176,6 +185,9 @@ class SignInFragment : Fragment() {
         }
     }
 
+    //function to store user details as EncryptedSharedPreferences to use while logging in using biometric
+    //https://developer.android.com/about/versions/12/deprecations
+    //https://developer.android.com/reference/androidx/security/crypto/EncryptedSharedPreferences
     @Suppress("DEPRECATION")
     private fun saveCredentials(email: String, password: String) {
         val masterKeyAlias = MasterKeys.getOrCreate(MasterKeys.AES256_GCM_SPEC)
@@ -195,6 +207,8 @@ class SignInFragment : Fragment() {
         }
     }
 
+    //https://developer.android.com/reference/androidx/core/content/ContextCompat#checkSelfPermission
+    //https://developer.android.com/training/permissions/requesting
     private fun checkLocationPermission() {
         if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION)
             == PackageManager.PERMISSION_GRANTED
@@ -208,6 +222,9 @@ class SignInFragment : Fragment() {
         }
     }
 
+    //https://developer.android.com/reference/androidx/fragment/app/Fragment#onRequestPermissionsResult(int,%20java.lang.String%5B%5D,%20int%5B%5D)
+    //https://developer.android.com/training/permissions/requesting#handle-response
+    //https://developer.android.com/training/permissions/requesting#results
     override fun onRequestPermissionsResult(
         requestCode: Int, permissions: Array<out String>, grantResults: IntArray
     ) {
@@ -226,6 +243,8 @@ class SignInFragment : Fragment() {
         (activity as MainActivity).loadHomePage()
     }
 
+    //https://medium.com/@Max_Sir/mastering-android-fragments-managers-transactions-and-best-practices-in-kotlin-af00cb9b44ac
+    //https://developer.android.com/guide/fragments/fragmentmanager
     private fun loadFragment(fragment: Fragment) {
         parentFragmentManager.beginTransaction()
             .replace(R.id.fragment_container, fragment)

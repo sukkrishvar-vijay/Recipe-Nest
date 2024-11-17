@@ -73,7 +73,8 @@ class MyRecipesFragment : Fragment() {
         super.onResume()
         fetchUserRecipes()
     }
-
+    // Fetches recipes created by the user from Firestore
+    // https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-mutable-list/
     private fun fetchUserRecipes() {
         firestore.collection("Recipes")
             .whereEqualTo("recipeUserId", currentUserId)
@@ -93,7 +94,7 @@ class MyRecipesFragment : Fragment() {
                     val dateRecipeAdded = document.getDate("dateRecipeAdded") ?: Date()
                     val recipeImageUrl = document.getString("recipeImageUrl") ?: ""
                     val recipeId = document.id
-
+                    // Create a RecipeCardModel object with the extracted values
                     val recipe = RecipeCardModel(
                         recipeUserId = recipeUserId,
                         recipeDescription = recipeDescription,
@@ -108,7 +109,8 @@ class MyRecipesFragment : Fragment() {
                     )
                     recipeList.add(recipe)
                 }
-
+                // RecyclerView adapter binding based on Android developer guide
+                // https://developer.android.com/guide/topics/ui/layout/recyclerview
                 recipeAdapter = RecipeCardsWithLongClickAdapter(
                     recipeList,
                     onClick = { recipe -> navigateToRecipeDetailsFragment(recipe) },
@@ -120,7 +122,9 @@ class MyRecipesFragment : Fragment() {
                 exception.printStackTrace()
             }
     }
-
+    // Display a dialog with Edit and Delete options for the selected recipe
+    // https://developer.android.com/develop/ui/views/components/dialogs
+    // https://stackoverflow.com/questions/45972079/when-to-use-alertdialog-builder-settitle-vs-dialog-settitle
     private fun showEditDeleteDialog(recipe: RecipeCardModel) {
         val options = arrayOf("Edit", "Delete")
         val builder = AlertDialog.Builder(requireContext())
@@ -133,7 +137,8 @@ class MyRecipesFragment : Fragment() {
         }
         builder.show()
     }
-
+    // Navigates to AddRecipeFragment with pre-filled recipe details for editing
+    // https://www.geeksforgeeks.org/bundle-in-android-with-example/
     private fun editRecipe(recipe: RecipeCardModel) {
         val addRecipeFragment = AddRecipeFragment()
         val bundle = Bundle().apply {
@@ -154,7 +159,9 @@ class MyRecipesFragment : Fragment() {
             .addToBackStack(null)
             .commit()
     }
-
+    // Show confirmation dialog before deleting the recipe
+    // https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/take-if.html
+    // https://stackoverflow.com/questions/50174614/firebase-get-getreferencefromurl
     private fun deleteRecipe(recipe: RecipeCardModel) {
         val dialog = AlertDialog.Builder(requireContext())
             .setTitle("Delete Recipe")
@@ -197,7 +204,8 @@ class MyRecipesFragment : Fragment() {
     }
 
 
-
+    // Navigates to the recipe details fragment with selected recipe data
+    // https://www.geeksforgeeks.org/bundle-in-android-with-example/
     private fun navigateToRecipeDetailsFragment(recipe: RecipeCardModel) {
         val recipeDetailsFragment = RecipeDetailsFragment()
         val bundle = Bundle().apply {

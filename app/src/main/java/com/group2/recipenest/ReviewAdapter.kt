@@ -30,6 +30,7 @@ class ReviewAdapter(
     private var reviewList: List<ReviewModel>
 ) : RecyclerView.Adapter<ReviewAdapter.ReviewViewHolder>() {
 
+    //https://developer.android.com/reference/android/annotation/SuppressLint
     companion object {
         private var activeMediaPlayer: MediaPlayer? = null
         @SuppressLint("StaticFieldLeak")
@@ -83,6 +84,8 @@ class ReviewAdapter(
                 audioSection.visibility = View.GONE
             }
 
+            //https://developer.android.com/reference/android/os/Handler
+            //https://www.youtube.com/watch?v=A3ReceYaoJM&list=PLpZQVidZ65jPz-XIHdWi1iCra8TU9h_kU&index=19
             handler = Handler(Looper.getMainLooper())
             runnable = Runnable{
                 //audioBar.progress = mediaPlayer?.currentPosition!!
@@ -92,6 +95,8 @@ class ReviewAdapter(
                 handler.postDelayed(runnable,0)
             }
 
+            //https://www.youtube.com/watch?v=A3ReceYaoJM&list=PLpZQVidZ65jPz-XIHdWi1iCra8TU9h_kU&index=19
+            //https://developer.android.com/reference/android/widget/SeekBar
             audioBar.setOnSeekBarChangeListener(object  : SeekBar.OnSeekBarChangeListener{
                 override fun onProgressChanged(p0: SeekBar?, p1: Int, p2: Boolean) {
                     if(p2)
@@ -116,6 +121,8 @@ class ReviewAdapter(
             }
         }
 
+        //function to get audio file from firebase storage using the link and loading the media player with the audio
+        //https://firebase.google.com/docs/storage/android/download-files
         private fun initializeMediaPlayer(audioUrl: String) {
             activeMediaPlayer?.let {
                 activeViewHolder?.stopAudioPlayback()
@@ -150,6 +157,10 @@ class ReviewAdapter(
                 }
         }
 
+        // function to start and stop audio playback and change play pause image
+        //https://www.youtube.com/watch?v=A3ReceYaoJM&list=PLpZQVidZ65jPz-XIHdWi1iCra8TU9h_kU&index=19
+        //https://developer.android.com/reference/android/media/MediaPlayer
+        //https://developer.android.com/reference/android/os/Handler
         private fun togglePlayback() {
             mediaPlayer?.let { player ->
                 if (isPlaying) {
@@ -165,6 +176,7 @@ class ReviewAdapter(
             }
         }
 
+        //function to stop audio playback if some other comment audio starts playing
         fun stopAudioPlayback() {
             mediaPlayer?.pause()
             mediaPlayer?.seekTo(0)
@@ -175,6 +187,7 @@ class ReviewAdapter(
             mediaPlayer = null
         }
 
+        //function to release all players which will be called from ReviewFragment.kt to release all players if ReviewFragment.kt is destroyed
         fun releasePlayer() {
             playAudioButton.setImageResource(R.drawable.ic_play)
             audioBar.progress = 0
@@ -194,6 +207,7 @@ class ReviewAdapter(
         }
     }
 
+    //function to release all players
     fun releaseAllPlayers() {
         activeViewHolder?.stopAudioPlayback()
         activeMediaPlayer?.release()
