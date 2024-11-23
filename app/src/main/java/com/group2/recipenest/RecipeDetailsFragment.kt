@@ -37,6 +37,7 @@ class RecipeDetailsFragment : Fragment() {
     private lateinit var firestore: FirebaseFirestore
     private var isFavorite = false
     private var currentFavoriteCategory: String? = null
+    private var totalCommentsCount: Int? = 0
 
 
     private val currentUserId = userSignInData.UserDocId
@@ -77,11 +78,7 @@ class RecipeDetailsFragment : Fragment() {
         favoriteButton.setOnClickListener {
             showFavoriteDialog(currentRecipeId)
         }
-
-        ratingsCommentsButton.setOnClickListener {
-            openReviewFragment()
-        }
-
+        
         return rootView
     }
 
@@ -150,15 +147,24 @@ class RecipeDetailsFragment : Fragment() {
             if (document.exists()) {
                 val comments = document.get("comments") as? List<Map<String, Any>>
                 val commentCount = comments?.size ?: 0
+                totalCommentsCount = commentCount
                 ratingsCommentsButton.text = "Ratings and Comments ($commentCount)"
 
                 val avgRating = document.getDouble("avgRating") ?: 0.0
                 avgRatingTextView.text = "${avgRating}★"
+
+                if(totalCommentsCount !=  0){
+                    ratingsCommentsButton.setOnClickListener {
+                        openReviewFragment()
+                    }
+                }
             } else {
+                totalCommentsCount = 0
                 ratingsCommentsButton.text = "Ratings and Comments (0)"
                 avgRatingTextView.text = "N/A★"
             }
         }.addOnFailureListener {
+            totalCommentsCount = 0
             ratingsCommentsButton.text = "Ratings and Comments (0)"
             avgRatingTextView.text = "N/A★"
         }
