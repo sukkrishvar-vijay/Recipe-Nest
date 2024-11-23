@@ -78,7 +78,7 @@ class RecipeDetailsFragment : Fragment() {
         favoriteButton.setOnClickListener {
             showFavoriteDialog(currentRecipeId)
         }
-        
+
         return rootView
     }
 

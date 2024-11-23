@@ -109,10 +109,13 @@ class MyRecipesFragment : Fragment() {
                     )
                     recipeList.add(recipe)
                 }
+
+                val sortedList = recipeList.sortedByDescending { it.dateRecipeAdded }
+                
                 // RecyclerView adapter binding based on Android developer guide
                 // https://developer.android.com/guide/topics/ui/layout/recyclerview
                 recipeAdapter = RecipeCardsWithLongClickAdapter(
-                    recipeList,
+                    sortedList,
                     onClick = { recipe -> navigateToRecipeDetailsFragment(recipe) },
                     onLongClick = { recipe -> showEditDeleteDialog(recipe) }
                 )
