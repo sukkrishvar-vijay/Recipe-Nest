@@ -19,6 +19,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.ImageView
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
@@ -46,6 +47,9 @@ class SearchFragment : Fragment() {
     private var selectedDifficultyLevel: String? = null
     private var selectedCookingTime: String? = null
     private val selectedCuisineTypes = mutableSetOf<String>()
+
+    private lateinit var searchResultCount: TextView
+    private lateinit var noSearchResult: TextView
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -84,6 +88,9 @@ class SearchFragment : Fragment() {
             override fun afterTextChanged(s: Editable?) {
                 if (s.isNullOrEmpty()) {
                     adapter.updateRecipes(emptyList())
+                    searchResultCount.text = ""
+                    searchResultCount.visibility = View.GONE
+                    noSearchResult.visibility = View.GONE
                 }
             }
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
@@ -97,6 +104,8 @@ class SearchFragment : Fragment() {
         cookingTimeChip = view.findViewById(R.id.cookingTimeChip)
         cuisineTypeChip = view.findViewById(R.id.cuisineTypeChip)
         clearFiltersButton = view.findViewById(R.id.clearFiltersButton)
+        searchResultCount = view.findViewById(R.id.resultsCountTextView)
+        noSearchResult = view.findViewById(R.id.noResultsTextView)
 
         difficultyLevelChip.setOnClickListener { showDifficultyLevelDialog(difficultyLevelChip) }
         cookingTimeChip.setOnClickListener { showCookingTimeDialog(cookingTimeChip) }
@@ -160,11 +169,15 @@ class SearchFragment : Fragment() {
                         recipeList.add(recipe)
                     }
                 }
-
                 adapter.updateRecipes(recipeList)
-
-                if (recipeList.isEmpty()) {
-                    Toast.makeText(requireContext(), "No recipes found with your search", Toast.LENGTH_SHORT).show()
+                if (recipeList.isNotEmpty()){
+                    searchResultCount.setText("${recipeList.count()} recipe(s) found")
+                    searchResultCount.visibility = View.VISIBLE
+                    noSearchResult.visibility = View.GONE
+                }else{
+                    noSearchResult.visibility = View.VISIBLE
+                    noSearchResult.text = "No recipes found!"
+                    searchResultCount.visibility = View.GONE
                 }
             }
             .addOnFailureListener {

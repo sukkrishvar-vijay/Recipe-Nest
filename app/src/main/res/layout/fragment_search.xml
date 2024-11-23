@@ -9,7 +9,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="10dp"
         android:gravity="center_horizontal">
 
         <!-- Top Vector Image -->
@@ -27,7 +26,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
-            app:cardCornerRadius="24dp"
+            android:layout_marginHorizontal="5dp"
+            app:cardCornerRadius="20dp"
             android:elevation="4dp">
 
             <RelativeLayout
@@ -42,10 +42,7 @@
                     android:layout_height="48dp"
                     android:minHeight="48dp"
                     android:layout_toStartOf="@id/searchIcon"
-                    android:layout_toLeftOf="@+id/searchIcon"
-                    android:layout_alignParentLeft="true"
-                    android:layout_weight="1"
-                    android:layout_marginStart="8dp"
+                    android:layout_alignParentStart="true"
                     android:background="@android:color/transparent"
                     android:hint="Search Recipe"
                     android:paddingStart="8dp"
@@ -58,7 +55,6 @@
                     android:layout_width="48dp"
                     android:layout_height="48dp"
                     android:layout_alignParentEnd="true"
-                    android:layout_alignParentRight="true"
                     android:layout_centerVertical="true"
                     android:src="@drawable/ic_search"
                     android:contentDescription="Search Icon"
@@ -139,12 +135,36 @@
             android:textSize="10sp"
             android:textColor="@android:color/black" />
 
+        <!-- Number of Search Results -->
+        <TextView
+            android:id="@+id/resultsCountTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:layout_marginHorizontal="5dp"
+            android:text=""
+            android:textStyle="bold"
+            android:textSize="14sp"
+            android:gravity="start"
+            android:textColor="@android:color/black" />
+
+        <!-- "No Recipes Found" Text -->
+        <TextView
+            android:id="@+id/noResultsTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text=""
+            android:textSize="18sp"
+            android:textColor="@android:color/darker_gray"
+            android:gravity="center"
+            android:visibility="gone" />
+
         <!-- RecyclerView for Search Results -->
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/searchResultsRecyclerView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginTop="16dp"
             android:layout_gravity="center_horizontal" />
 
     </LinearLayout>
