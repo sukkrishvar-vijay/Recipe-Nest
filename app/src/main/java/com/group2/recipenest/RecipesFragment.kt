@@ -25,6 +25,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.transition.Visibility
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -77,7 +78,6 @@ class RecipesFragment : Fragment() {
 
         locationHelper.getCityName { cityName ->
             currentLocation = cityName ?: "Location not found"
-            trendingTitle.text = "Recipes Trending in ${cityName}"
         }
 
         // RecyclerView setup with different layout managers based on Android developer documentation
@@ -192,7 +192,13 @@ class RecipesFragment : Fragment() {
                 val sortedRecipeList = recipeList.sortedByDescending { it.dateRecipeAdded }
 
                 verticalAdapter.updateRecipes(sortedRecipeList)
-                horizontalAdapter.updateTrendingRecipes(trendingRecipeList)
+                if (trendingRecipeList.isEmpty()){
+                    trendingTitle.visibility = View.GONE
+                }else{
+                    trendingTitle.visibility = View.VISIBLE
+                    horizontalAdapter.updateTrendingRecipes(trendingRecipeList)
+                    trendingTitle.text = "Recipes Trending in ${currentLocation}"
+                }
                 carouselAdapter.updateCarouselItems(carouselRecipeList)
             }
             .addOnFailureListener { exception ->
