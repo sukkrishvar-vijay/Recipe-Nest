@@ -116,7 +116,7 @@
 
     <!--https://github.com/material-components/material-components-android/blob/master/docs/components/TextField.md-->
     <com.google.android.material.textfield.TextInputLayout
-        style="?attr/textInputFilledStyle"
+        style="?attr/textInputOutlinedStyle"
         android:id="@+id/usernametextField"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -136,7 +136,7 @@
 
     <!--https://github.com/material-components/material-components-android/blob/master/docs/components/TextField.md-->
     <com.google.android.material.textfield.TextInputLayout
-        style="?attr/textInputFilledStyle"
+        style="?attr/textInputOutlinedStyle"
         android:id="@+id/userDescriptiontextField"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -153,6 +153,10 @@
             android:backgroundTint="#2ED1C300"
             android:inputType="textMultiLine"
             android:minLines="8"
+            android:maxLines="8"
+            android:scrollbars="vertical"
+            android:overScrollMode="always"
+            android:scrollHorizontally="false"
             android:gravity="top"
             />
     </com.google.android.material.textfield.TextInputLayout>

@@ -17,7 +17,7 @@
 
     <!--https://github.com/material-components/material-components-android/blob/master/docs/components/TextField.md-->
     <com.google.android.material.textfield.TextInputLayout
-        style="?attr/textInputFilledStyle"
+        style="?attr/textInputOutlinedStyle"
         android:id="@+id/emailtextField"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -37,7 +37,7 @@
 
     <!--https://github.com/material-components/material-components-android/blob/master/docs/components/TextField.md-->
     <com.google.android.material.textfield.TextInputLayout
-        style="?attr/textInputFilledStyle"
+        style="?attr/textInputOutlinedStyle"
         android:id="@+id/passwordtextField"
         app:endIconMode="password_toggle"
         android:layout_width="match_parent"
@@ -96,6 +96,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:backgroundTint="@color/theme"
+            app:iconTint = "#000000"
             android:contentDescription="finger print sign in"
             app:icon="@drawable/baseline_fingerprint_24"
             />

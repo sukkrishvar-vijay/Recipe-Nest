@@ -12,7 +12,6 @@
         android:orientation="vertical"
         tools:ignore="ExtraText">
 
-        <!-- ImageView with Button in the middle -->
         <!-- ImageView with Button beneath it -->
         <FrameLayout
             android:layout_width="match_parent"
@@ -39,7 +38,7 @@
         <!-- Title EditText -->
         <!--https://github.com/material-components/material-components-android/blob/master/docs/components/TextField.md-->
         <com.google.android.material.textfield.TextInputLayout
-            style="?attr/textInputFilledStyle"
+            style="?attr/textInputOutlinedStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10sp"
@@ -58,7 +57,7 @@
         <!-- Description Text Area -->
         <!--https://github.com/material-components/material-components-android/blob/master/docs/components/TextField.md-->
         <com.google.android.material.textfield.TextInputLayout
-            style="?attr/textInputFilledStyle"
+            style="?attr/textInputOutlinedStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10sp"

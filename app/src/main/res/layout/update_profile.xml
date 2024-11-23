@@ -52,7 +52,7 @@
 
             <!--https://github.com/material-components/material-components-android/blob/master/docs/components/TextField.md-->
             <com.google.android.material.textfield.TextInputLayout
-                style="?attr/textInputFilledStyle"
+                style="?attr/textInputOutlinedStyle"
                 android:layout_height="wrap_content"
                 android:layout_width="0dp"
                 android:layout_marginRight="5sp"
@@ -71,7 +71,7 @@
 
             <!--https://github.com/material-components/material-components-android/blob/master/docs/components/TextField.md-->
             <com.google.android.material.textfield.TextInputLayout
-                style="?attr/textInputFilledStyle"
+                style="?attr/textInputOutlinedStyle"
                 android:layout_height="wrap_content"
                 android:layout_width="0dp"
                 android:layout_marginLeft="5sp"
@@ -93,7 +93,7 @@
         <!-- Username Field -->
         <!--https://github.com/material-components/material-components-android/blob/master/docs/components/TextField.md-->
         <com.google.android.material.textfield.TextInputLayout
-            style="?attr/textInputFilledStyle"
+            style="?attr/textInputOutlinedStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="5sp"
@@ -112,7 +112,7 @@
         <!-- Bio/Description TextArea -->
         <!--https://github.com/material-components/material-components-android/blob/master/docs/components/TextField.md-->
         <com.google.android.material.textfield.TextInputLayout
-            style="?attr/textInputFilledStyle"
+            style="?attr/textInputOutlinedStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="5sp"
@@ -127,6 +127,10 @@
                 android:backgroundTint="#2ED1C300"
                 android:inputType="textMultiLine"
                 android:minLines="8"
+                android:maxLines="8"
+                android:scrollbars="vertical"
+                android:overScrollMode="always"
+                android:scrollHorizontally="false"
                 android:gravity="top"
                 />
         </com.google.android.material.textfield.TextInputLayout>
@@ -141,7 +145,7 @@
         <!-- Email Field -->
         <!--https://github.com/material-components/material-components-android/blob/master/docs/components/TextField.md-->
         <com.google.android.material.textfield.TextInputLayout
-            style="?attr/textInputFilledStyle"
+            style="?attr/textInputOutlinedStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Email"

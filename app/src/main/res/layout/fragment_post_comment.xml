@@ -27,22 +27,28 @@
         <!-- Comment Text Field with Rounded Edges -->
         <!--https://github.com/material-components/material-components-android/blob/master/docs/components/TextField.md-->
         <com.google.android.material.textfield.TextInputLayout
-            style="?attr/textInputFilledStyle"
+            style="?attr/textInputOutlinedStyle"
             android:id="@+id/commentText"
             android:layout_width="match_parent"
-            android:layout_height="200dp"
+            android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
             android:hint="Comment"
             android:elevation="4dp"
             app:hintTextColor="@color/black"
-            app:boxStrokeColor="@color/theme">
+            app:boxStrokeColor="@color/theme"
+            app:helperTextEnabled="true">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:minLines="5"
+                android:minLines="8"
+                android:maxLines="8"
                 android:gravity="top|start"
                 android:backgroundTint="#2ED1C300"
+                android:scrollbars="vertical"
+                android:overScrollMode="always"
+                android:scrollHorizontally="false"
+                android:inputType="textMultiLine"
                 />
         </com.google.android.material.textfield.TextInputLayout>
 
