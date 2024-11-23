@@ -17,6 +17,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -33,6 +34,7 @@ class RecipeCardsFragment : Fragment() {
     private lateinit var recipeAdapter: RecipeCardsAdapter
     private lateinit var firestore: FirebaseFirestore
     private lateinit var tileTitle: String
+    private lateinit var emptyStateTextView: TextView
 
     private var currentUserId = userSignInData.UserDocId
 
@@ -55,6 +57,8 @@ class RecipeCardsFragment : Fragment() {
         }
 
         firestore = Firebase.firestore
+
+        emptyStateTextView = view.findViewById(R.id.no_recipes_text_view)
 
         // RecyclerView setup and LinearLayoutManager usage based on Android developer documentation
         // https://developer.android.com/guide/topics/ui/layout/recyclerview
@@ -153,13 +157,14 @@ class RecipeCardsFragment : Fragment() {
                 if (recipeRemoved) {
                     userRef.update("favoriteCollection", favoriteCollection).addOnSuccessListener {
                         recipeAdapter.removeRecipeAtPosition(position)
-                        Log.d("RecipeCardsFragment", "Recipe successfully deleted from Firestore.")
+                        if (recipeAdapter.itemCount == 0) {
+                            showEmptyState()
+                        }
                     }.addOnFailureListener { exception ->
                         Log.e("RecipeCardsFragment", "Failed to update Firestore: ${exception.message}")
                     }
                 } else {
                     recipeAdapter.notifyItemChanged(position)
-                    Log.e("RecipeCardsFragment", "Recipe ID not found in favoriteCollection.")
                 }
             }
         }.addOnFailureListener { exception ->
@@ -239,6 +244,7 @@ class RecipeCardsFragment : Fragment() {
                             navigateToRecipeDetailsFragment(recipe)
                         }
                         recipeRecyclerView.adapter = recipeAdapter
+                        emptyStateTextView.visibility = View.GONE
                     }
                 }.addOnFailureListener { exception ->
                     exception.printStackTrace()
@@ -247,6 +253,9 @@ class RecipeCardsFragment : Fragment() {
     }
 
     private fun showEmptyState() {
+        emptyStateTextView.visibility = View.VISIBLE
+        emptyStateTextView.text = "No recipes added to this favorites collection!"
+        recipeRecyclerView.visibility = View.GONE
     }
     // Navigates to the recipe details fragment with selected recipe data
     private fun navigateToRecipeDetailsFragment(recipe: RecipeCardModel) {
