@@ -30,6 +30,7 @@ import com.bumptech.glide.Glide
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.button.MaterialButtonToggleGroup
 import com.google.android.material.textfield.TextInputEditText
+import com.google.android.material.textfield.TextInputLayout
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -189,37 +190,95 @@ class AddRecipeFragment : Fragment() {
         uploadImageButton.setOnClickListener { mediaSelector.selectMediaSource() }
 
         saveRecipeButton.setOnClickListener {
-            val recipeTitle = titleEditText.text.toString()
-            val recipeDescription = descriptionEditText.text.toString()
-            val selectedDifficulty = when {
-                easyButton.isChecked -> "Easy"
-                mediumButton.isChecked -> "Medium"
-                hardButton.isChecked -> "Hard"
-                else -> "Unknown"
-            }
-            val selectedCookingTime = when (cookingTimeGroup.checkedRadioButtonId) {
-                R.id.time_15 -> 15
-                R.id.time_30 -> 30
-                R.id.time_45 -> 45
-                R.id.time_60 -> 60
-                else -> 0
-            }
-            val cuisineType = mutableListOf<String>().apply {
-                if (cuisineVegetarian.isChecked) add("Vegetarian")
-                if (cuisineNonVegetarian.isChecked) add("Non-Vegetarian")
-                if (cuisineChinese.isChecked) add("Chinese")
-                if (cuisineThai.isChecked) add("Thai")
-                if (cuisineIndian.isChecked) add("Indian")
-                if (cuisineAmerican.isChecked) add("American")
+            var isValid = true
+
+            // Recipe Title Validation
+            val titleLayout = rootView.findViewById<TextInputLayout>(R.id.recipe_title_layout)
+            if (titleEditText.text.isNullOrBlank()) {
+                titleLayout.error = "Title is required" // Automatically shows red outline and message
+                titleLayout.isErrorEnabled = true
+                isValid = false
+            } else {
+                titleLayout.error = null // Clears error and resets outline
+                titleLayout.isErrorEnabled = false
             }
 
-            if (recipeTitle.isBlank()) {
-                Toast.makeText(requireContext(), "Please enter a recipe title", Toast.LENGTH_SHORT).show()
-            } else if (selectedCookingTime == 0) {
-                Toast.makeText(requireContext(), "Please select a valid cooking time", Toast.LENGTH_SHORT).show()
-            } else if (imageUri == null && !isEditMode) {
-                Toast.makeText(requireContext(), "Please upload an image", Toast.LENGTH_SHORT).show()
+            // Recipe Description Validation
+            val descriptionLayout = rootView.findViewById<TextInputLayout>(R.id.recipe_description_layout)
+            if (descriptionEditText.text.isNullOrBlank()) {
+                descriptionLayout.error = "Description is required"
+                descriptionLayout.isErrorEnabled = true
+                isValid = false
             } else {
+                descriptionLayout.error = null
+                descriptionLayout.isErrorEnabled = false
+            }
+
+            // Cuisine Type Validation
+            val cuisineError = rootView.findViewById<TextView>(R.id.cuisine_error)
+            if (!cuisineVegetarian.isChecked &&
+                !cuisineNonVegetarian.isChecked &&
+                !cuisineChinese.isChecked &&
+                !cuisineThai.isChecked &&
+                !cuisineIndian.isChecked &&
+                !cuisineAmerican.isChecked
+            ) {
+                cuisineError.visibility = View.VISIBLE // Show the error message
+                isValid = false
+            } else {
+                cuisineError.visibility = View.GONE // Hide the error message
+            }
+
+            // Cooking Time Validation
+            val cookingTimeError = rootView.findViewById<TextView>(R.id.cooking_time_error)
+            if (cookingTimeGroup.checkedRadioButtonId == -1) {
+                cookingTimeError.visibility = View.VISIBLE // Show the error message
+                isValid = false
+            } else {
+                cookingTimeError.visibility = View.GONE // Hide the error message
+            }
+
+            // Difficulty Level Validation
+            val difficultyError = rootView.findViewById<TextView>(R.id.difficulty_error)
+            if (!easyButton.isChecked && !mediumButton.isChecked && !hardButton.isChecked) {
+                difficultyError.visibility = View.VISIBLE // Show the error message
+                isValid = false
+            } else {
+                difficultyError.visibility = View.GONE // Hide the error message
+            }
+
+            // Image Upload Validation
+            if (imageUri == null && !isEditMode) {
+                Toast.makeText(requireContext(), "Please upload a picture of your dish", Toast.LENGTH_SHORT).show()
+                isValid = false
+            }
+
+            // Proceed if all fields are valid
+            if (isValid) {
+                val recipeTitle = titleEditText.text.toString()
+                val recipeDescription = descriptionEditText.text.toString()
+                val selectedDifficulty = when {
+                    easyButton.isChecked -> "Easy"
+                    mediumButton.isChecked -> "Medium"
+                    hardButton.isChecked -> "Hard"
+                    else -> "Unknown"
+                }
+                val selectedCookingTime = when (cookingTimeGroup.checkedRadioButtonId) {
+                    R.id.time_15 -> 15
+                    R.id.time_30 -> 30
+                    R.id.time_45 -> 45
+                    R.id.time_60 -> 60
+                    else -> 0
+                }
+                val cuisineType = mutableListOf<String>().apply {
+                    if (cuisineVegetarian.isChecked) add("Vegetarian")
+                    if (cuisineNonVegetarian.isChecked) add("Non-Vegetarian")
+                    if (cuisineChinese.isChecked) add("Chinese")
+                    if (cuisineThai.isChecked) add("Thai")
+                    if (cuisineIndian.isChecked) add("Indian")
+                    if (cuisineAmerican.isChecked) add("American")
+                }
+
                 if (isEditMode && imageUri == null) {
                     saveRecipeData(
                         recipeTitle,
@@ -328,15 +387,18 @@ class AddRecipeFragment : Fragment() {
     }
     // Fetching Existing Recipe location to keep the location unchanged even after editing the recipe from elsewhere
     // https://youtu.be/GZnCHLEo6ng?si=r-qkdFcglG4iEcld
-    private fun fetchExistingRecipeUploadLocation(recipeId: String){
+    private fun fetchExistingRecipeUploadLocation(recipeId: String) {
         firestore.collection("Recipes").document(recipeId)
             .get()
             .addOnSuccessListener { document ->
                 if (document.exists()) {
                     recipeUploadLocation = document.getString("recipeUploadLocation") ?: "Location not found"
+                } else {
+                    recipeUploadLocation = "N/A"
                 }
             }
             .addOnFailureListener { exception ->
+                recipeUploadLocation = "N/A"
                 Log.e("AddRecipeFragment", "Failed to fetch location: ${exception.message}")
             }
     }

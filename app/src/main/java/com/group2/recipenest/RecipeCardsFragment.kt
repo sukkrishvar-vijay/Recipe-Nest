@@ -119,7 +119,7 @@ class RecipeCardsFragment : Fragment() {
     private fun showDeleteConfirmationDialog(recipe: RecipeCardModel, position: Int) {
         AlertDialog.Builder(requireContext())
             .setTitle("Delete Recipe")
-            .setMessage("Are you sure you want to delete this recipe?")
+            .setMessage("Are you sure you want to remove this recipe?")
             .setPositiveButton("Delete") { _, _ ->
                 deleteRecipe(recipe, position)
             }

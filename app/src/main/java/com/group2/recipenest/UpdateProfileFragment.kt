@@ -8,17 +8,22 @@
 package com.group2.recipenest
 
 import android.app.Activity
+import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Color
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
@@ -26,6 +31,7 @@ import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
 import com.google.android.material.materialswitch.MaterialSwitch
 import com.google.android.material.textfield.TextInputEditText
+import com.google.android.material.textfield.TextInputLayout
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -91,7 +97,7 @@ class UpdateProfileFragment : Fragment() {
 
         toolbar.setNavigationIcon(R.drawable.ic_back_arrow)
         toolbar.setNavigationOnClickListener {
-            requireActivity().onBackPressedDispatcher.onBackPressed()
+            handleUnsavedChanges() // Call the confirmation dialog logic when the back arrow is clicked
         }
 
         profileImage = view.findViewById(R.id.profile_image)
@@ -104,18 +110,72 @@ class UpdateProfileFragment : Fragment() {
         authSwitch = view.findViewById(R.id.auth_switch)
         val changeProfileText = view.findViewById<TextView>(R.id.change_profile_text)
 
+        addTextWatcher(firstNameEditText, view.findViewById(R.id.first_name_layout))
+        addTextWatcher(lastNameEditText, view.findViewById(R.id.last_name_layout))
+        addTextWatcher(usernameEditText, view.findViewById(R.id.username_layout))
+
+
         emailEditText.isFocusable = false
         emailEditText.isFocusableInTouchMode = false
 
         getUserProfileData(userDocumentId)
 
         updateButton.setOnClickListener {
+            var isValid = true
+
+            // First Name Validation
+            val firstNameLayout = requireView().findViewById<TextInputLayout>(R.id.first_name_layout)
+            if (firstNameEditText.text.isNullOrBlank()) {
+                firstNameLayout.helperText = "First Name is required"
+                firstNameLayout.setHelperTextColor(ContextCompat.getColorStateList(requireContext(), android.R.color.holo_red_dark))
+                isValid = false
+            } else {
+                firstNameLayout.helperText = null
+            }
+
+            // Last Name Validation
+            val lastNameLayout = requireView().findViewById<TextInputLayout>(R.id.last_name_layout)
+            if (lastNameEditText.text.isNullOrBlank()) {
+                lastNameLayout.helperText = "Last Name is required"
+                lastNameLayout.setHelperTextColor(ContextCompat.getColorStateList(requireContext(), android.R.color.holo_red_dark))
+                isValid = false
+            } else {
+                lastNameLayout.helperText = null
+            }
+
+            // Username Validation
+            val usernameLayout = requireView().findViewById<TextInputLayout>(R.id.username_layout)
+            if (usernameEditText.text.isNullOrBlank()) {
+                usernameLayout.helperText = "Username is required"
+                usernameLayout.setHelperTextColor(ContextCompat.getColorStateList(requireContext(), android.R.color.holo_red_dark))
+                isValid = false
+            } else {
+                usernameLayout.helperText = null
+            }
+
+
+            // Check if all fields are valid
+            if (!isValid) {
+                Toast.makeText(requireContext(), "Please fill out all the required fields", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            // Proceed with the update
             if (imageUri != null) {
                 uploadProfileImageAndData()
             } else {
                 updateUserProfileDataOnly()
             }
         }
+        // Handle swipe gesture/device back button
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner,
+            object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    handleUnsavedChanges()
+                }
+            }
+        )
+
 
         changeProfileText.setOnClickListener {
             if (ContextCompat.checkSelfPermission(requireContext(), storagePermission) == PackageManager.PERMISSION_GRANTED) {
@@ -244,4 +304,67 @@ class UpdateProfileFragment : Fragment() {
                 Toast.makeText(requireContext(), "Failed to update profile", Toast.LENGTH_SHORT).show()
             }
     }
+
+    // Method to handle unsaved changes and show the confirmation dialog
+    private fun handleUnsavedChanges() {
+        if (hasUnsavedChanges()) {
+            showDiscardChangesDialog()
+        } else {
+            navigateToProfileFragment()
+        }
+    }
+
+    private fun hasUnsavedChanges(): Boolean {
+        return firstNameEditText.text.toString() != originalFirstName ||
+                lastNameEditText.text.toString() != originalLastName ||
+                usernameEditText.text.toString() != originalUsername ||
+                bioEditText.text.toString() != originalBio ||
+                authSwitch.isChecked != (originalAuth ?: false) ||
+                imageUri != null
+    }
+
+    // Method to show a confirmation dialog
+    private fun showDiscardChangesDialog() {
+        val dialog = AlertDialog.Builder(requireContext())
+            .setTitle("Discard Changes?")
+            .setMessage("You have unsaved changes. Are you sure you want to discard them?")
+            .setPositiveButton("Yes") { _, _ -> navigateToProfileFragment() }
+            .setNegativeButton("No", null)
+            .create() 
+
+        dialog.setOnShowListener {
+            dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(Color.BLACK)
+            dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(Color.BLACK)
+        }
+
+        dialog.show()
+    }
+
+    // Navigate back to ProfileFragment
+    private fun navigateToProfileFragment() {
+        parentFragmentManager.popBackStack() // Go back to the previous fragment in the back stack
+    }
+
+    private fun addTextWatcher(editText: TextInputEditText, layout: TextInputLayout) {
+        editText.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+                // No action needed
+            }
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                // No action needed
+            }
+
+            override fun afterTextChanged(s: Editable?) {
+                if (s.isNullOrBlank()) {
+                    layout.helperText = "${layout.hint} is required"
+                    layout.setHelperTextColor(ContextCompat.getColorStateList(requireContext(), android.R.color.holo_red_dark))
+                } else {
+                    layout.helperText = null
+                }
+            }
+        })
+    }
+
+
 }

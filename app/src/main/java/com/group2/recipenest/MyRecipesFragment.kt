@@ -169,33 +169,40 @@ class MyRecipesFragment : Fragment() {
         val dialog = AlertDialog.Builder(requireContext())
             .setTitle("Delete Recipe")
             .setMessage("Are you sure you want to delete this recipe?")
-            .setPositiveButton("Yes") { dialog, _ ->
-                firestore.collection("Recipes").document(recipe.recipeId)
+            .setPositiveButton("Delete") { _, _ ->
+                val recipeId = recipe.recipeId
+
+                // Delete recipe document
+                firestore.collection("Recipes").document(recipeId)
                     .delete()
                     .addOnSuccessListener {
-                        recipe.recipeImageUrl.takeIf { it!!.isNotEmpty() }?.let { imageUrl ->
-                            val storageRef = storage.getReferenceFromUrl(imageUrl)
-                            storageRef.delete()
-                                .addOnSuccessListener {
+                        removeRecipeFromAllFavorites(recipeId) { isRemoved ->
+                            if (isRemoved) {
+                                recipe.recipeImageUrl?.takeIf { it.isNotEmpty() }?.let { imageUrl ->
+                                    val storageRef = storage.getReferenceFromUrl(imageUrl)
+                                    storageRef.delete()
+                                        .addOnSuccessListener {
+                                            Toast.makeText(requireContext(), "Recipe deleted successfully!", Toast.LENGTH_SHORT).show()
+                                            fetchUserRecipes()
+                                        }
+                                        .addOnFailureListener {
+                                            Toast.makeText(requireContext(), "Failed to delete image.", Toast.LENGTH_SHORT).show()
+                                        }
+                                } ?: run {
                                     Toast.makeText(requireContext(), "Recipe deleted successfully!", Toast.LENGTH_SHORT).show()
                                     fetchUserRecipes()
                                 }
-                                .addOnFailureListener {
-                                    Toast.makeText(requireContext(), "Failed to delete image.", Toast.LENGTH_SHORT).show()
-                                }
-                        } ?: run {
-                            Toast.makeText(requireContext(), "Recipe deleted successfully!", Toast.LENGTH_SHORT).show()
-                            fetchUserRecipes()
+
+                            } else {
+                                Toast.makeText(requireContext(), "Failed to update favorites.", Toast.LENGTH_SHORT).show()
+                            }
                         }
                     }
                     .addOnFailureListener {
                         Toast.makeText(requireContext(), "Failed to delete recipe.", Toast.LENGTH_SHORT).show()
                     }
-                dialog.dismiss()
             }
-            .setNegativeButton("No") { dialog, _ ->
-                dialog.dismiss()
-            }
+            .setNegativeButton("Cancel") { dialog, _ -> dialog.dismiss() }
             .create()
 
         dialog.setOnShowListener {
@@ -204,6 +211,32 @@ class MyRecipesFragment : Fragment() {
         }
 
         dialog.show()
+    }
+
+    private fun removeRecipeFromAllFavorites(recipeId: String, callback: (Boolean) -> Unit) {
+        firestore.collection("User").get()
+            .addOnSuccessListener { users ->
+                val batch = firestore.batch()
+
+                for (user in users) {
+                    val userDocRef = user.reference
+                    val favoriteCollection = user.get("favoriteCollection") as? MutableList<Map<String, MutableList<String>>>
+
+                    favoriteCollection?.let { collection ->
+                        val updatedCollection = collection.map { map ->
+                            map.mapValues { (key, recipeIds) ->
+                                recipeIds.filterNot { it == recipeId }.toMutableList()
+                            }
+                        }
+                        batch.update(userDocRef, "favoriteCollection", updatedCollection)
+                    }
+                }
+
+                batch.commit()
+                    .addOnSuccessListener { callback(true) }
+                    .addOnFailureListener { callback(false) }
+            }
+            .addOnFailureListener { callback(false) }
     }
 
 
