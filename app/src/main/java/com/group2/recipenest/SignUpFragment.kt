@@ -44,17 +44,7 @@ class SignUpFragment:Fragment() {
         passwordFocusListener()
 
         binding.previousPageButton.setOnClickListener{
-            val firstname = binding.firstNametextField.editText?.text.toString().trim()
-            val lastname = binding.lastNametextField.editText?.text.toString().trim()
-            val email = binding.emailtextField.editText?.text.toString().trim()
-            val password = binding.enterPasswordtextField.editText?.text.toString().trim()
-            val confirm_password = binding.confirmPasswordtextField.editText?.text.toString().trim()
-            if (email.isNotEmpty() || password.isNotEmpty() || firstname.isNotEmpty() || lastname.isNotEmpty() || confirm_password.isNotEmpty()){
-                userData.firstName = firstname
-                userData.lastName = lastname
-                userData.email = email
-                userData.password = password
-            }
+            clearUserData()
             loadFragment(SignInFragment())
         }
 
@@ -86,7 +76,7 @@ class SignUpFragment:Fragment() {
             val password = binding.passwordEditText.text.toString()
             val confirmPassword = text.toString()
             if (password != confirmPassword) {
-                binding.confirmPasswordtextField.helperText= "Passwords do not match"
+                binding.confirmPasswordtextField.helperText= "Password do not match"
                 binding.confirmPasswordtextField.setHelperTextColor(ColorStateList.valueOf(Color.RED))
             } else {
                 binding.confirmPasswordtextField.helperText = null
@@ -185,6 +175,17 @@ class SignUpFragment:Fragment() {
             return "Must contain 1 special character (@#\$%^&+=)"
         }
         return null
+    }
+
+    //clearing the data class
+    private fun clearUserData() {
+        userData.firstName = ""
+        userData.lastName = ""
+        userData.email = ""
+        userData.password = ""
+        userData.username = ""
+        userData.description = ""
+        userData.profileimage = ""
     }
 
     //https://medium.com/@Max_Sir/mastering-android-fragments-managers-transactions-and-best-practices-in-kotlin-af00cb9b44ac
