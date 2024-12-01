@@ -4,6 +4,7 @@
         <item name="android:colorBackground">@android:color/white</item>
         <item name="colorControlActivated">#D1C300</item>
         <item name="colorPrimary">#D1C300</item>
+        <item name="android:textColorHighlight">"#2ED1C300"</item>
     </style>
 
     <style name="CustomRadioButton" parent="Theme.AppCompat.Light.Dialog.Alert">
