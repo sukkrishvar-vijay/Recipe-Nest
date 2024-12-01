@@ -186,7 +186,7 @@ class PostCommentFragment : Fragment() {
                 if(currentRating == 0){
                     // Toast messages implementation based on Android developer guide
                     // https://developer.android.com/guide/topics/ui/notifiers/toasts
-                    Toast.makeText(requireContext(), "Rating for the dish cannot be 0", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(), "Please rate the recipe", Toast.LENGTH_SHORT).show()
                 }
                 if(comment.isEmpty()){
                     commentTextLayout.error = "Comment is required"
