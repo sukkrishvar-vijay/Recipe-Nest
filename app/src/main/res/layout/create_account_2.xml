@@ -150,11 +150,9 @@
 
         <com.google.android.material.textfield.TextInputEditText
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="175dp"
             android:backgroundTint="#2ED1C300"
             android:inputType="textMultiLine"
-            android:minLines="8"
-            android:maxLines="8"
             android:scrollbars="vertical"
             android:overScrollMode="always"
             android:scrollHorizontally="false"

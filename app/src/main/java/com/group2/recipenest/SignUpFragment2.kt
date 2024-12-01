@@ -7,13 +7,10 @@
 
 package com.group2.recipenest
 
-import android.content.res.ColorStateList
-import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.group2.recipenest.databinding.CreateAccount2Binding
 
@@ -41,7 +38,7 @@ class SignUpFragment2: Fragment() {
             val username = binding.usernametextField.editText?.text.toString().trim()
             val userdescription = binding.userDescriptiontextField.editText?.text.toString().trim()
 
-            if(username.isNotEmpty()){
+            if(username.isNotEmpty() || userdescription.isNotEmpty()){
                 userData.username = username
                 userData.description = userdescription
             }
@@ -61,8 +58,7 @@ class SignUpFragment2: Fragment() {
             binding.usernametextField.error = null
 
             if (username.isEmpty()) {
-                binding.usernametextField.error = "User Name is required"
-                Toast.makeText(requireContext(), "Please fill the username text field", Toast.LENGTH_SHORT).show()
+                binding.usernametextField.error = "Username is required"
             }
             else{
                 userData.username = username

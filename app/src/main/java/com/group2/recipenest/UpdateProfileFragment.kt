@@ -255,6 +255,7 @@ class UpdateProfileFragment : Fragment() {
                 .addOnSuccessListener {
                     filePath.downloadUrl.addOnSuccessListener { downloadUrl ->
                         updateUserProfileDataOnly(downloadUrl.toString())
+                        imageUri = null
                     }
                 }
                 .addOnFailureListener {

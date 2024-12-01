@@ -14,7 +14,6 @@ import android.util.Patterns
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import com.group2.recipenest.databinding.CreateAccount1Binding
@@ -45,6 +44,17 @@ class SignUpFragment:Fragment() {
         passwordFocusListener()
 
         binding.previousPageButton.setOnClickListener{
+            val firstname = binding.firstNametextField.editText?.text.toString().trim()
+            val lastname = binding.lastNametextField.editText?.text.toString().trim()
+            val email = binding.emailtextField.editText?.text.toString().trim()
+            val password = binding.enterPasswordtextField.editText?.text.toString().trim()
+            val confirm_password = binding.confirmPasswordtextField.editText?.text.toString().trim()
+            if (email.isNotEmpty() || password.isNotEmpty() || firstname.isNotEmpty() || lastname.isNotEmpty() || confirm_password.isNotEmpty()){
+                userData.firstName = firstname
+                userData.lastName = lastname
+                userData.email = email
+                userData.password = password
+            }
             loadFragment(SignInFragment())
         }
 
@@ -76,7 +86,7 @@ class SignUpFragment:Fragment() {
             val password = binding.passwordEditText.text.toString()
             val confirmPassword = text.toString()
             if (password != confirmPassword) {
-                binding.confirmPasswordtextField.helperText= "Password do not match"
+                binding.confirmPasswordtextField.helperText= "Passwords do not match"
                 binding.confirmPasswordtextField.setHelperTextColor(ColorStateList.valueOf(Color.RED))
             } else {
                 binding.confirmPasswordtextField.helperText = null
@@ -98,7 +108,6 @@ class SignUpFragment:Fragment() {
 
             if(password!=confirm_password) {
                 binding.confirmPasswordtextField.error = "Passwords do not match"
-                binding.confirmPasswordtextField.setHelperTextColor(ColorStateList.valueOf(Color.RED))
             }
 
             if (email.isEmpty() || password.isEmpty() || firstname.isEmpty() || lastname.isEmpty() || confirm_password.isEmpty()) {
@@ -111,7 +120,7 @@ class SignUpFragment:Fragment() {
                     binding.enterPasswordtextField.error = "Password is required"
                 }
                 if (confirm_password.isEmpty()) {
-                    binding.confirmPasswordtextField.error = "Password is required"
+                    binding.confirmPasswordtextField.error = "Password re-entry is required"
                 }
                 if (firstname.isEmpty()){
                     binding.firstNametextField.error = "First Name is required"
@@ -126,12 +135,16 @@ class SignUpFragment:Fragment() {
                     binding.emailtextField.error = "Invalid email address"
                 }
             }
-            else {
+
+            if(firstname.isNotEmpty() && lastname.isNotEmpty() && Patterns.EMAIL_ADDRESS.matcher(email).matches() && password == confirm_password && email.isNotEmpty() && password.isNotEmpty() && validPassword() == null) {
                 userData.firstName = firstname
                 userData.lastName = lastname
                 userData.email = email
                 userData.password = password
                 loadFragment(SignUpFragment2())
+            }
+            else{
+                binding.enterPasswordtextField.error = validPassword()
             }
 
         }
@@ -154,7 +167,7 @@ class SignUpFragment:Fragment() {
     private fun validPassword(): String? {
         val passwordText = binding.passwordEditText.text.toString()
         if(passwordText.isEmpty()) {
-            return null
+            return "Password is required"
         }
         if(passwordText.length < 8) {
             return "Minimum 8 character password"
