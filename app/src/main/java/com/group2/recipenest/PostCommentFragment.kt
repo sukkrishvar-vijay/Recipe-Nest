@@ -10,6 +10,8 @@ package com.group2.recipenest
 import android.Manifest
 import android.annotation.SuppressLint
 import android.content.pm.PackageManager
+import android.content.res.ColorStateList
+import android.graphics.Color
 import android.media.MediaPlayer
 import android.media.MediaRecorder
 import android.net.Uri
@@ -29,6 +31,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
@@ -125,13 +128,16 @@ class PostCommentFragment : Fragment() {
         }
 
         audioRecord.setOnClickListener {
-            if(canStartRecord){
-                canStartRecord = false
-                startRecording()
-            }
-            else{
-                canStartRecord = true
-                stopRecording()
+            if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED) {
+                if (canStartRecord) {
+                    canStartRecord = false
+                    startRecording()
+                } else {
+                    canStartRecord = true
+                    stopRecording()
+                }
+            } else {
+                Toast.makeText(requireContext(), "Enable Mic permission in the Settings", Toast.LENGTH_SHORT).show()
             }
         }
 
@@ -166,7 +172,7 @@ class PostCommentFragment : Fragment() {
             val comment = commentEditText?.text.toString()
             val rating = getDynamicRating()
 
-            if (comment.isNotEmpty()) {
+            if (comment.isNotEmpty() && currentRating != 0) {
                 if(isAudioAvailable){
                     uploadAudioToFirebase { audioDownloadUrl ->
                         audioUrl = audioDownloadUrl
@@ -177,9 +183,17 @@ class PostCommentFragment : Fragment() {
                     postComment(comment, recipeId, rating)
                 }
             } else {
-                // Toast messages implementation based on Android developer guide
-                // https://developer.android.com/guide/topics/ui/notifiers/toasts
-                Toast.makeText(requireContext(), "Comment cannot be empty", Toast.LENGTH_SHORT).show()
+                if(currentRating == 0){
+                    // Toast messages implementation based on Android developer guide
+                    // https://developer.android.com/guide/topics/ui/notifiers/toasts
+                    Toast.makeText(requireContext(), "Rating for the dish cannot be 0", Toast.LENGTH_SHORT).show()
+                }
+                if(comment.isEmpty()){
+                    commentTextLayout.error = "Comment is required"
+                }
+                else{
+                    commentTextLayout.error = null
+                }
             }
         }
         return rootView
@@ -190,9 +204,9 @@ class PostCommentFragment : Fragment() {
     //https://developer.android.com/training/data-storage
     @Suppress("DEPRECATION")
     private fun startRecording() {
-        audioRecord.text = "Recording, Tap to Stop"
-        setAudioTime.text = "00:00"
         if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED) {
+            audioRecord.text = "Recording, Tap to Stop"
+            setAudioTime.text = "00:00"
             mediaRecorder = MediaRecorder().apply {
                 setAudioSource(MediaRecorder.AudioSource.MIC)
                 setOutputFormat(MediaRecorder.OutputFormat.MPEG_4)
@@ -285,16 +299,27 @@ class PostCommentFragment : Fragment() {
     //https://developer.android.com/training/permissions/requesting
     private fun requestPermissions() {
         val requestPermissionLauncher = registerForActivityResult(
-            ActivityResultContracts.RequestPermission()
-        ) { isGranted: Boolean ->
-            if (!isGranted) {
+            ActivityResultContracts.RequestMultiplePermissions()
+        ) { permissions ->
+            val micGranted = permissions[Manifest.permission.RECORD_AUDIO] ?: false
+            val writeGranted = permissions[Manifest.permission.WRITE_EXTERNAL_STORAGE] ?: false
+            val readGranted = permissions[Manifest.permission.READ_EXTERNAL_STORAGE] ?: false
+
+            if (!micGranted) {
                 Toast.makeText(requireContext(), "Enable microphone permission to record audio comment", Toast.LENGTH_LONG).show()
             }
+            // Handle other permissions if needed.
         }
-        requestPermissionLauncher.launch(Manifest.permission.RECORD_AUDIO)
-        requestPermissionLauncher.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-        requestPermissionLauncher.launch(Manifest.permission.READ_EXTERNAL_STORAGE)
+
+        requestPermissionLauncher.launch(
+            arrayOf(
+                Manifest.permission.RECORD_AUDIO,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                Manifest.permission.READ_EXTERNAL_STORAGE
+            )
+        )
     }
+
 
     // Star rating click listener pattern adapted from Android developer tutorial on custom views
     // https://developer.android.com/guide/topics/ui/custom-components

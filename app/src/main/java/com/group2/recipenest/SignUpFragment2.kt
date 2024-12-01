@@ -7,6 +7,8 @@
 
 package com.group2.recipenest
 
+import android.content.res.ColorStateList
+import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -46,11 +48,20 @@ class SignUpFragment2: Fragment() {
             loadFragment(SignUpFragment())
         }
 
+        binding.usernametext.setOnFocusChangeListener { _, focused ->
+            if (focused){
+                binding.usernametextField.error = null
+            }
+        }
+
         binding.nextPageButton.setOnClickListener {
             val username = binding.usernametextField.editText?.text.toString().trim()
             val userdescription = binding.userDescriptiontextField.editText?.text.toString().trim()
 
+            binding.usernametextField.error = null
+
             if (username.isEmpty()) {
+                binding.usernametextField.error = "User Name is required"
                 Toast.makeText(requireContext(), "Please fill the username text field", Toast.LENGTH_SHORT).show()
             }
             else{

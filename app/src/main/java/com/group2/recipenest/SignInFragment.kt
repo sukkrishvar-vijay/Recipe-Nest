@@ -10,6 +10,8 @@ package com.group2.recipenest
 import android.Manifest
 import android.content.Context.MODE_PRIVATE
 import android.content.pm.PackageManager
+import android.content.res.ColorStateList
+import android.graphics.Color
 import androidx.biometric.BiometricPrompt
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -56,12 +58,10 @@ class SignInFragment : Fragment() {
         biometricPrompt = BiometricPrompt(this, executor, object : BiometricPrompt.AuthenticationCallback() {
             override fun onAuthenticationError(errorCode: Int, errString: CharSequence) {
                 super.onAuthenticationError(errorCode, errString)
-                Toast.makeText(requireContext(), "Authentication error: $errString", Toast.LENGTH_SHORT).show()
             }
 
             override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
                 super.onAuthenticationSucceeded(result)
-                Toast.makeText(requireContext(), "Authentication succeeded!", Toast.LENGTH_SHORT).show()
                 signInUserViaBio()
             }
 
@@ -78,12 +78,31 @@ class SignInFragment : Fragment() {
             .setNegativeButtonText("Cancel")
             .build()
 
+        binding.emailtext.setOnFocusChangeListener { _, focused ->
+            if (focused){
+                binding.emailtextField.error = null
+            }
+        }
+
+        binding.passwordtext.setOnFocusChangeListener { _, focused ->
+            if (focused){
+                binding.passwordtextField.error = null
+            }
+        }
+
         binding.signInButton.setOnClickListener {
             val email = binding.emailtextField.editText?.text.toString().trim()
             val password = binding.passwordtextField.editText?.text.toString().trim()
 
             if (email.isEmpty() || password.isEmpty()) {
-                Toast.makeText(requireContext(), "Please enter email and password", Toast.LENGTH_SHORT).show()
+                if(email.isEmpty()){
+                    binding.emailtextField.error = "Email is required"
+                }
+                else binding.emailtextField.error = null
+                if(password.isEmpty()){
+                    binding.passwordtextField.error = "Password is required"
+                }
+                else binding.passwordtextField.error = null
             } else {
                 signInUser(email, password)
             }
@@ -144,7 +163,6 @@ class SignInFragment : Fragment() {
         auth.signInWithEmailAndPassword(email, password)
             .addOnCompleteListener(requireActivity()) { task ->
                 if (task.isSuccessful) {
-                    Toast.makeText(requireContext(), "Sign in successful", Toast.LENGTH_SHORT).show()
                     saveCredentials(email, password)
                     val currentUser = auth.currentUser
                     if (currentUser != null) {

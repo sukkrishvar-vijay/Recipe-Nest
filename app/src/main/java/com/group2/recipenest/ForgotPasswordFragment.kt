@@ -7,6 +7,8 @@
 
 package com.group2.recipenest
 
+import android.content.res.ColorStateList
+import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -37,11 +39,16 @@ class ForgotPasswordFragment: Fragment() {
             loadFragment(SignInFragment())
         }
 
+        binding.backButton.setOnClickListener {
+            loadFragment(SignInFragment())
+        }
+
         //https://firebase.google.com/docs/auth/android/manage-users
         //https://stackoverflow.com/questions/42800349/forgot-password-in-firebase-for-android
         binding.resetPasswordButton.setOnClickListener {
             val email = binding.emailtextField.editText?.text.toString().trim()
             if(email != ""){
+                binding.emailtextField.error = null
                 FirebaseAuth.getInstance().sendPasswordResetEmail(email)
                     .addOnCompleteListener { task ->
                         if (task.isSuccessful) {
@@ -51,7 +58,7 @@ class ForgotPasswordFragment: Fragment() {
 
             }
             else{
-                Toast.makeText(requireContext(), "Please enter your email", Toast.LENGTH_SHORT).show()
+                binding.emailtextField.error = "Email is required"
             }
 
         }

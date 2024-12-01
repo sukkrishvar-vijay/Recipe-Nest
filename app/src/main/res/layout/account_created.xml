@@ -8,10 +8,10 @@
     <ImageView
         android:id="@+id/logo"
         android:layout_width="wrap_content"
-        android:layout_marginLeft="30sp"
-        android:layout_marginRight="30sp"
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp"
         android:layout_height="200dp"
-        android:layout_marginTop="80sp"
+        android:layout_marginTop="80dp"
         android:src="@drawable/logo" />
 
     <TextView
@@ -31,11 +31,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:backgroundTint="@color/theme"
-        android:layout_marginTop="100sp"
+        android:layout_marginTop="100dp"
         android:textColor="@color/black"
         android:text="Start Exploring Recipes"
-        android:paddingStart="50sp"
-        android:paddingEnd="50sp"
+        android:paddingStart="50dp"
+        android:paddingEnd="50dp"
         />
 
 </LinearLayout>

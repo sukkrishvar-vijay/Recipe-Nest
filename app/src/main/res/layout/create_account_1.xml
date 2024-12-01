@@ -10,9 +10,9 @@
         android:id="@+id/logo"
         android:layout_width="150dp"
         android:layout_height="120dp"
-        android:layout_marginLeft="20sp"
-        android:layout_marginRight="20sp"
-        android:layout_marginTop="80sp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="80dp"
         android:src="@drawable/logo" />
 
     <LinearLayout
@@ -118,11 +118,11 @@
         android:id="@+id/userNameFields"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="30sp"
-        android:layout_marginRight="30sp"
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp"
         android:orientation="horizontal"
         android:gravity="center"
-        android:layout_marginTop="60sp">
+        android:layout_marginTop="60dp">
 
         <!--https://github.com/material-components/material-components-android/blob/master/docs/components/TextField.md-->
         <com.google.android.material.textfield.TextInputLayout
@@ -130,13 +130,14 @@
             android:id="@+id/firstNametextField"
             android:layout_height="wrap_content"
             android:layout_width="0dp"
-            android:layout_marginRight="5sp"
+            android:layout_marginRight="5dp"
             android:layout_weight="1"
             android:hint="First Name"
             app:hintTextColor="@color/black"
             app:boxStrokeColor="@color/theme">
 
             <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/firstNametext"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:backgroundTint="#2ED1C300"
@@ -149,13 +150,14 @@
             android:id="@+id/lastNametextField"
             android:layout_height="wrap_content"
             android:layout_width="0dp"
-            android:layout_marginLeft="5sp"
+            android:layout_marginLeft="5dp"
             android:layout_weight="1"
             android:hint="Last Name"
             app:hintTextColor="@color/black"
             app:boxStrokeColor="@color/theme">
 
             <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/lastNametext"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:backgroundTint="#2ED1C300"
@@ -170,14 +172,15 @@
         android:id="@+id/emailtextField"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="5sp"
-        android:layout_marginLeft="30sp"
-        android:layout_marginRight="30sp"
+        android:layout_marginTop="5dp"
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp"
         android:hint="Email"
         app:hintTextColor="@color/black"
         app:boxStrokeColor="@color/theme">
 
         <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/emailtext"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:backgroundTint="#2ED1C300"
@@ -191,14 +194,15 @@
         app:endIconMode="password_toggle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="5sp"
-        android:layout_marginLeft="30sp"
-        android:layout_marginRight="30sp"
+        android:layout_marginTop="5dp"
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp"
         android:hint="Password"
         app:hintTextColor="@color/black"
         app:boxStrokeColor="@color/theme">
 
         <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/passwordEditText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="textPassword"
@@ -213,14 +217,15 @@
         app:endIconMode="password_toggle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="5sp"
-        android:layout_marginLeft="30sp"
-        android:layout_marginRight="30sp"
+        android:layout_marginTop="5dp"
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp"
         android:hint="Confirm Password"
         app:hintTextColor="@color/black"
         app:boxStrokeColor="@color/theme">
 
         <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/confirmPasswordEditText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="textPassword"
@@ -232,9 +237,9 @@
         android:id="@+id/navOptions"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="30sp"
+        android:layout_marginLeft="30dp"
         android:layout_marginTop="60dp"
-        android:layout_marginRight="30sp"
+        android:layout_marginRight="30dp"
         android:orientation="horizontal">
 
         <Button
@@ -243,8 +248,8 @@
             android:layout_height="wrap_content"
             android:layout_gravity="start"
             android:backgroundTint="@color/white"
-            android:paddingStart="1sp"
-            android:paddingEnd="1sp"
+            android:paddingStart="1dp"
+            android:paddingEnd="1dp"
             android:text="Previous"
             android:textColor="@color/text_blue" />
 
@@ -260,8 +265,8 @@
             android:layout_height="wrap_content"
             android:layout_gravity="end"
             android:backgroundTint="@color/white"
-            android:paddingStart="1sp"
-            android:paddingEnd="1sp"
+            android:paddingStart="1dp"
+            android:paddingEnd="1dp"
             android:text="Next"
             android:textColor="@color/text_blue" />
 
