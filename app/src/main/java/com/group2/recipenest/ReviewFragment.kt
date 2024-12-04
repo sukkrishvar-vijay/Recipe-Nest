@@ -9,7 +9,6 @@ package com.group2.recipenest
 
 import ReviewModel
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -83,7 +82,7 @@ class ReviewFragment : BottomSheetDialogFragment() {
                     }
                 }
                 .addOnFailureListener { exception ->
-                    Toast.makeText(requireContext(), "Failed to fetch comments: ${exception.message}", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(), "Failed to fetch reviews: ${exception.message}", Toast.LENGTH_SHORT).show()
                 }
         }
     }

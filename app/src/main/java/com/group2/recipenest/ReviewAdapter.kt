@@ -140,7 +140,7 @@ class ReviewAdapter(
                             togglePlayback()
                         }
                         setOnCompletionListener {
-                            playAudioButton.setImageResource(R.drawable.ic_play) // Set icon back to "play"
+                            playAudioButton.setImageResource(R.drawable.ic_play)
                             this@ReviewViewHolder.isPlaying = false
                             handler.removeCallbacks(runnable)
                             mediaPlayer?.seekTo(0)
@@ -165,18 +165,18 @@ class ReviewAdapter(
             mediaPlayer?.let { player ->
                 if (isPlaying) {
                     player.pause()
-                    playAudioButton.setImageResource(R.drawable.ic_play) // Set icon to "play"
+                    playAudioButton.setImageResource(R.drawable.ic_play)
                     handler.removeCallbacks(runnable)
                 } else {
                     player.start()
-                    playAudioButton.setImageResource(R.drawable.ic_pause) // Set icon to "pause"
+                    playAudioButton.setImageResource(R.drawable.ic_pause)
                     handler.postDelayed(runnable, 0)
                 }
                 isPlaying = !isPlaying
             }
         }
 
-        //function to stop audio playback if some other comment audio starts playing
+        // function to stop audio playback if some other comment audio starts playing
         fun stopAudioPlayback() {
             mediaPlayer?.pause()
             mediaPlayer?.seekTo(0)
@@ -187,7 +187,7 @@ class ReviewAdapter(
             mediaPlayer = null
         }
 
-        //function to release all players which will be called from ReviewFragment.kt to release all players if ReviewFragment.kt is destroyed
+        // function to release all players which will be called from ReviewFragment.kt to release all players if ReviewFragment.kt is destroyed
         fun releasePlayer() {
             playAudioButton.setImageResource(R.drawable.ic_play)
             audioBar.progress = 0
@@ -207,7 +207,7 @@ class ReviewAdapter(
         }
     }
 
-    //function to release all players
+    // function to release all players
     fun releaseAllPlayers() {
         activeViewHolder?.stopAudioPlayback()
         activeMediaPlayer?.release()

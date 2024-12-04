@@ -25,7 +25,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import androidx.transition.Visibility
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -102,7 +101,7 @@ class RecipesFragment : Fragment() {
         fetchRecipesFromFirestore()
 
         moreRecipesTitle = rootView.findViewById(R.id.moreRecipesTitle)
-        moreRecipesTitle.text = "More Recipes"
+
 
         return rootView
     }
@@ -192,6 +191,9 @@ class RecipesFragment : Fragment() {
                 val sortedRecipeList = recipeList.sortedByDescending { it.dateRecipeAdded }
 
                 verticalAdapter.updateRecipes(sortedRecipeList)
+                moreRecipesTitle.text = "More Recipes"
+
+
                 if (trendingRecipeList.isEmpty()){
                     trendingTitle.visibility = View.GONE
                 }else{

@@ -17,7 +17,6 @@ import com.bumptech.glide.Glide
 import androidx.recyclerview.widget.RecyclerView
 
 
-
 class RecipeCardsWithLongClickAdapter(
     private var recipeList: List<RecipeCardModel>,
     private val onClick: (RecipeCardModel) -> Unit,
@@ -33,7 +32,6 @@ class RecipeCardsWithLongClickAdapter(
         val recipe = recipeList[position]
         holder.bind(recipe, onClick, onLongClick)
     }
-    // Returns the total number of items in the list.
     override fun getItemCount(): Int = recipeList.size
 
     class RecipeViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {

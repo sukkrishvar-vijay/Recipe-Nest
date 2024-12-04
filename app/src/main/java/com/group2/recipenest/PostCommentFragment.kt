@@ -10,8 +10,6 @@ package com.group2.recipenest
 import android.Manifest
 import android.annotation.SuppressLint
 import android.content.pm.PackageManager
-import android.content.res.ColorStateList
-import android.graphics.Color
 import android.media.MediaPlayer
 import android.media.MediaRecorder
 import android.net.Uri
@@ -33,7 +31,6 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
@@ -308,7 +305,6 @@ class PostCommentFragment : Fragment() {
             if (!micGranted) {
                 Toast.makeText(requireContext(), "Enable microphone permission to record audio comment", Toast.LENGTH_LONG).show()
             }
-            // Handle other permissions if needed.
         }
 
         requestPermissionLauncher.launch(

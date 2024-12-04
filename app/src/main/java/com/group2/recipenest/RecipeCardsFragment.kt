@@ -80,7 +80,7 @@ class RecipeCardsFragment : Fragment() {
                     recipeAdapter.notifyItemChanged(position)
                 }
             }
-            // Added a background color to the swipe action
+            // Add a background color to the swipe action
             // https://stackoverflow.com/questions/35773384/call-itemtouchhelper-onchilddraw-manually-to-swipe-item-on-recyclerview
             override fun onChildDraw(
                 c: Canvas,
@@ -95,7 +95,6 @@ class RecipeCardsFragment : Fragment() {
                     val itemView = viewHolder.itemView
                     val background = ColorDrawable(Color.RED)
 
-
                     background.setBounds(
                         itemView.left,
                         itemView.top,
@@ -107,7 +106,9 @@ class RecipeCardsFragment : Fragment() {
                 super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
             }
         })
+
         // Attach the ItemTouchHelper to the RecyclerView to enable swipe functionality
+        // https://www.youtube.com/watch?v=uvzP8KTz4Fg&ab_channel=CodingWithMitch
         itemTouchHelper.attachToRecyclerView(recipeRecyclerView)
 
         fetchRecipeIdsFromFavorites(tileTitle)
@@ -257,6 +258,7 @@ class RecipeCardsFragment : Fragment() {
         emptyStateTextView.text = "No recipes added to this favorites collection!"
         recipeRecyclerView.visibility = View.GONE
     }
+
     // Navigates to the recipe details fragment with selected recipe data
     private fun navigateToRecipeDetailsFragment(recipe: RecipeCardModel) {
         val recipeDetailsFragment = RecipeDetailsFragment()

@@ -15,7 +15,6 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.group2.recipenest.R
 
 // Setting up RecyclerView Adapter and ViewHolder based on Android developer documentation
 // https://developer.android.com/guide/topics/ui/layout/recyclerview

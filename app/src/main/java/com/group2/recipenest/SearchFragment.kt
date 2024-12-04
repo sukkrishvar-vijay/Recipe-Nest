@@ -13,7 +13,6 @@ import android.graphics.Color
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -29,8 +28,6 @@ import com.google.android.material.button.MaterialButton
 import com.google.android.material.chip.Chip
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
-import com.google.firebase.firestore.QuerySnapshot
-import com.google.android.gms.tasks.Tasks
 import java.util.Date
 
 class SearchFragment : Fragment() {

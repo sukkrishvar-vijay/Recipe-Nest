@@ -97,7 +97,7 @@ class UpdateProfileFragment : Fragment() {
 
         toolbar.setNavigationIcon(R.drawable.ic_back_arrow)
         toolbar.setNavigationOnClickListener {
-            handleUnsavedChanges() // Call the confirmation dialog logic when the back arrow is clicked
+            handleUnsavedChanges()
         }
 
         profileImage = view.findViewById(R.id.profile_image)
@@ -343,17 +343,15 @@ class UpdateProfileFragment : Fragment() {
 
     // Navigate back to ProfileFragment
     private fun navigateToProfileFragment() {
-        parentFragmentManager.popBackStack() // Go back to the previous fragment in the back stack
+        parentFragmentManager.popBackStack()
     }
 
     private fun addTextWatcher(editText: TextInputEditText, layout: TextInputLayout) {
         editText.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-                // No action needed
             }
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                // No action needed
             }
 
             override fun afterTextChanged(s: Editable?) {

@@ -10,8 +10,6 @@ package com.group2.recipenest
 import android.Manifest
 import android.content.Context.MODE_PRIVATE
 import android.content.pm.PackageManager
-import android.content.res.ColorStateList
-import android.graphics.Color
 import androidx.biometric.BiometricPrompt
 import android.os.Bundle
 import android.view.LayoutInflater

@@ -94,7 +94,7 @@ class MyRecipesFragment : Fragment() {
                     val dateRecipeAdded = document.getDate("dateRecipeAdded") ?: Date()
                     val recipeImageUrl = document.getString("recipeImageUrl") ?: ""
                     val recipeId = document.id
-                    // Create a RecipeCardModel object with the extracted values
+
                     val recipe = RecipeCardModel(
                         recipeUserId = recipeUserId,
                         recipeDescription = recipeDescription,
@@ -171,8 +171,7 @@ class MyRecipesFragment : Fragment() {
             .setMessage("Are you sure you want to delete this recipe?")
             .setPositiveButton("Delete") { _, _ ->
                 val recipeId = recipe.recipeId
-
-                // Delete recipe document
+                
                 firestore.collection("Recipes").document(recipeId)
                     .delete()
                     .addOnSuccessListener {

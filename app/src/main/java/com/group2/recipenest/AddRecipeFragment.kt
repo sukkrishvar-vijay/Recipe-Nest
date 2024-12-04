@@ -55,7 +55,6 @@ class AddRecipeFragment : Fragment() {
     private var existingComments: List<Map<String, Any>> = emptyList()
     private val currentUserId = userSignInData.UserDocId
 
-    // Request code for Camera permission
     private val CAMERA_PERMISSION_REQUEST = 101
 
     override fun onCreateView(
@@ -71,8 +70,6 @@ class AddRecipeFragment : Fragment() {
         toolbar.title = "Add New Recipe"
         toolbar.setTitleTextColor(Color.BLACK)
 
-
-        // Initializing the UI elements
         val uploadImageButton: Button = rootView.findViewById(R.id.upload_image_button)
         val uploadedImageView: ImageView = rootView.findViewById(R.id.uploaded_image)
         val titleEditText: TextInputEditText = rootView.findViewById(R.id.recipe_title)
@@ -113,7 +110,7 @@ class AddRecipeFragment : Fragment() {
             }
         }
 
-        // Check if this Fragment is in Edit mode by looking for arguments
+        // https://stackoverflow.com/questions/30846973/getting-arguments-from-a-bundle
         arguments?.let { bundle ->
             isEditMode = true
             toolbar.title = "Edit Recipe"
@@ -148,6 +145,7 @@ class AddRecipeFragment : Fragment() {
                 45 -> cookingTimeGroup.check(R.id.time_45)
                 60 -> cookingTimeGroup.check(R.id.time_60)
             }
+
             // Load Recipe Image if it exists
             // https://www.geeksforgeeks.org/image-loading-caching-library-android-set-2/
             if (recipeImageUrl.isNotEmpty()) {
@@ -195,11 +193,11 @@ class AddRecipeFragment : Fragment() {
             // Recipe Title Validation
             val titleLayout = rootView.findViewById<TextInputLayout>(R.id.recipe_title_layout)
             if (titleEditText.text.isNullOrBlank()) {
-                titleLayout.error = "Title is required" // Automatically shows red outline and message
+                titleLayout.error = "Title is required"
                 titleLayout.isErrorEnabled = true
                 isValid = false
             } else {
-                titleLayout.error = null // Clears error and resets outline
+                titleLayout.error = null
                 titleLayout.isErrorEnabled = false
             }
 
@@ -223,37 +221,35 @@ class AddRecipeFragment : Fragment() {
                 !cuisineIndian.isChecked &&
                 !cuisineAmerican.isChecked
             ) {
-                cuisineError.visibility = View.VISIBLE // Show the error message
+                cuisineError.visibility = View.VISIBLE
                 isValid = false
             } else {
-                cuisineError.visibility = View.GONE // Hide the error message
+                cuisineError.visibility = View.GONE
             }
 
             // Cooking Time Validation
             val cookingTimeError = rootView.findViewById<TextView>(R.id.cooking_time_error)
             if (cookingTimeGroup.checkedRadioButtonId == -1) {
-                cookingTimeError.visibility = View.VISIBLE // Show the error message
+                cookingTimeError.visibility = View.VISIBLE
                 isValid = false
             } else {
-                cookingTimeError.visibility = View.GONE // Hide the error message
+                cookingTimeError.visibility = View.GONE
             }
 
             // Difficulty Level Validation
             val difficultyError = rootView.findViewById<TextView>(R.id.difficulty_error)
             if (!easyButton.isChecked && !mediumButton.isChecked && !hardButton.isChecked) {
-                difficultyError.visibility = View.VISIBLE // Show the error message
+                difficultyError.visibility = View.VISIBLE
                 isValid = false
             } else {
-                difficultyError.visibility = View.GONE // Hide the error message
+                difficultyError.visibility = View.GONE
             }
 
-            // Image Upload Validation
             if (imageUri == null && !isEditMode) {
                 Toast.makeText(requireContext(), "Please upload a picture of your dish", Toast.LENGTH_SHORT).show()
                 isValid = false
             }
 
-            // Proceed if all fields are valid
             if (isValid) {
                 val recipeTitle = titleEditText.text.toString()
                 val recipeDescription = descriptionEditText.text.toString()

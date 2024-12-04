@@ -91,11 +91,11 @@ class SignUpFragment3 : Fragment() {
                 requestPermissionLauncher.launch(storagePermission)
             }
         }
-        // Navigates to the previous fragment (SignUpFragment2)
+
         binding.previousButton.setOnClickListener {
             loadFragment(SignUpFragment2())
         }
-        // Handles the submission of user data to Firebase
+
         binding.submitButton.setOnClickListener {
             val email = userData.email
             val password = userData.password
