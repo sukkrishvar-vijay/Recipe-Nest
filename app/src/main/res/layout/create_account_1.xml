@@ -135,6 +135,7 @@
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/firstNametext"
+                android:inputType="textCapSentences"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:backgroundTint="#2ED1C300"
@@ -158,6 +159,7 @@
                 android:id="@+id/lastNametext"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:inputType="textCapSentences"
                 android:backgroundTint="#2ED1C300"
                 />
         </com.google.android.material.textfield.TextInputLayout>
@@ -179,6 +181,7 @@
                 android:id="@+id/emailtext"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:inputType="textEmailAddress"
                 android:backgroundTint="#2ED1C300"
                 />
         </com.google.android.material.textfield.TextInputLayout>

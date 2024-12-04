@@ -1,17 +1,15 @@
-<?xml version="1.0" encoding="utf-8"?>
 <androidx.coordinatorlayout.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <!-- LinearLayout to hold ImageView and RecyclerView -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <!-- Top Vector Image -->
+        <!-- Top Logo -->
         <ImageView
             android:id="@+id/top_vector_image"
             android:layout_width="wrap_content"
@@ -21,18 +19,37 @@
             android:layout_marginTop="20dp"
             android:layout_marginBottom="20dp" />
 
-        <!-- RecyclerView to display list of recipes -->
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/my_recipe_recycler_view"
+        <!-- RecyclerView and Empty Message Layout -->
+        <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="1"
-            android:padding="8dp"
-            android:clipToPadding="false"
-            android:scrollbars="vertical" />
+            android:layout_weight="1">
+
+            <!-- RecyclerView for Recipes -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/my_recipe_recycler_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:padding="8dp"
+                android:clipToPadding="false"
+                android:scrollbars="vertical"
+                android:visibility="visible" />
+
+            <!-- Empty Message -->
+            <TextView
+                android:id="@+id/empty_message_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="No recipes added yet! Tap the '+' button to start adding your own recipes."
+                android:textAlignment="center"
+                android:textSize="16sp"
+                android:textColor="@android:color/darker_gray"
+                android:visibility="gone" />
+        </FrameLayout>
     </LinearLayout>
 
-    <!-- Floating Action Button (FAB) -->
+    <!-- Floating Action Button -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab_add_new_recipe"
         android:layout_width="wrap_content"

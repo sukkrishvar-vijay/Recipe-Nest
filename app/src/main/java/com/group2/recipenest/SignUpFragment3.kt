@@ -105,7 +105,6 @@ class SignUpFragment3 : Fragment() {
                 .addOnCompleteListener(requireActivity()) { task ->
                     if (task.isSuccessful) {
                         current_user = auth.currentUser
-                        Toast.makeText(requireContext(), "Success!", Toast.LENGTH_SHORT).show()
                         uploadImageToFirebase { imageUrl ->
                             userData.profileimage = imageUrl
                             writeUserToFirebase(current_user?.uid)

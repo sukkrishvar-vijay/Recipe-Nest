@@ -14,6 +14,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -31,6 +32,7 @@ class MyRecipesFragment : Fragment() {
 
     private lateinit var recipeRecyclerView: RecyclerView
     private lateinit var recipeAdapter: RecipeCardsWithLongClickAdapter
+    private lateinit var emptyMessageText: TextView
     private lateinit var firestore: FirebaseFirestore
     private lateinit var storage: FirebaseStorage
 
@@ -64,6 +66,7 @@ class MyRecipesFragment : Fragment() {
         }
 
         recipeRecyclerView = view.findViewById(R.id.my_recipe_recycler_view)
+        emptyMessageText = view.findViewById(R.id.empty_message_text)
         recipeRecyclerView.layoutManager = LinearLayoutManager(requireContext())
 
         return view
@@ -110,16 +113,24 @@ class MyRecipesFragment : Fragment() {
                     recipeList.add(recipe)
                 }
 
-                val sortedList = recipeList.sortedByDescending { it.dateRecipeAdded }
-                
-                // RecyclerView adapter binding based on Android developer guide
-                // https://developer.android.com/guide/topics/ui/layout/recyclerview
-                recipeAdapter = RecipeCardsWithLongClickAdapter(
-                    sortedList,
-                    onClick = { recipe -> navigateToRecipeDetailsFragment(recipe) },
-                    onLongClick = { recipe -> showEditDeleteDialog(recipe) }
-                )
-                recipeRecyclerView.adapter = recipeAdapter
+                if (recipeList.isEmpty()) {
+                    recipeRecyclerView.visibility = View.GONE
+                    emptyMessageText.visibility = View.VISIBLE
+                } else {
+                    recipeRecyclerView.visibility = View.VISIBLE
+                    emptyMessageText.visibility = View.GONE
+
+                    val sortedList = recipeList.sortedByDescending { it.dateRecipeAdded }
+                    // RecyclerView adapter binding based on Android developer guide
+                    // https://developer.android.com/guide/topics/ui/layout/recyclerview
+                    recipeAdapter = RecipeCardsWithLongClickAdapter(
+                        sortedList,
+                        onClick = { recipe -> navigateToRecipeDetailsFragment(recipe) },
+                        onLongClick = { recipe -> showEditDeleteDialog(recipe) }
+                    )
+                    recipeRecyclerView.adapter = recipeAdapter
+                }
+
             }
             .addOnFailureListener { exception ->
                 exception.printStackTrace()

@@ -25,6 +25,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -47,12 +48,21 @@ class RecipesFragment : Fragment() {
     private var carouselRecipeList: List<RecipesCarouselModel> = listOf()
     private lateinit var locationHelper: LocationHelper
     private var currentLocation: String? = null
+    private lateinit var swipeRefreshLayout: SwipeRefreshLayout
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         val rootView = inflater.inflate(layout.fragment_recipe, container, false)
+
+        swipeRefreshLayout = rootView.findViewById(R.id.swipeRefreshLayout)
+
+        swipeRefreshLayout.setOnRefreshListener {
+            swipeRefreshLayout.isRefreshing = true
+
+            fetchRecipesFromFirestore()
+        }
 
         firestore = Firebase.firestore
 
@@ -193,7 +203,6 @@ class RecipesFragment : Fragment() {
                 verticalAdapter.updateRecipes(sortedRecipeList)
                 moreRecipesTitle.text = "More Recipes"
 
-
                 if (trendingRecipeList.isEmpty()){
                     trendingTitle.visibility = View.GONE
                 }else{
@@ -202,9 +211,12 @@ class RecipesFragment : Fragment() {
                     trendingTitle.text = "Recipes Trending in ${currentLocation}"
                 }
                 carouselAdapter.updateCarouselItems(carouselRecipeList)
+
+                swipeRefreshLayout.isRefreshing = false
             }
             .addOnFailureListener { exception ->
                 exception.printStackTrace()
+                swipeRefreshLayout.isRefreshing = false
             }
     }
 

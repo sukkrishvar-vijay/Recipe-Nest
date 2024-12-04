@@ -52,6 +52,7 @@
                 android:id="@+id/recipe_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:inputType="textCapSentences"
                 android:backgroundTint="#2ED1C300"
                 />
         </com.google.android.material.textfield.TextInputLayout>
@@ -73,7 +74,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:backgroundTint="#2ED1C300"
-                android:inputType="textMultiLine"
+                android:inputType="textMultiLine|textCapSentences"
                 android:minLines="10"
                 android:gravity="top"
                 />

@@ -56,6 +56,7 @@
                 android:id="@+id/first_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:inputType="textCapSentences"
                 android:backgroundTint="#2ED1C300" />
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -74,6 +75,7 @@
                 android:id="@+id/last_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:inputType="textCapSentences"
                 android:backgroundTint="#2ED1C300" />
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -116,7 +118,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:backgroundTint="#2ED1C300"
-                android:inputType="textMultiLine"
+                android:inputType="textMultiLine|textCapSentences"
                 android:minLines="8"
                 android:maxLines="8"
                 android:scrollbars="vertical"
