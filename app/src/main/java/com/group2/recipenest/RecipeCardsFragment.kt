@@ -255,7 +255,7 @@ class RecipeCardsFragment : Fragment() {
 
     private fun showEmptyState() {
         emptyStateTextView.visibility = View.VISIBLE
-        emptyStateTextView.text = "No recipes added to this favorites collection!"
+        emptyStateTextView.text = "No recipes added to this collection!"
         recipeRecyclerView.visibility = View.GONE
     }
 
