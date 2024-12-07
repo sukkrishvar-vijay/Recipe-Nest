@@ -3,6 +3,8 @@
  * including code generation, identifying bugs, and fixing errors related to app crashes. The AI provided guidance in modifying
  * and improving the structure of the code while adhering to Android development best practices. All generated solutions were reviewed
  * and tested for functionality before implementation.
+ * https://openai.com/index/chatgpt/
+ * https://gemini.google.com/app
  */
 
 package com.group2.recipenest
@@ -201,7 +203,7 @@ class RecipesFragment : Fragment() {
                 val sortedRecipeList = recipeList.sortedByDescending { it.dateRecipeAdded }
 
                 verticalAdapter.updateRecipes(sortedRecipeList)
-                moreRecipesTitle.text = "More Recipes"
+                moreRecipesTitle.text = "All Recipes"
 
                 if (trendingRecipeList.isEmpty()){
                     trendingTitle.visibility = View.GONE
