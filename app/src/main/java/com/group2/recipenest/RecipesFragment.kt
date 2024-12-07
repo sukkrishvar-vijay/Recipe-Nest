@@ -22,6 +22,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
@@ -51,6 +52,7 @@ class RecipesFragment : Fragment() {
     private lateinit var locationHelper: LocationHelper
     private var currentLocation: String? = null
     private lateinit var swipeRefreshLayout: SwipeRefreshLayout
+    private lateinit var progressBar: ProgressBar
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -59,6 +61,7 @@ class RecipesFragment : Fragment() {
         val rootView = inflater.inflate(layout.fragment_recipe, container, false)
 
         swipeRefreshLayout = rootView.findViewById(R.id.swipeRefreshLayout)
+        progressBar = rootView.findViewById(R.id.progressBar)
 
         swipeRefreshLayout.setOnRefreshListener {
             swipeRefreshLayout.isRefreshing = true
@@ -122,6 +125,7 @@ class RecipesFragment : Fragment() {
     // https://firebase.google.com/docs/firestore/query-data/get-data
     // https://developer.android.com/reference/com/google/android/play/core/tasks/OnSuccessListener
     private fun fetchRecipesFromFirestore() {
+        progressBar.visibility = View.VISIBLE
         firestore.collection("Recipes")
             .get()
             .addOnSuccessListener { documents ->
@@ -213,11 +217,12 @@ class RecipesFragment : Fragment() {
                     trendingTitle.text = "Recipes Trending in ${currentLocation}"
                 }
                 carouselAdapter.updateCarouselItems(carouselRecipeList)
-
+                progressBar.visibility = View.GONE
                 swipeRefreshLayout.isRefreshing = false
             }
             .addOnFailureListener { exception ->
                 exception.printStackTrace()
+                progressBar.visibility = View.GONE
                 swipeRefreshLayout.isRefreshing = false
             }
     }
