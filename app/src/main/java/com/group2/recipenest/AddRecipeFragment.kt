@@ -411,6 +411,12 @@ class AddRecipeFragment : Fragment() {
         recipeImageUrl: String,
         comments: List<Map<String, Any>>
     ) {
+        val recipeAvgRating = if (isEditMode) {
+            arguments?.getDouble("avgRating") ?: 0.0
+        } else {
+            0.0
+        }
+
         val recipeData = hashMapOf(
             "recipeTitle" to title,
             "recipeDescription" to description,
@@ -420,7 +426,7 @@ class AddRecipeFragment : Fragment() {
             "cuisineType" to cuisineType,
             "recipeUserId" to currentUserId,
             "dateRecipeAdded" to Date(),
-            "avgRating" to 0.0,
+            "avgRating" to recipeAvgRating,
             "recipeImageUrl" to recipeImageUrl,
             "comments" to comments
         )

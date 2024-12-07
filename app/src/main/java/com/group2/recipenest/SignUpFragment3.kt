@@ -10,6 +10,7 @@
 package com.group2.recipenest
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
@@ -24,6 +25,8 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.security.crypto.EncryptedSharedPreferences
+import androidx.security.crypto.MasterKeys
 import com.bumptech.glide.Glide
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
@@ -107,6 +110,9 @@ class SignUpFragment3 : Fragment() {
                 .addOnCompleteListener(requireActivity()) { task ->
                     if (task.isSuccessful) {
                         current_user = auth.currentUser
+                        saveCredentials(email, password)
+                        val sharedPreferences = requireActivity().getSharedPreferences("UserSettings", Context.MODE_PRIVATE)
+                        sharedPreferences.edit().putBoolean("biometricEnabled", false).apply()
                         uploadImageToFirebase { imageUrl ->
                             userData.profileimage = imageUrl
                             writeUserToFirebase(current_user?.uid)
@@ -147,6 +153,7 @@ class SignUpFragment3 : Fragment() {
             onUploadComplete("")
         }
     }
+
     // Method to write user sign up details to User collection in firebase
     // https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-hash-map/
     private fun writeUserToFirebase(userId: String?) {
@@ -173,12 +180,36 @@ class SignUpFragment3 : Fragment() {
                 clearUserData()
                 userSignInData.UserUID = current_user!!.uid
                 userSignInData.UserDocId = documentReference.id
+                userSignInData.ShowAuthFirstTime = false
                 Log.d("USERDOCID", documentReference.id)
             }
             .addOnFailureListener { exception ->
                 Log.w("USERDOCID", "Error adding Document", exception)
             }
     }
+
+    //function to store user details as EncryptedSharedPreferences to use while logging in using biometric
+    //https://developer.android.com/about/versions/12/deprecations
+    //https://developer.android.com/reference/androidx/security/crypto/EncryptedSharedPreferences
+    @Suppress("DEPRECATION")
+    private fun saveCredentials(email: String, password: String) {
+        val masterKeyAlias = MasterKeys.getOrCreate(MasterKeys.AES256_GCM_SPEC)
+
+        val encryptedSharedPreferences = EncryptedSharedPreferences.create(
+            "UserCredentials",
+            masterKeyAlias,
+            requireContext(),
+            EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
+            EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
+        )
+
+        encryptedSharedPreferences.edit().apply {
+            putString("email", email)
+            putString("password", password)
+            apply()
+        }
+    }
+
     //clearing the data class
     private fun clearUserData() {
         userData.firstName = ""
@@ -189,6 +220,7 @@ class SignUpFragment3 : Fragment() {
         userData.description = ""
         userData.profileimage = ""
     }
+
     //https://medium.com/@Max_Sir/mastering-android-fragments-managers-transactions-and-best-practices-in-kotlin-af00cb9b44ac
     //https://developer.android.com/guide/fragments/fragmentmanager
     private fun loadFragment(fragment: Fragment) {
