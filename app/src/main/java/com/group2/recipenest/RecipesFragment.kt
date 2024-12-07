@@ -125,6 +125,9 @@ class RecipesFragment : Fragment() {
     // https://firebase.google.com/docs/firestore/query-data/get-data
     // https://developer.android.com/reference/com/google/android/play/core/tasks/OnSuccessListener
     private fun fetchRecipesFromFirestore() {
+
+        // It shows the loading state until all the Recipes are fetched.
+        // https://developer.android.com/reference/android/widget/ProgressBar
         progressBar.visibility = View.VISIBLE
         firestore.collection("Recipes")
             .get()
