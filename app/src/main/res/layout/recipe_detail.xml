@@ -47,6 +47,20 @@
 
             </FrameLayout>
 
+            <TextView
+                android:id="@+id/recipeTitleTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:gravity="center"
+                android:textAlignment="center"
+                android:layout_gravity="center_horizontal"
+                android:textColor="@android:color/black"
+                android:maxLines="3"
+                android:ellipsize="end" />
+
             <!-- Recipe Owner Name and Username in a Single TextView -->
             <TextView
                 android:id="@+id/ownerNameAndUsername"

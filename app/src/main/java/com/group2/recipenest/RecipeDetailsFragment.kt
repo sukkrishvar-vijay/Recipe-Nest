@@ -32,6 +32,7 @@ class RecipeDetailsFragment : Fragment() {
     private lateinit var shortDetailTextView: TextView
     private lateinit var longDetailTextView: TextView
     private lateinit var recipeOwnerTextView: TextView
+    private lateinit var recipeTitleView: TextView
     private lateinit var ratingsCommentsButton: Button
     private lateinit var favoriteButton: ImageButton
     private lateinit var currentRecipeId: String
@@ -53,6 +54,7 @@ class RecipeDetailsFragment : Fragment() {
 
         firestore = Firebase.firestore
 
+        recipeTitleView = rootView.findViewById(R.id.recipeTitleTextView)
         recipeOwnerTextView = rootView.findViewById(R.id.ownerNameAndUsername)
         avgRatingTextView = rootView.findViewById(R.id.ratingText)
         shortDetailTextView = rootView.findViewById(R.id.selectedFilters)
@@ -118,7 +120,8 @@ class RecipeDetailsFragment : Fragment() {
         }
 
         val toolbar: Toolbar = requireActivity().findViewById(R.id.toolbar)
-        toolbar.title = recipeTitle
+        toolbar.title = "Recipe Details"
+        recipeTitleView.text = recipeTitle
     }
 
     // Firestore document retrieval and setting text views with data based on Firebase documentation
